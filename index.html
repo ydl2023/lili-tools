@@ -1428,6 +1428,76 @@ button.stage.stage-clickable:hover .note {
   border-top: 1px solid var(--line-soft);
 }
 
+/* ---------- Stage Ⅰ 分区：按模型分组 ---------- */
+.type-section { margin-bottom: 28px; }
+.type-section:last-child { margin-bottom: 36px; }
+.type-section-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 0 2px 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 18px;
+}
+.type-section-head .title {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--ink);
+  letter-spacing: .02em;
+}
+.type-section-head .title .en {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: .15em;
+  margin-left: 10px;
+  text-transform: uppercase;
+}
+.type-section-head .caption {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+.type-section .type-choice {
+  margin: 0;
+}
+
+/* ---------- WIP 卡片（占位、置灰、不可点） ---------- */
+.type-card.wip {
+  border-left-color: var(--line);
+  background: transparent;
+  opacity: .55;
+  cursor: not-allowed;
+  position: relative;
+}
+.type-card.wip:hover {
+  border-left-color: var(--line);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+.type-card.wip .type-eyebrow {
+  color: var(--ink-faint);
+}
+.type-card.wip::after {
+  content: '即将上线';
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+}
+
 /* Multi-image upload grid for character flow */
 .img-grid {
   display: grid;
@@ -2646,31 +2716,77 @@ button.stage.stage-clickable:hover .note {
       <div class="crumb">Stage Ⅰ · Generation</div>
       <h2>抽图 · 你要抽哪种图？</h2>
       <p class="sub">
-        场景图用香蕉（Nano Banana Pro）抽；角色图用 SDXL（画风 LoRA 已整合进底模，不需要触发词）。两条路的提示词语法完全不同。
+        不同模型的语法完全不同：香蕉吃中文自然语言、SDXL 吃英文 danbooru tag、Flux 吃格式化自然语言。按下面的分区挑就行，每条路工具给你专门写。
       </p>
     </div>
 
-    <div class="type-choice">
-      <button class="type-card" onclick="goS1Scene()">
-        <div class="type-eyebrow">— Scene · 香蕉</div>
-        <div class="type-title">场景图</div>
-        <div class="type-desc">AVG 对话背景图。环境为主体、有无角色都可以、默认下三分之一留立绘位。</div>
-        <div class="type-meta">输出 · 中文自然语言 prompt · 带风格锚点</div>
-      </button>
+    <!-- ===== 香蕉抽图 ===== -->
+    <div class="type-section">
+      <div class="type-section-head">
+        <div class="title">香蕉抽图 <span class="en">Nano Banana Pro</span></div>
+        <div class="caption">吃中文自然语言、画风统一、看图叙事好</div>
+      </div>
+      <div class="type-choice">
+        <button class="type-card" onclick="goS1Scene()">
+          <div class="type-eyebrow">— Scene · 场景</div>
+          <div class="type-title">场景图</div>
+          <div class="type-desc">AVG 对话背景图。环境为主体、有无角色都可以，默认下三分之一留立绘位。</div>
+          <div class="type-meta">输出 · 中文自然语言 prompt</div>
+        </button>
 
-      <button class="type-card" onclick="goS1TwoChar()">
-        <div class="type-eyebrow">— Two-Char · 香蕉</div>
-        <div class="type-title">双人图</div>
-        <div class="type-desc">两个角色互动的剧情插画。上传男主女主参考图和场景参考，工具写出中文 prompt 给香蕉用。</div>
-        <div class="type-meta">输出 · 中文自然语言 prompt · 双人剧情向</div>
-      </button>
+        <button class="type-card" onclick="goS1SingleChar()">
+          <div class="type-eyebrow">— Single-Char · 单人</div>
+          <div class="type-title">单人图</div>
+          <div class="type-desc">单个角色的立绘或情境插画。上传角色参考图，工具写中文 prompt 给香蕉。</div>
+          <div class="type-meta">输出 · 中文自然语言 prompt · 单人剧情向</div>
+        </button>
 
-      <button class="type-card" onclick="goS1Char()">
-        <div class="type-eyebrow">— Character · SDXL</div>
-        <div class="type-title">角色图</div>
-        <div class="type-desc">立绘 / 单人 / 双人。上传角色参考图，描述场景和情境，工具给你 danbooru tag。</div>
-        <div class="type-meta">输出 · danbooru 风格英文 tag · 末尾带质量词</div>
-      </button>
+        <button class="type-card" onclick="goS1TwoChar()">
+          <div class="type-eyebrow">— Two-Char · 双人</div>
+          <div class="type-title">双人图</div>
+          <div class="type-desc">两个角色互动的剧情插画。上传男主女主参考图和场景参考，工具写中文 prompt 给香蕉用。</div>
+          <div class="type-meta">输出 · 中文自然语言 prompt · 双人剧情向</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== Flux 抽图 ===== -->
+    <div class="type-section">
+      <div class="type-section-head">
+        <div class="title">Flux 抽图 <span class="en">Flux Dev / Schnell</span></div>
+        <div class="caption">吃格式化自然语言、细节精细、场景特别稳</div>
+      </div>
+      <div class="type-choice">
+        <button class="type-card" onclick="goS1FluxScene()">
+          <div class="type-eyebrow">— Scene · 场景</div>
+          <div class="type-title">场景图</div>
+          <div class="type-desc">环境类场景抽图。Flux 的强项——细节精细、光影物理感强。工具写适配 Flux 的格式化自然语言 prompt。</div>
+          <div class="type-meta">输出 · 中文格式化 prompt + 英文技术术语括注</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== SDXL 抽图 ===== -->
+    <div class="type-section">
+      <div class="type-section-head">
+        <div class="title">SDXL 抽图 <span class="en">Stable Diffusion XL</span></div>
+        <div class="caption">吃 danbooru tag、画风 LoRA 已整合进底模（不需要触发词）</div>
+      </div>
+      <div class="type-choice">
+        <button class="type-card" onclick="goS1Char()">
+          <div class="type-eyebrow">— Character · 角色</div>
+          <div class="type-title">角色图（单/双人）</div>
+          <div class="type-desc">立绘 / 单人 / 双人。上传角色参考图，描述场景和情境，工具给你 danbooru tag。</div>
+          <div class="type-meta">输出 · danbooru 风格英文 tag · 末尾带质量词</div>
+        </button>
+
+        <button class="type-card" onclick="goS1SdxlTwo()">
+          <div class="type-eyebrow">— Two-Char · 双人</div>
+          <div class="type-title">双人图（独立版）</div>
+          <div class="type-desc">专为双人互动优化的 SDXL tag 生成。强调两个角色的相对位置、视线、互动姿态。</div>
+          <div class="type-meta">输出 · danbooru 风格英文 tag · 双人向</div>
+        </button>
+      </div>
     </div>
 
     <div class="btn-row">
@@ -2679,7 +2795,7 @@ button.stage.stage-clickable:hover .note {
 
     <div class="margin-note">
       <span>Stage Ⅰ / 选择子流程</span>
-      <span>场景图 → 香蕉 · 角色图 → SDXL</span>
+      <span>按模型分区 · 挑对的路出对的 prompt</span>
     </div>
   </section>
 
@@ -2813,6 +2929,186 @@ button.stage.stage-clickable:hover .note {
     <div class="margin-note">
       <span>Stage Ⅰ / Two-Char · 香蕉</span>
       <span>输出给 Nano Banana Pro · 双人剧情向</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 16: STAGE Ⅰ SINGLE-CHAR via 香蕉 ============ -->
+  <section class="screen" data-screen="16">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Single-Char · 香蕉</div>
+      <h2>抽单人图 · 香蕉</h2>
+      <p class="sub">
+        单个角色的立绘或情境插画。上传角色参考图（跟你直接喂香蕉时一样），描述这次要画的情境，工具写中文 prompt。
+      </p>
+    </div>
+
+    <!-- 模式开关 -->
+    <div class="field">
+      <label>输出类型</label>
+      <div class="hint">立绘 · 纯色背景、角色定格；情境 · 完整环境、角色与场景互动</div>
+      <div class="variant-chips" id="s1-single-mode-chips" style="margin-top:6px;">
+        <span class="variant-chip on" data-mode="portrait">立绘模式</span>
+        <span class="variant-chip" data-mode="scene">情境模式</span>
+      </div>
+    </div>
+
+    <!-- 角色性别 -->
+    <div class="field">
+      <label>角色性别</label>
+      <div class="hint">决定构图 / 用词偏向，以及女主的脸部处理规则</div>
+      <div class="variant-chips" id="s1-single-gender-chips" style="margin-top:6px;">
+        <span class="variant-chip on" data-gender="female">女主</span>
+        <span class="variant-chip" data-gender="male">男主</span>
+      </div>
+    </div>
+
+    <!-- 脸部处理（只在女主时显示） -->
+    <div class="field" id="s1-single-face-field">
+      <label>脸部处理</label>
+      <div class="hint">乙游惯例 · 女主脸常遮挡（发丝 / 侧逆光 / 低头阴影）来维持玩家代入感</div>
+      <div class="variant-chips" id="s1-single-face-chips" style="margin-top:6px;">
+        <span class="variant-chip on" data-face="obscured">遮脸 · 代入感</span>
+        <span class="variant-chip" data-face="visible">完整露脸</span>
+      </div>
+    </div>
+
+    <!-- 参考图区 -->
+    <div class="field">
+      <label>上传参考图</label>
+      <div class="hint">Refs · 可选 · 最多 3 张 · 留空表示纯文生图造一个新角色</div>
+      <div class="img-grid" id="s1-single-refs">
+        <button class="img-add-slot" id="s1-single-add">
+          <div class="plus">+</div>
+          <div class="txt">添加参考图<br>(点击或拖拽)</div>
+        </button>
+        <input type="file" id="s1-single-file-input" accept="image/*" multiple style="display:none" />
+      </div>
+      <div class="hint" style="margin-top:8px">每张下面选一下它是什么（角色本人 / 姿势参考 / 光影参考 / 场景参考）</div>
+    </div>
+
+    <!-- 情境描述 -->
+    <div class="field">
+      <label>情境描述 *</label>
+      <div class="hint">Scene · 立绘模式主要写姿势/表情/服装；情境模式要写时间/地点/在干什么</div>
+      <textarea id="s1-single-desc" placeholder="例（立绘）：站姿定格，微微侧身，手中握折扇，神情温婉凝视前方。&#10;例（情境）：傍晚庭院，女主独自倚靠石栏凝视远方，余晖洒落，情绪微倦。"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(9)"><span class="arrow">←</span> 回上一步</button>
+      <button class="btn" id="s1-single-generate" onclick="runS1SingleCharGenerate()">生成香蕉 Prompt <span class="arrow">→</span></button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Single-Char · 香蕉</span>
+      <span>输出给 Nano Banana Pro · 单人剧情 / 立绘</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 17: STAGE Ⅰ TWO-CHAR · SDXL（独立版） ============ -->
+  <section class="screen" data-screen="17">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Two-Char · SDXL</div>
+      <h2>抽双人图 · SDXL 独立版</h2>
+      <p class="sub">
+        两个角色互动的插画，用 SDXL（Illustrious / NoobAI）跑。相比普通角色图，这张卡会强制加入互动 tag——看向 / 拥抱 / 身高差 / 复杂姿势等，让两人"真的在互动"。
+      </p>
+    </div>
+
+    <!-- 角色组合 -->
+    <div class="field">
+      <label>角色组合</label>
+      <div class="hint">决定人数 tag 的写法 · BL / GL / 男女都支持</div>
+      <div class="variant-chips" id="s1-sdxltwo-combo-chips" style="margin-top:6px;">
+        <span class="variant-chip on" data-combo="mf">男女</span>
+        <span class="variant-chip" data-combo="mm">男男 · BL</span>
+        <span class="variant-chip" data-combo="ff">女女 · GL</span>
+      </div>
+    </div>
+
+    <!-- 参考图区 -->
+    <div class="field">
+      <label>上传参考图</label>
+      <div class="hint">Refs · 可选 · 最多 4 张 · 留空表示纯文生图</div>
+      <div class="img-grid" id="s1-sdxltwo-refs">
+        <button class="img-add-slot" id="s1-sdxltwo-add">
+          <div class="plus">+</div>
+          <div class="txt">添加参考图<br>(点击或拖拽)</div>
+        </button>
+        <input type="file" id="s1-sdxltwo-file-input" accept="image/*" multiple style="display:none" />
+      </div>
+      <div class="hint" style="margin-top:8px">每张图下面选用途（角色A · 角色B · 场景参考 · 姿势参考 · 其它）</div>
+    </div>
+
+    <!-- 情境描述 -->
+    <div class="field">
+      <label>情境描述 *</label>
+      <div class="hint">Scene · 时间 / 地点 / 两人互动（看 / 抱 / 壁咚 / 公主抱） / 情绪 · 没传图时这里要写详细</div>
+      <textarea id="s1-sdxltwo-desc" placeholder="例：雪夜街灯下，高个男人扣住矮个男人的手腕将其抵在墙上，两人凝视对方，矮者脸红回视。"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(9)"><span class="arrow">←</span> 回上一步</button>
+      <button class="btn" id="s1-sdxltwo-generate" onclick="runS1SdxlTwoGenerate()">生成 SDXL Tag <span class="arrow">→</span></button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Two-Char · SDXL</span>
+      <span>输出给 SDXL / Illustrious / NoobAI · 强化双人互动 tag</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 18: STAGE Ⅰ SCENE · Flux Klein ============ -->
+  <section class="screen" data-screen="18">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Scene · Flux Klein</div>
+      <h2>抽场景图 · Flux Klein</h2>
+      <p class="sub">
+        Flux 吃格式化自然语言，细节精细、光影物理感强。适合做精细场景图。工具写中文 prompt，关键技术词会保留英文括注（体积光 / volumetric lighting 等 Flux 社区通用词）。
+      </p>
+    </div>
+
+    <!-- 场景用途开关 -->
+    <div class="field">
+      <label>场景用途</label>
+      <div class="hint">AVG · 下三分之一留立绘位，为对话框服务；纯环境 · 不留立绘位，细节拉满</div>
+      <div class="variant-chips" id="s1-fluxscene-mode-chips" style="margin-top:6px;">
+        <span class="variant-chip on" data-mode="avg">AVG 背景模式</span>
+        <span class="variant-chip" data-mode="env">纯环境图模式</span>
+      </div>
+    </div>
+
+    <!-- 参考图区 -->
+    <div class="field">
+      <label>上传参考图</label>
+      <div class="hint">Refs · 可选 · 最多 3 张 · Flux 参考图主要为色彩 / 氛围 / 光影参考</div>
+      <div class="img-grid" id="s1-fluxscene-refs">
+        <button class="img-add-slot" id="s1-fluxscene-add">
+          <div class="plus">+</div>
+          <div class="txt">添加参考图<br>(点击或拖拽)</div>
+        </button>
+        <input type="file" id="s1-fluxscene-file-input" accept="image/*" multiple style="display:none" />
+      </div>
+      <div class="hint" style="margin-top:8px">每张下面选用途（色彩参考 · 建筑参考 · 光影参考 · 其它）</div>
+    </div>
+
+    <!-- 场景描述 -->
+    <div class="field">
+      <label>场景描述 *</label>
+      <div class="hint">Scene · 场景类型 / 时间 / 光源方向 / 氛围 / 特殊元素 · 越具体越好</div>
+      <textarea id="s1-fluxscene-desc" placeholder="例：维多利亚风教堂花园，黄昏时分，侧逆光从右后方穿过彩色玻璃窗，忧郁氛围，石板路两侧有玫瑰与铁艺栏杆。"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(9)"><span class="arrow">←</span> 回上一步</button>
+      <button class="btn" id="s1-fluxscene-generate" onclick="runS1FluxSceneGenerate()">生成 Flux Klein Prompt <span class="arrow">→</span></button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Scene · Flux Klein</span>
+      <span>输出给 Flux Klein · 格式化中文自然语言</span>
     </div>
   </section>
 
@@ -5343,17 +5639,473 @@ const S1_TWO_CHAR_BANANA_SYSTEM = `你是中国乙女手游美术团队的双人
 只返回 JSON。`;
 
 
+/* =====================================================
+ * S1_SINGLE_CHAR_BANANA_SYSTEM · 单人图（立绘 / 情境双模式）
+ *
+ * 相比双人图：
+ * - 只有 1 个主角 → characters 段变成 character 段
+ * - 2 种模式：portrait（立绘，纯背景）/ scene（情境，完整环境）
+ * - 2 种角色性别 + 女主可切换遮脸/露脸
+ * ===================================================== */
+const S1_SINGLE_CHAR_BANANA_SYSTEM = `你是中国乙女手游美术团队的单人图抽图 prompt 助手。用户要用 **Nano Banana Pro（"香蕉"）** 抽一张**单个角色**的插画。你帮他写完整的中文 prompt。
+
+---
+
+**风格锚点**（跟场景图/双人图一致的团队铁律）：
+- 恋与深空 / 光与夜之恋 / 未定事件簿 同款中国乙女手游美术风格
+- 高品质厚涂（Impasto）数字绘画质感，颜色饱和清透
+- 光影戏剧性强，体积光 / 空气感
+- 绝对无黑色描边轮廓线 —— 色块与光影自然过渡
+- 柔性材质（织物 / 头发 / 植物）用手绘厚涂笔触；硬质（建筑 / 家具 / 金属饰品）有体积感
+- 色彩搭配高级感，高级调和色，**拒绝土气撞色**
+- 暗部透出环境色冷暖交织，绝不死黑
+
+---
+
+**两种模式**（userText 会告诉你选了哪个）：
+
+**A · portrait 立绘模式**：
+- 焦点是**角色本身的定格姿态、服装细节、材质层次**
+- 背景**纯色或极简**（柔和渐变、单色调、简洁深色背景、一层空气感）
+- 构图：全身或半身，角色居中
+- **不需要**复杂环境叙事，光影以衬托角色为主
+- 适合用途：立绘定格、角色卡、CG 卡面
+
+**B · scene 情境模式**：
+- 焦点是**角色与环境的融合叙事**
+- 背景**完整环境**（有时间、地点、氛围）
+- 构图：中景为主，角色与环境互动
+- 光影要服务于情境叙事
+- 适合用途：剧情插画、故事关键帧
+
+---
+
+**角色性别处理**（userText 告诉你选的性别）：
+
+**male 男主**：
+- 用词偏向"俊朗 / 英气 / 深邃 / 沉稳"等男主向形容词
+- 姿态强调肩线 / 身板 / 骨骼感
+- 不使用"娇美 / 柔美 / 婉约"这类女性向描述
+
+**female 女主**：
+- 用词偏向"清秀 / 温婉 / 柔和 / 灵动"
+- 强调发丝、衣料的飘逸感
+- **脸部处理**按 userText 里的 faceRule 选：
+  - **obscured 遮脸**：加一句"脸部适度遮挡（发丝垂落下来遮挡一侧 / 低头阴影 / 侧逆光形成剪影 / 不直视镜头）"——这是乙游惯例，维持玩家代入感
+  - **visible 露脸**：正常描绘五官，可以加"眼神温柔 / 清澈眸光"等描述，但避免正面紧贴镜头的特写
+
+---
+
+**构图要点**：
+- **不要**写"下三分之一留立绘位"（那是场景图的语法）
+- 单人图角色就是主体
+- 镜头景别按情境选：立绘偏全身/半身，情境偏中景
+
+---
+
+**Prompt 结构**（5 段）：
+
+**第1段 opening**（固定开头）：
+"请以《恋与深空》《光与夜之恋》《未定事件簿》同款中国乙女手游美术风格绘制以下画面："
+
+**第2段 character**（核心 · 单人描写）：
+- 根据参考图描述**角色外貌**（发色发型、瞳色、服装、气质）——必须忠实于参考图
+- 角色的**动作姿态**（站姿 / 倚靠 / 回眸 / 低头等）
+- **表情情绪**（温柔 / 专注 / 悲伤 / 凝思等）
+- 如果是女主 + 遮脸模式，这一段要写进脸部遮挡的处理
+- 这段是整个 prompt 最重要的，写足信息
+
+**第3段 background**（背景环境）：
+- **立绘模式**：一两句话描述纯色/极简背景（如"柔和米色渐变背景，一层薄薄空气感"）
+- **情境模式**：完整环境描写（地点 / 时段 / 主要环境元素），但**简略于纯场景图**——环境是衬托
+- 如果用户传了场景参考图，融入进来
+
+**第4段 light_atmosphere**（光影与氛围）：
+- 光源方向（顶光 / 侧逆光 / 烛光 / 月光 / 晨光等）
+- 主色调搭配
+- 空气感 / 体积光描写
+- 情绪氛围强调
+
+**第5段 closing_style**（固定收尾句）：
+"画面整体为电影级高品质厚涂数字绘画风格，颜色饱和清透，光影戏剧性强。绝对禁止任何形式的黑色描边、勾线或线稿填色，物体边界靠纯正的高品质厚涂色块与光影自然过渡。整体色调偏 [根据情境选 X 色系与 Y 色系的克制搭配]，有极其浓郁且清透的专业游戏原画师手绘笔触质感。"
+
+末尾色调要**根据情境真实选择**（烛光夜景→"冷蓝与暖橙烛光的克制搭配"；黄昏户外→"暖橙与深紫的冷暖呼应"；立绘素白背景→"单一主题色调配合少量互补色点缀"）。
+
+---
+
+**处理多张参考图**：
+- 角色本人参考图 → 读外貌特征写进 character 段
+- 姿势参考 → 借用姿势，但人物外貌仍以"角色本人"参考图为准
+- 光影参考 → 借用光影写进 light_atmosphere 段
+- 场景参考 → 读环境写进 background 段（情境模式下）
+- **不要**说"参考图 1"或"根据图"，自然融合进描述
+
+**用户没详细说的**：
+自己合理补充动作 / 情绪 / 光影 / 色调，但要跟用户给的信息一致。
+
+---
+
+**严格禁用词**（跟场景图/双人图一致）：
+- 审核触发词：judge / prison / legal / oxblood。用中性替代
+- "seen from the doorway"
+- photorealistic / realistic / 写实 / 真实感
+- cel-shading / 扁平 / 线稿 / 漫画
+
+---
+
+**返回 JSON**：
+
+{
+  "prompt_lines": [
+    {"text": "请以《恋与深空》...", "note_id": "opening"},
+    {"text": "......", "note_id": "character"},
+    {"text": "......", "note_id": "background"},
+    {"text": "......", "note_id": "light_atmosphere"},
+    {"text": "画面整体为电影级......", "note_id": "closing_style"}
+  ],
+  "notes": [
+    {"id": "opening", "html": "..."},
+    {"id": "character", "html": "..."},
+    {"id": "background", "html": "..."},
+    {"id": "light_atmosphere", "html": "..."},
+    {"id": "closing_style", "html": "..."}
+  ]
+}
+
+**注释风格**（主美带徒弟的语气）：
+- opening 为什么要有（风格锁定）
+- character 为什么写得最详细 + 如果是女主+遮脸说明为什么这么处理（乙游代入感）
+- background 为什么简略（单人图背景是衬托）
+- 立绘 vs 情境的模式差异
+- 色调选择的思路
+
+只返回 JSON。`;
+
+
+/* =====================================================
+ * S1_SDXL_TWO_CHAR_SYSTEM · SDXL 双人独立版
+ *
+ * 和普通 SDXL 角色图的区别：
+ * - 角色组合（男女/男男/女女）→ 人数 tag 必须精准对应
+ * - 强制加入 4 类互动 tag（至少覆盖 2 类）
+ * - 焦点是两个人的互动张力，场景可以弱化
+ * ===================================================== */
+const S1_SDXL_TWO_CHAR_SYSTEM = `你是中国乙女手游美术团队的**双人图抽图** prompt 助手。用户要用 **SDXL（Illustrious / NoobAI 等动漫底模）** 抽一张**两个角色强互动**的插画，你帮他写 danbooru 风格 tag prompt。
+
+**团队已经把画风 LoRA 整合进底模了**，所以你不需要管风格，专注内容。
+
+这张卡和普通"角色图"卡不同——**双人独立版的灵魂是两人的互动张力**。参考图 / 描述都是衬托，互动 tag 必须写得精准、具体、强烈。
+
+---
+
+**输入**：
+- 1-4 张参考图（每张标了用途：角色A / 角色B / 场景参考 / 姿势参考 / 其它）
+- 用户描述：两人的关系、动作、情绪、场景
+- **角色组合**（userText 里会告诉你）：\`mf\` 男女 / \`mm\` 男男 / \`ff\` 女女
+
+---
+
+**【硬规则】人数 tag**（必须严格按组合写，第一个 tag 固定）：
+- \`mf\` → \`1boy, 1girl,\`
+- \`mm\` → \`2boys,\`
+- \`ff\` → \`2girls,\`
+
+绝不要写成 \`1boy, 1boy\` 或 \`solo\`。
+
+---
+
+**【硬规则】必须包含的 4 类互动 tag**（**至少覆盖 2 类**，1 类都没写视为失败）：
+
+**1. 社交互动类**（视线、接触、对话）：
+\`looking_at_another\`, \`eye_contact\`, \`imminent_kiss\`, \`kissing\`, \`holding_hands\`, \`hand_on_another's_shoulder\`, \`hand_on_another's_face\`, \`hand_on_another's_cheek\`, \`hand_on_another's_chest\`, \`back-to-back\`, \`facing_another\`
+
+**2. 体型相对位置类**（空间关系）：
+\`height_difference\`, \`size_difference\`, \`behind_another\`, \`hugging_from_behind\`, \`on_top\`, \`beside_another\`, \`between_legs\`, \`carrying\`, \`piggyback\`
+
+**3. 情绪与脸部反应类**（互动引发的情绪）：
+\`blush\`, \`blush_stickers\`, \`heavy_breathing\`, \`surprised\`, \`teary_eyes\`, \`embarrassed\`, \`jealous\`, \`angry\`, \`smile_at_another\`, \`tearful\`
+
+**4. 复杂姿势互动类**（强叙事姿势）：
+\`princess_carry\`, \`wall_slam\`, \`pinned_down\`, \`pulling_sleeve\`, \`grabbing_another's_hair\`, \`chin_grab\`, \`grabbing_from_behind\`, \`choking\`, \`lifting_person\`, \`head_tilt\`, \`arm_grab\`, \`wrist_grab\`
+
+**选 tag 原则**：
+- 读用户描述，选**最贴合那个动作**的 tag
+- 不要堆砌，每类选 1-3 个精准的比选 5 个泛的好
+- 如果用户描述里含"壁咚"→ \`wall_slam\` + \`pinned_to_wall\`
+- 如果含"公主抱"→ \`princess_carry\` + \`carrying\`
+- 如果含"从身后抱"→ \`hugging_from_behind\` + \`behind_another\`
+
+---
+
+**Tag 总体结构**（在上面硬规则基础上，按顺序写）：
+
+1. **人数 tag**（按组合 mf/mm/ff）
+2. **构图 / 视角**：\`upper_body\` / \`cowboy_shot\` / \`full_body\` / \`from_side\` / \`close-up\` / \`from_above\` 等——双人图常用 \`cowboy_shot\` 或 \`upper_body\`
+3. **互动 tag**（4 类至少覆盖 2 类）—— **这是灵魂，写全、写精**
+4. **每个角色的外貌**（忠实参考图）：
+   - 角色A：发色 + 发型 + 眼色 + 皮肤 + 体型 tag
+   - 角色B：同上
+   - 两个角色的 tag 块**逻辑分组，别混在一起**
+5. **每个角色的服装配饰**（颜色 + 款式 + 材质）
+6. **两人的表情情绪**（用互动上下文的 tag，如 \`looking_at_another\` 已经隐含了视线，这里补 \`gentle_smile\` / \`serious\` / \`closed_eyes\` / \`teary_eyes\` 等）
+7. **场景环境**（\`outdoors\` / \`church_interior\` / \`forest\` 等——**双人图里场景是衬托，不要写太多**）
+8. **光影氛围**（\`backlighting\` / \`candlelight\` / \`sunset\` / \`cinematic_lighting\` 等）
+9. **特殊元素**（物件、粒子效果等）
+10. **末尾质量词**（必须加，不能省）：\`masterpiece, best quality, amazing quality, very aesthetic, absurdres\`
+
+---
+
+**从参考图读角色**：
+- 发色、发型、眼睛、体型 —— 按图判断，用 danbooru 标准 tag
+- 服装 —— 按图判断，别瞎造词
+- 不确定的就不写
+- 标了"角色A"/"角色B"的 → 对应两个 character 的 tag 块
+- "场景参考" → 融入场景环境 tag
+- "姿势参考" → 融入互动 + 姿势 tag
+
+**用户没说的情况**：
+- 没说光影 → 按场景合理补（夜内 \`candlelight\` + \`warm_light\`，白天外 \`sunlight\` + \`backlighting\`）
+- 没说构图 → 默认 \`cowboy_shot\` 或 \`upper_body\`
+- 没说情绪 → 按互动上下文合理补（\`wall_slam\` + 矮者 \`blush\` + 高者 \`serious\`）
+
+---
+
+**Tag 规则**：
+- 英文，多词 tag 用下划线连接
+- 40-80 个内容 tag + 5 个质量词
+- 不要 artist 标签
+- 不要中文
+- 重点互动 tag 可以 \`(tag:1.2)\` 权重，克制使用（一个 prompt 里不超过 2 个权重 tag）
+
+**严格禁用**：
+- LoRA 触发词（团队画风已集成）
+- 风格词：\`anime\` / \`realistic\` / \`2d\`
+- NSFW tag（这是乙女向正经插画）
+
+---
+
+**返回 JSON**：
+
+{
+  "image_type": "two_char_sdxl",
+  "observation": "一句话中文描述要抽的图。20-40 字。必须包含两人互动的关键动作。",
+  "prompt": "1boy, 1girl, cowboy_shot, wall_slam, pinned_to_wall, hand_on_another's_shoulder, looking_at_another, height_difference, blush, ...（所有 tag）..., masterpiece, best quality, amazing quality, very aesthetic, absurdres",
+  "combo_used": "mf" 或 "mm" 或 "ff",
+  "interaction_tags_covered": ["social", "position"],
+  "notes": [
+    {"id": "combo_and_layout", "html": "为什么这么选人数 + 构图..."},
+    {"id": "interaction", "html": "选了哪些互动 tag、对应哪一类、为什么..."},
+    {"id": "charA", "html": "角色A tag 怎么从图读的..."},
+    {"id": "charB", "html": "角色B tag 怎么从图读的（如果有）..."},
+    {"id": "scene_mood", "html": "场景和光影的处理（为什么场景不展开）..."},
+    {"id": "quality", "html": "末尾质量词必须加..."}
+  ]
+}
+
+\`interaction_tags_covered\` 是一个包含 \`social\`/\`position\`/\`emotion\`/\`pose\` 中**至少 2 个**的数组——这是自检。
+
+**注释风格**（主美带徒弟的语气，短、具体、有因果）：
+- 组合和构图选择的理由
+- 互动 tag 的分类和理由（最重要的一段，详细展开）
+- 每个角色 tag 从图里读到的关键特征
+- 为什么场景不展开（双人互动是焦点）
+- 末尾质量词新手必须加
+
+只返回 JSON。`;
+
+
+/* =====================================================
+ * S1_FLUX_SCENE_SYSTEM · Flux Klein 场景图（AVG / 纯环境双模式）
+ *
+ * 和香蕉场景图的核心区别：
+ * - 语法：不是散文式自然语言，而是**格式化段式自然语言**（每段聚焦一维）
+ * - 语言：中文正文 + Flux 社区通用技术术语保留英文括注
+ * - Klein 风格锚点：团队已有的 Klein SOP 审美（偏电影感、重光影）
+ * - 两种模式：avg 留立绘位 / env 纯环境图
+ * ===================================================== */
+const S1_FLUX_SCENE_SYSTEM = `你是中国乙女手游美术团队的**场景图抽图** prompt 助手。用户要用 **Flux Klein** 抽一张精细场景图。你帮他写格式化中文 prompt。
+
+**Flux Klein 的语法特点**（和香蕉完全不同）：
+- Flux 吃**格式化段式自然语言**，**不要**写成香蕉那种连贯散文
+- **每段一个维度**（镜头、环境、光影、风格锚点、lockdown），段间用句号或换行明确分隔
+- 段内可以有多句，但要围绕那一个维度
+- 保留 Flux 社区通用技术术语的英文括注：体积光 (volumetric lighting)、次表面散射 (subsurface scattering)、环境光遮蔽 (ambient occlusion)、景深 (depth of field)、广角 (wide-angle) 等——这些是**构图/光影物理维度**的词
+- **禁用**香蕉系的风格锚点句（"恋与深空 / 光与夜之恋同款..."中那个长版本）——那是给香蕉用的
+
+---
+
+**【硬规则 · 最重要】画风由 LoRA 控制，prompt 不要写画风形容词**
+
+团队会在 ComfyUI 里挂**场景画风 LoRA**（同《光与夜之恋》《恋与制作人》同类游戏画风），prompt 写画风词会**和 LoRA 打架**，导致画面跑偏或质感崩坏。
+
+**严禁**写的画风质感形容词：
+- 技法类：painterly / brushwork / impasto / 厚涂质感 / 厚涂笔触 / 手绘感 / 手绘笔触
+- 等级类：cinematic quality / 电影级质感 / masterpiece quality / 高品质质感 / premium texture
+- 物理类：physically-based rendering / 物理光影 / photorealistic / realistic / 写实
+- 色彩规范类：muted desaturated palette / 色彩低饱和高级调和 / 高级调和色 / 色彩调和
+- 风格标签：anime / 2d / cel-shading / stylized / illustration / concept art
+
+**严禁**写的 negative lockdown（LoRA 决定画风，不需要 prompt 防跑偏）：
+- 不要卡通化 / 不要 anime style / 不要描边 / 不要线稿 / 不要 2d
+
+**可以**写的技术词（构图/物理维度，LoRA 不会覆盖这些）：
+- 镜头 / 视角：medium shot / wide-angle / overhead view / eye-level / dutch angle
+- 景深：depth of field / 景深 / 长景深 / 浅景深
+- 光影物理：volumetric lighting / subsurface scattering / ambient occlusion / crepuscular rays / rim light
+- 构图抽象：clean composition / breathing room / 整洁构图 / 画面呼吸感
+
+**不要**写画风锚点：
+- **禁止**在 prompt 里提任何游戏名（《光与夜之恋》《恋与制作人》等）或画风流派名（"乙女游戏画风 / otome scene art"等）
+- 原因：Flux Klein 底模对这些中文游戏名理解不稳定，而团队 LoRA 会**完全接管画风**，prompt 里写画风词反而会添乱
+- style_anchor 段只用来写**构图维度**的中性技术词（景深 / 呼吸感 / 长镜头），不涉及任何画风暗示
+
+---
+
+**两种模式**（userText 告诉你选了哪个）：
+
+**A · avg AVG 背景模式**：
+- 用途：AVG 游戏对话背景
+- 构图：**下三分之一留立绘位**（必须在 prompt 里明确写）
+- 景别：中景或中远景，不要近景
+- 焦点：环境氛围要能让角色立绘放上来不冲突
+- 光影：要能服务于角色被打光（不要搞极端逆光或高对比）
+
+**B · env 纯环境图模式**：
+- 用途：宣传图、CG 背景、环境概念图
+- 构图：完整环境，**不留立绘位**
+- 景别：可以大胆用广角 / 俯视 / 仰视等叙事性视角
+- 焦点：环境本身是主体，细节要拉满
+- 光影：可以极致发挥（体积光、丁达尔光、uplighting、rimlight 等 Flux 的强项）
+
+---
+
+**Prompt 段式结构**（每个模式用 6 段或 5 段）：
+
+**第1段 shot**（镜头 + 视角）：
+- 例："中景构图 (medium shot)，平视视角 (eye-level)"
+- 或："广角俯视构图 (wide-angle overhead view)，略带鱼眼畸变 (fisheye distortion)"
+- avg 模式用平视 / 略仰视，env 模式可以大胆
+
+**第2段 environment**（环境主体）：
+- 场景类型（建筑 / 户外 / 内景 / 时间 / 季节）
+- 主要环境元素（分前景 / 中景 / 远景叙述）
+- 材质细节（石材的风化、木材的纹理、布料的褶皱）
+- 建筑风格或自然环境的具体时代 / 地域特征
+
+**第3段 lighting**（光影 · Flux 的强项，占大头，详细写）：
+- 光源方向 + 光源类型（侧逆光 / 顶光 / 烛光 / 月光 / 日出光 / 窗光）
+- **必写**：体积光 (volumetric lighting) 或次表面散射 (subsurface scattering) 或丁达尔效应 (crepuscular rays) 至少一个
+- 阴影的质感（柔边阴影 / 硬边阴影）
+- 环境光遮蔽 (ambient occlusion) 在角落的积累
+- 主色调 + 局部重点色
+
+**第4段 standing_space**（**仅 avg 模式**，纯环境图跳过）：
+- 明确表述画面下三分之一保留给立绘，不要有复杂前景遮挡
+- 例："画面下方三分之一区域保持相对简洁空白，用于 AVG 对话角色立绘放置，地面或前景不要放置高于小腿的物件"
+
+**第5段 composition_anchor**（构图锚点 · 短 · **不涉及任何画风**）：
+- 这一段 note_id 仍叫 "style_anchor"（为了和 schema 兼容），但实际内容**只写构图维度的技术词**
+- **绝对不要**提任何游戏名（《光与夜之恋》《恋与制作人》等）或画风流派（"乙女游戏画风"等）
+- 例："景深长镜头 (long depth of field)，画面整洁有呼吸感 (clean composition with breathing room)。"
+- 例："浅景深虚化前景 (shallow depth of field with foreground bokeh)，构图留白 (negative space composition)。"
+- 根据场景实际需要选 1-2 个构图技术词，别堆
+- **绝不能**写"电影级质感 / 厚涂笔触 / 物理光影 / 色彩调和"这些画风质感形容词
+
+**第6段 lockdown**（硬约束 · **只约束内容，不约束画风**）：
+- avg 模式："保持纯场景无人物 (no characters, clean empty environment)，画面下方三分之一区域为对话立绘预留，前景不要有复杂遮挡物。"
+- env 模式："保持环境为焦点 (environment-focused, no main characters in frame)。"
+- **绝不**加"不要 anime / 不要卡通 / 不要描边 / 不要线稿"这些——LoRA 决定画风，这些 negative 会和 LoRA 打架
+
+---
+
+**处理多张参考图**：
+- 色彩参考 → 读色调融入 lighting 段
+- 建筑参考 → 读建筑细节融入 environment 段
+- 光影参考 → 读光影方向 / 强度融入 lighting 段
+- **不要**说"参考图 1"或"根据图"，自然融合进描述
+
+**用户没详细说的**：
+合理补充时间 / 光影 / 氛围 / 色调，但要跟用户给的信息一致，不能瞎编。
+
+---
+
+**严格禁用词**：
+- 审核触发词：judge / prison / legal / oxblood。用中性替代
+- 香蕉专用锚点长句："请以《恋与深空》《光与夜之恋》《未定事件簿》同款..."（那是给香蕉的；本卡的画风锚点要短，只一句）
+- **画风质感形容词**（前面硬规则里列全了）：painterly / 厚涂质感 / cinematic quality / 电影级质感 / 色彩调和 / anime / 2d 等
+- **画风 negative lockdown**：不要卡通 / 不要 anime / 不要描边 / 不要线稿（LoRA 控制画风）
+
+---
+
+**返回 JSON**：
+
+{
+  "mode_used": "avg" 或 "env",
+  "prompt_lines": [
+    {"text": "中景构图 (medium shot)，平视视角 (eye-level)。", "note_id": "shot"},
+    {"text": "维多利亚风教堂花园......", "note_id": "environment"},
+    {"text": "侧逆光......体积光 (volumetric lighting)......", "note_id": "lighting"},
+    {"text": "画面下方三分之一区域......（仅 avg 模式）", "note_id": "standing_space"},
+    {"text": "景深长镜头 (long depth of field)，画面整洁有呼吸感 (clean composition with breathing room)。", "note_id": "style_anchor"},
+    {"text": "保持纯场景无人物 (no characters, clean empty environment)，画面下方三分之一区域为对话立绘预留，前景不要有复杂遮挡物。", "note_id": "lockdown"}
+  ],
+  "notes": [
+    {"id": "shot", "html": "..."},
+    {"id": "environment", "html": "..."},
+    {"id": "lighting", "html": "..."},
+    {"id": "standing_space", "html": "..."},
+    {"id": "style_anchor", "html": "..."},
+    {"id": "lockdown", "html": "..."}
+  ]
+}
+
+**注意**：avg 模式 prompt_lines 6 段；env 模式 **跳过 standing_space 段**（5 段），notes 也对应不包含 standing_space。
+
+**注释风格**（主美带徒弟的语气）：
+- shot 为什么这么选（avg 必须平视，env 可以大胆）
+- environment 分层叙述的重要性（前中远景）
+- lighting 为什么占大头（Flux 强项，物理光影精细）
+- avg 模式的立绘位处理逻辑
+- **style_anchor 为什么只写构图技术词、不写任何画风词 / 不提任何游戏名**（提醒使用者：画风 100% 交给团队 LoRA，prompt 写画风词或游戏名会和 LoRA 打架，Flux Klein 底模对中文游戏名理解也不稳定）
+- lockdown 为什么只约束内容不约束画风（LoRA 决定画风）
+
+只返回 JSON。`;
+
+
 
 state.s1 = {
-  subType: null,                // 'scene' | 'two_char' | 'character'
+  subType: null,                // 'scene' | 'two_char' | 'single_char' | 'character' | 'sdxl_two' | 'flux_scene'
   scene: { refs: [], description: '', standingSpace: true, result: null },
   twoChar: { images: [], description: '', result: null },
+  singleChar: {
+    images: [],
+    description: '',
+    mode: 'portrait',      // 'portrait' 立绘 | 'scene' 情境
+    gender: 'female',      // 'female' | 'male'
+    faceRule: 'obscured',  // 'obscured' 遮脸（仅女主有意义） | 'visible' 露脸
+    result: null
+  },
+  sdxlTwo: {
+    images: [],
+    description: '',
+    combo: 'mf',           // 'mf' 男女 | 'mm' 男男 | 'ff' 女女
+    result: null
+  },
+  fluxScene: {
+    images: [],
+    description: '',
+    mode: 'avg',           // 'avg' AVG 背景（留立绘位） | 'env' 纯环境图
+    result: null
+  },
   char: { images: [], description: '', result: null }
 };
 
 /* ---------- Entry points ---------- */
 function goS1Scene() { state.s1.subType = 'scene'; resetS1Scene(); go(10); }
 function goS1TwoChar() { state.s1.subType = 'two_char'; resetS1TwoChar(); go(13); }
+function goS1SingleChar() { state.s1.subType = 'single_char'; resetS1SingleChar(); go(16); }
+function goS1SdxlTwo() { state.s1.subType = 'sdxl_two'; resetS1SdxlTwo(); go(17); }
+function goS1FluxScene() { state.s1.subType = 'flux_scene'; resetS1FluxScene(); go(18); }
 function goS1Char() { state.s1.subType = 'character'; resetS1Char(); go(11); }
 
 function resetS1Scene() {
@@ -5370,11 +6122,695 @@ function resetS1TwoChar() {
   if (descEl) descEl.value = '';
   renderS1TwoCharImages();
 }
+function resetS1SingleChar() {
+  state.s1.singleChar = {
+    images: [], description: '',
+    mode: 'portrait', gender: 'female', faceRule: 'obscured',
+    result: null
+  };
+  const descEl = document.getElementById('s1-single-desc');
+  if (descEl) descEl.value = '';
+  // 重置 chip 状态：立绘 / 女主 / 遮脸
+  setS1SingleChipStates();
+  updateS1SingleFaceFieldVisibility();
+  renderS1SingleCharImages();
+}
 function resetS1Char() {
   state.s1.char = { images: [], description: '', result: null };
   const descEl = document.getElementById('s1-char-desc');
   if (descEl) descEl.value = '';
   renderS1CharImages();
+}
+
+/* ---------- Single-Char: chip 切换 + 参考图 CRUD + runner ---------- */
+
+const S1_SINGLE_ROLES = ['角色本人', '姿势参考', '光影参考', '场景参考'];
+
+/** 恢复所有 chip 到默认状态（立绘 / 女主 / 遮脸） */
+function setS1SingleChipStates() {
+  const s = state.s1.singleChar;
+  document.querySelectorAll('#s1-single-mode-chips .variant-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.mode === s.mode);
+  });
+  document.querySelectorAll('#s1-single-gender-chips .variant-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.gender === s.gender);
+  });
+  document.querySelectorAll('#s1-single-face-chips .variant-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.face === s.faceRule);
+  });
+}
+
+/** 脸部处理字段只在女主时显示 */
+function updateS1SingleFaceFieldVisibility() {
+  const field = document.getElementById('s1-single-face-field');
+  if (!field) return;
+  field.style.display = state.s1.singleChar.gender === 'female' ? 'block' : 'none';
+}
+
+/** 模式切换监听 */
+document.querySelectorAll('#s1-single-mode-chips .variant-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    state.s1.singleChar.mode = chip.dataset.mode;
+    setS1SingleChipStates();
+  });
+});
+document.querySelectorAll('#s1-single-gender-chips .variant-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    state.s1.singleChar.gender = chip.dataset.gender;
+    setS1SingleChipStates();
+    updateS1SingleFaceFieldVisibility();
+  });
+});
+document.querySelectorAll('#s1-single-face-chips .variant-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    state.s1.singleChar.faceRule = chip.dataset.face;
+    setS1SingleChipStates();
+  });
+});
+
+/** 参考图渲染 */
+function renderS1SingleCharImages() {
+  const grid = document.getElementById('s1-single-refs');
+  if (!grid) return;
+  const imgs = state.s1.singleChar.images;
+  const addBtn = `
+    <button class="img-add-slot" id="s1-single-add">
+      <div class="plus">+</div>
+      <div class="txt">添加参考图<br>(点击或拖拽)</div>
+    </button>
+    <input type="file" id="s1-single-file-input" accept="image/*" multiple style="display:none" />
+  `;
+  const slots = imgs.map((img, i) => `
+    <div class="img-slot">
+      <img class="slot-thumb" src="${img.dataUrl}" alt="">
+      <button class="slot-remove" onclick="removeS1SingleCharImage(${i})">×</button>
+      <div class="slot-controls">
+        <label>这张图是</label>
+        <select class="slot-role" onchange="setS1SingleCharRole(${i}, this.value)">
+          ${S1_SINGLE_ROLES.map(r => `<option value="${r}" ${r === img.role ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+  grid.innerHTML = slots + (imgs.length < 3 ? addBtn : '');
+  wireS1SingleAddButton();
+}
+
+function wireS1SingleAddButton() {
+  const addBtn = document.getElementById('s1-single-add');
+  const fileInput = document.getElementById('s1-single-file-input');
+  if (!addBtn || !fileInput) return;
+  addBtn.addEventListener('click', () => fileInput.click());
+  addBtn.addEventListener('dragover', e => { e.preventDefault(); addBtn.classList.add('drag'); });
+  addBtn.addEventListener('dragleave', () => addBtn.classList.remove('drag'));
+  addBtn.addEventListener('drop', e => {
+    e.preventDefault();
+    addBtn.classList.remove('drag');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    for (const f of files) addS1SingleCharImage(f);
+  });
+  fileInput.addEventListener('change', e => {
+    for (const f of e.target.files) addS1SingleCharImage(f);
+    e.target.value = '';
+  });
+}
+
+async function addS1SingleCharImage(file) {
+  if (state.s1.singleChar.images.length >= 3) {
+    showToast('最多 3 张参考图', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    // 默认第一张是"角色本人"
+    const defaultRole = state.s1.singleChar.images.length === 0 ? '角色本人' : '姿势参考';
+    state.s1.singleChar.images.push({ dataUrl, base64, filename: file.name, role: defaultRole });
+    renderS1SingleCharImages();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+  }
+}
+
+function removeS1SingleCharImage(i) {
+  state.s1.singleChar.images.splice(i, 1);
+  renderS1SingleCharImages();
+}
+
+function setS1SingleCharRole(i, role) {
+  if (state.s1.singleChar.images[i]) state.s1.singleChar.images[i].role = role;
+}
+
+/** Generate runner */
+async function runS1SingleCharGenerate() {
+  const s = state.s1.singleChar;
+  const desc = document.getElementById('s1-single-desc').value.trim();
+  const imgs = s.images;
+  if (imgs.length === 0 && !desc) {
+    showToast('请上传参考图，或填写情境描述（至少一样）', 'err');
+    return;
+  }
+  s.description = desc;
+
+  const btn = document.getElementById('s1-single-generate');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 prompt 中...';
+
+  const modeLabel = s.mode === 'portrait' ? '立绘模式（纯色/极简背景，角色定格）' : '情境模式（完整环境，角色与场景互动）';
+  const genderLabel = s.gender === 'female' ? '女主' : '男主';
+  const faceNote = s.gender === 'female'
+    ? (s.faceRule === 'obscured'
+        ? '脸部规则: 遮脸 —— 必须在 character 段里加入"脸部适度遮挡"的处理'
+        : '脸部规则: 露脸 —— 正常描绘五官，但避免正面紧贴镜头特写')
+    : '（男主不适用脸部规则）';
+
+  const imageLabels = imgs.length > 0
+    ? imgs.map((img, i) => `图 ${i + 1}: ${img.role}`).join('\n')
+    : '（用户没传参考图 · 纯文生图模式 · 按描述构造一个新角色）';
+
+  const userText = `[输出模式]
+${s.mode}  ·  ${modeLabel}
+
+[角色性别]
+${s.gender}  ·  ${genderLabel}
+${faceNote}
+
+[参考图清单]
+${imageLabels}
+
+[情境描述]
+${desc || '（用户没详细描述，请合理补充）'}
+
+${imgs.length === 0
+  ? '这是**纯文生图**模式 —— 角色外貌全部从用户描述里读。如果描述里角色外貌也少，按乙女手游审美合理补充，但要自洽。'
+  : '请为这次单人图抽图写出完整的香蕉 prompt，character 段是灵魂，多花笔墨。'}
+按 5 段结构返回 JSON。`;
+
+  try {
+    const raw = await callAIMulti({
+      systemPrompt: S1_SINGLE_CHAR_BANANA_SYSTEM,
+      userText,
+      imageBase64List: imgs.map(im => im.base64)
+    });
+    const parsed = extractJSON(raw);
+    if (!Array.isArray(parsed.prompt_lines) || !Array.isArray(parsed.notes)) {
+      throw new Error("返回 JSON 结构不对");
+    }
+    s.result = parsed;
+    renderS1SingleCharOutput();
+    go(12);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成香蕉 Prompt <span class="arrow">→</span>';
+  }
+}
+
+/** Output renderer */
+function renderS1SingleCharOutput() {
+  const g = state.s1.singleChar.result;
+  const s = state.s1.singleChar;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+
+  const modeTag = s.mode === 'portrait' ? '立绘' : '情境';
+  const genderTag = s.gender === 'female' ? '女主' : '男主';
+
+  const promptLinesHTML = g.prompt_lines.map(l => `
+    <div class="line anno-target" data-note="${escapeHTML(l.note_id || '')}">${escapeHTML(l.text || '')}</div>
+  `).join('');
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  document.getElementById('s1-output-title').textContent = '单人图香蕉 Prompt 出来了';
+  const out = document.getElementById('s1-output-content');
+  out.innerHTML = `
+    <div class="prompt-card" id="s1-single-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · 单人图 · 香蕉 · ' + modeTag + ' · ' + genderTag)}</span>
+      <button class="copy-btn" onclick="copyS1SingleCharPrompt()">复制</button>
+      ${promptLinesHTML}
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 prompt 和参考图一起丢进香蕉跑。满意了可以去 <b>Ⅱ 整图优化</b> 精细化，或者 <b>Ⅲ 局部精修</b> 调局部。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(16)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(9)">再抽一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+  wireS1OutputHover();
+}
+
+function copyS1SingleCharPrompt() {
+  const lines = [...document.querySelectorAll('#s1-single-prompt-card .line')].map(l => l.textContent.trim());
+  navigator.clipboard?.writeText(lines.join('\n'));
+  showToast('Prompt 已复制');
+}
+
+/* ---------- SDXL Two-Char 独立版：reset + chip + 参考图 CRUD + runner ---------- */
+
+const S1_SDXLTWO_ROLES = ['角色A', '角色B', '场景参考', '姿势参考', '其它参考'];
+
+function resetS1SdxlTwo() {
+  state.s1.sdxlTwo = {
+    images: [], description: '', combo: 'mf', result: null
+  };
+  const descEl = document.getElementById('s1-sdxltwo-desc');
+  if (descEl) descEl.value = '';
+  setS1SdxlTwoChipStates();
+  renderS1SdxlTwoImages();
+}
+
+/** 恢复 combo chip 到当前 state */
+function setS1SdxlTwoChipStates() {
+  const s = state.s1.sdxlTwo;
+  document.querySelectorAll('#s1-sdxltwo-combo-chips .variant-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.combo === s.combo);
+  });
+}
+
+/** 监听 combo chip */
+document.querySelectorAll('#s1-sdxltwo-combo-chips .variant-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    state.s1.sdxlTwo.combo = chip.dataset.combo;
+    setS1SdxlTwoChipStates();
+  });
+});
+
+/** 参考图渲染 */
+function renderS1SdxlTwoImages() {
+  const grid = document.getElementById('s1-sdxltwo-refs');
+  if (!grid) return;
+  const imgs = state.s1.sdxlTwo.images;
+  const addBtn = `
+    <button class="img-add-slot" id="s1-sdxltwo-add">
+      <div class="plus">+</div>
+      <div class="txt">添加参考图<br>(点击或拖拽)</div>
+    </button>
+    <input type="file" id="s1-sdxltwo-file-input" accept="image/*" multiple style="display:none" />
+  `;
+  const slots = imgs.map((img, i) => `
+    <div class="img-slot">
+      <img class="slot-thumb" src="${img.dataUrl}" alt="">
+      <button class="slot-remove" onclick="removeS1SdxlTwoImage(${i})">×</button>
+      <div class="slot-controls">
+        <label>这张图是</label>
+        <select class="slot-role" onchange="setS1SdxlTwoRole(${i}, this.value)">
+          ${S1_SDXLTWO_ROLES.map(r => `<option value="${r}" ${r === img.role ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+  grid.innerHTML = slots + (imgs.length < 4 ? addBtn : '');
+  wireS1SdxlTwoAddButton();
+}
+
+function wireS1SdxlTwoAddButton() {
+  const addBtn = document.getElementById('s1-sdxltwo-add');
+  const fileInput = document.getElementById('s1-sdxltwo-file-input');
+  if (!addBtn || !fileInput) return;
+  addBtn.addEventListener('click', () => fileInput.click());
+  addBtn.addEventListener('dragover', e => { e.preventDefault(); addBtn.classList.add('drag'); });
+  addBtn.addEventListener('dragleave', () => addBtn.classList.remove('drag'));
+  addBtn.addEventListener('drop', e => {
+    e.preventDefault();
+    addBtn.classList.remove('drag');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    for (const f of files) addS1SdxlTwoImage(f);
+  });
+  fileInput.addEventListener('change', e => {
+    for (const f of e.target.files) addS1SdxlTwoImage(f);
+    e.target.value = '';
+  });
+}
+
+async function addS1SdxlTwoImage(file) {
+  if (state.s1.sdxlTwo.images.length >= 4) {
+    showToast('最多 4 张参考图', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    // 默认前两张是 角色A / 角色B
+    const count = state.s1.sdxlTwo.images.length;
+    const defaultRole = count === 0 ? '角色A' : (count === 1 ? '角色B' : '场景参考');
+    state.s1.sdxlTwo.images.push({ dataUrl, base64, filename: file.name, role: defaultRole });
+    renderS1SdxlTwoImages();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+  }
+}
+
+function removeS1SdxlTwoImage(i) {
+  state.s1.sdxlTwo.images.splice(i, 1);
+  renderS1SdxlTwoImages();
+}
+
+function setS1SdxlTwoRole(i, role) {
+  if (state.s1.sdxlTwo.images[i]) state.s1.sdxlTwo.images[i].role = role;
+}
+
+/** Generate runner */
+async function runS1SdxlTwoGenerate() {
+  const s = state.s1.sdxlTwo;
+  const desc = document.getElementById('s1-sdxltwo-desc').value.trim();
+  const imgs = s.images;
+  if (imgs.length === 0 && !desc) {
+    showToast('请上传参考图，或填写情境描述（至少一样）', 'err');
+    return;
+  }
+  s.description = desc;
+
+  const btn = document.getElementById('s1-sdxltwo-generate');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 tag 中...';
+
+  const comboLabel = { mf: '男女（1boy, 1girl）', mm: '男男 · BL（2boys）', ff: '女女 · GL（2girls）' }[s.combo];
+
+  const imageLabels = imgs.length > 0
+    ? imgs.map((img, i) => `图 ${i + 1}: ${img.role}`).join('\n')
+    : '（用户没传参考图 · 纯文生图模式 · 按描述合成两个角色）';
+
+  const userText = `[角色组合]
+${s.combo}  ·  ${comboLabel}
+第一个 tag 必须按这个组合写：${s.combo === 'mf' ? '1boy, 1girl' : s.combo === 'mm' ? '2boys' : '2girls'}
+
+[参考图清单]
+${imageLabels}
+
+[情境描述]
+${desc || '（用户没详细描述，请合理补充）'}
+
+${imgs.length === 0
+  ? '这是**纯文生图**模式 —— 两个角色的外貌都从描述里读，描述不全按乙游审美合理补充。'
+  : '请按系统指令写双人 SDXL tag prompt，记住 4 类互动 tag 必须至少覆盖 2 类。'}
+返回 JSON。`;
+
+  try {
+    const raw = await callAIMulti({
+      systemPrompt: S1_SDXL_TWO_CHAR_SYSTEM,
+      userText,
+      imageBase64List: imgs.map(im => im.base64)
+    });
+    const parsed = extractJSON(raw);
+    if (!parsed.prompt) throw new Error("返回 JSON 没有 prompt 字段");
+    if (!Array.isArray(parsed.notes)) parsed.notes = [];
+    // 自检：interaction_tags_covered 至少 2 类
+    if (Array.isArray(parsed.interaction_tags_covered) && parsed.interaction_tags_covered.length < 2) {
+      console.warn('AI 返回的互动 tag 覆盖不足 2 类:', parsed.interaction_tags_covered);
+    }
+    s.result = parsed;
+    renderS1SdxlTwoOutput();
+    go(12);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成 SDXL Tag <span class="arrow">→</span>';
+  }
+}
+
+/** Output renderer */
+function renderS1SdxlTwoOutput() {
+  const g = state.s1.sdxlTwo.result;
+  const s = state.s1.sdxlTwo;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+  const comboTag = { mf: '男女', mm: '男男 · BL', ff: '女女 · GL' }[s.combo];
+
+  const observationHTML = g.observation
+    ? `<div class="observation">${escapeHTML(g.observation)}</div>`
+    : '';
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  // 互动 tag 覆盖分类（自检字段，显示给用户看）
+  let coverageHTML = '';
+  if (Array.isArray(g.interaction_tags_covered) && g.interaction_tags_covered.length > 0) {
+    const classMap = { social: '社交', position: '体型位置', emotion: '情绪', pose: '复杂姿势' };
+    const chips = g.interaction_tags_covered.map(c => classMap[c] || c).join(' · ');
+    coverageHTML = `<div class="note-intro" style="margin-top:0;margin-bottom:12px;">互动 tag 覆盖 · ${escapeHTML(chips)}</div>`;
+  }
+
+  document.getElementById('s1-output-title').textContent = '双人图 SDXL Tag 出来了';
+  const out = document.getElementById('s1-output-content');
+  out.innerHTML = `
+    ${observationHTML}
+    ${coverageHTML}
+    <div class="prompt-card" id="s1-sdxltwo-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · 双人图 · SDXL · ' + comboTag)}</span>
+      <button class="copy-btn" onclick="copyS1SdxlTwoPrompt()">复制</button>
+      <div class="line">${escapeHTML(g.prompt || '')}</div>
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 tag 贴进 ComfyUI / WebUI / SD.Next 跑。这是双人向，记得 batch size 调 1，一次跑一张慢慢看互动。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(17)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(9)">再抽一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+  wireS1OutputHover();
+}
+
+function copyS1SdxlTwoPrompt() {
+  const prompt = document.querySelector('#s1-sdxltwo-prompt-card .line')?.textContent.trim() || '';
+  navigator.clipboard?.writeText(prompt);
+  showToast('Prompt 已复制');
+}
+
+/* ---------- Flux Scene · Klein：reset + chip + 参考图 CRUD + runner ---------- */
+
+const S1_FLUXSCENE_ROLES = ['色彩参考', '建筑参考', '光影参考', '其它参考'];
+
+function resetS1FluxScene() {
+  state.s1.fluxScene = {
+    images: [], description: '', mode: 'avg', result: null
+  };
+  const descEl = document.getElementById('s1-fluxscene-desc');
+  if (descEl) descEl.value = '';
+  setS1FluxSceneChipStates();
+  renderS1FluxSceneImages();
+}
+
+function setS1FluxSceneChipStates() {
+  const s = state.s1.fluxScene;
+  document.querySelectorAll('#s1-fluxscene-mode-chips .variant-chip').forEach(c => {
+    c.classList.toggle('on', c.dataset.mode === s.mode);
+  });
+}
+
+document.querySelectorAll('#s1-fluxscene-mode-chips .variant-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    state.s1.fluxScene.mode = chip.dataset.mode;
+    setS1FluxSceneChipStates();
+  });
+});
+
+function renderS1FluxSceneImages() {
+  const grid = document.getElementById('s1-fluxscene-refs');
+  if (!grid) return;
+  const imgs = state.s1.fluxScene.images;
+  const addBtn = `
+    <button class="img-add-slot" id="s1-fluxscene-add">
+      <div class="plus">+</div>
+      <div class="txt">添加参考图<br>(点击或拖拽)</div>
+    </button>
+    <input type="file" id="s1-fluxscene-file-input" accept="image/*" multiple style="display:none" />
+  `;
+  const slots = imgs.map((img, i) => `
+    <div class="img-slot">
+      <img class="slot-thumb" src="${img.dataUrl}" alt="">
+      <button class="slot-remove" onclick="removeS1FluxSceneImage(${i})">×</button>
+      <div class="slot-controls">
+        <label>这张图是</label>
+        <select class="slot-role" onchange="setS1FluxSceneRole(${i}, this.value)">
+          ${S1_FLUXSCENE_ROLES.map(r => `<option value="${r}" ${r === img.role ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+  grid.innerHTML = slots + (imgs.length < 3 ? addBtn : '');
+  wireS1FluxSceneAddButton();
+}
+
+function wireS1FluxSceneAddButton() {
+  const addBtn = document.getElementById('s1-fluxscene-add');
+  const fileInput = document.getElementById('s1-fluxscene-file-input');
+  if (!addBtn || !fileInput) return;
+  addBtn.addEventListener('click', () => fileInput.click());
+  addBtn.addEventListener('dragover', e => { e.preventDefault(); addBtn.classList.add('drag'); });
+  addBtn.addEventListener('dragleave', () => addBtn.classList.remove('drag'));
+  addBtn.addEventListener('drop', e => {
+    e.preventDefault();
+    addBtn.classList.remove('drag');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    for (const f of files) addS1FluxSceneImage(f);
+  });
+  fileInput.addEventListener('change', e => {
+    for (const f of e.target.files) addS1FluxSceneImage(f);
+    e.target.value = '';
+  });
+}
+
+async function addS1FluxSceneImage(file) {
+  if (state.s1.fluxScene.images.length >= 3) {
+    showToast('最多 3 张参考图', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    const defaultRole = state.s1.fluxScene.images.length === 0 ? '色彩参考' : '建筑参考';
+    state.s1.fluxScene.images.push({ dataUrl, base64, filename: file.name, role: defaultRole });
+    renderS1FluxSceneImages();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+  }
+}
+
+function removeS1FluxSceneImage(i) {
+  state.s1.fluxScene.images.splice(i, 1);
+  renderS1FluxSceneImages();
+}
+
+function setS1FluxSceneRole(i, role) {
+  if (state.s1.fluxScene.images[i]) state.s1.fluxScene.images[i].role = role;
+}
+
+/** Generate runner */
+async function runS1FluxSceneGenerate() {
+  const s = state.s1.fluxScene;
+  const desc = document.getElementById('s1-fluxscene-desc').value.trim();
+  const imgs = s.images;
+  if (!desc) {
+    showToast('请先写场景描述', 'err');
+    return;
+  }
+  s.description = desc;
+
+  const btn = document.getElementById('s1-fluxscene-generate');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 prompt 中...';
+
+  const modeLabel = s.mode === 'avg'
+    ? 'AVG 背景模式（下三分之一留立绘位，景别中景/中远景，光影要为角色立绘服务）'
+    : '纯环境图模式（不留立绘位，环境本身是主体，细节和光影都可以拉满）';
+
+  const imageLabels = imgs.length > 0
+    ? imgs.map((img, i) => `图 ${i + 1}: ${img.role}`).join('\n')
+    : '（用户没传参考图 · 按描述自由发挥）';
+
+  const userText = `[输出模式]
+${s.mode}  ·  ${modeLabel}
+
+[参考图清单]
+${imageLabels}
+
+[场景描述]
+${desc}
+
+请按系统指令写 Flux Klein 格式化中文 prompt，每段聚焦一个维度。${s.mode === 'avg' ? '记得包含 standing_space 段（6 段）。' : '纯环境图模式跳过 standing_space 段（5 段）。'}
+返回 JSON。`;
+
+  try {
+    const raw = await callAIMulti({
+      systemPrompt: S1_FLUX_SCENE_SYSTEM,
+      userText,
+      imageBase64List: imgs.map(im => im.base64)
+    });
+    const parsed = extractJSON(raw);
+    if (!Array.isArray(parsed.prompt_lines) || !Array.isArray(parsed.notes)) {
+      throw new Error("返回 JSON 结构不对");
+    }
+    // 自检：avg 模式应该有 6 段，env 模式应该有 5 段
+    const expected = s.mode === 'avg' ? 6 : 5;
+    if (parsed.prompt_lines.length !== expected) {
+      console.warn(`AI 返回了 ${parsed.prompt_lines.length} 段，预期 ${expected} 段（${s.mode} 模式）`);
+    }
+    s.result = parsed;
+    renderS1FluxSceneOutput();
+    go(12);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成 Flux Klein Prompt <span class="arrow">→</span>';
+  }
+}
+
+/** Output renderer */
+function renderS1FluxSceneOutput() {
+  const g = state.s1.fluxScene.result;
+  const s = state.s1.fluxScene;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+  const modeTag = s.mode === 'avg' ? 'AVG 背景' : '纯环境图';
+
+  const promptLinesHTML = g.prompt_lines.map(l => `
+    <div class="line anno-target" data-note="${escapeHTML(l.note_id || '')}">${escapeHTML(l.text || '')}</div>
+  `).join('');
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  document.getElementById('s1-output-title').textContent = '场景图 Flux Klein Prompt 出来了';
+  const out = document.getElementById('s1-output-content');
+  out.innerHTML = `
+    <div class="prompt-card" id="s1-fluxscene-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · 场景图 · Flux Klein · ' + modeTag)}</span>
+      <button class="copy-btn" onclick="copyS1FluxScenePrompt()">复制</button>
+      ${promptLinesHTML}
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 prompt 贴进 ComfyUI / Flux Klein 工作流跑。${s.mode === 'avg' ? 'AVG 背景记得跑 16:9 或 2:1 比例，立绘位留在下方三分之一。' : '纯环境图可以跑高分辨率，Flux 细节拉满正好发挥。'}
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(18)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(9)">再抽一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+  wireS1OutputHover();
+}
+
+function copyS1FluxScenePrompt() {
+  const lines = [...document.querySelectorAll('#s1-fluxscene-prompt-card .line')].map(l => l.textContent.trim());
+  navigator.clipboard?.writeText(lines.join('\n'));
+  showToast('Prompt 已复制');
 }
 
 /* ---------- Scene refs: multi-image upload ---------- */
@@ -6032,6 +7468,9 @@ function copyS1TwoCharPrompt() {
 renderS1SceneRefs();
 renderS1CharImages();
 renderS1TwoCharImages();
+renderS1SingleCharImages();
+renderS1SdxlTwoImages();
+renderS1FluxSceneImages();
 
 
 /* =====================================================
@@ -7145,6 +8584,11 @@ function showToast(msg, type) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/** Stage Ⅰ WIP 占位卡点击提示 */
+function showWipToast(name) {
+  showToast(`${name} 正在开发中，敬请期待`);
 }
 
 /* =====================================================
