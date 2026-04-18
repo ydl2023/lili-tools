@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- 米色纸底 -->
+  <rect width="512" height="512" fill="#f5efe3"/>
+
+  <!-- 金边装饰框（safe zone 内部，避免被 maskable 裁切）-->
+  <rect x="72" y="72" width="368" height="368"
+        fill="none" stroke="#a68857" stroke-width="2.5" opacity="0.55"/>
+  <rect x="82" y="82" width="348" height="348"
+        fill="none" stroke="#a68857" stroke-width="1" opacity="0.35"/>
+
+  <!-- 主视觉"里"字 -->
+  <text x="256" y="308"
+        font-family="'PingFang SC','STSong','STZhongsong',Georgia,serif"
+        font-size="200"
+        font-weight="500"
+        text-anchor="middle"
+        fill="#28221a">里</text>
+
+  <!-- 底部小斜体英文品牌 -->
+  <text x="256" y="388"
+        font-family="Georgia,serif"
+        font-style="italic"
+        font-size="24"
+        font-weight="400"
+        text-anchor="middle"
+        fill="#6b5d4d"
+        letter-spacing="0.12em">LILI · TOOLBOX</text>
+
+  <!-- 右上角酒红印章点缀 -->
+  <rect x="352" y="108" width="52" height="52"
+        fill="#8a2a2b" opacity="0.92" rx="1.5"/>
+  <text x="378" y="144"
+        font-family="Georgia,serif"
+        font-size="26"
+        font-weight="700"
+        text-anchor="middle"
+        fill="#f5efe3"
+        letter-spacing="0.02em">里</text>
+</svg>

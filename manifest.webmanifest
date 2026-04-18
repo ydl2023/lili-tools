@@ -1,0 +1,21 @@
+{
+  "name": "里里的工具箱",
+  "short_name": "里里工具箱",
+  "description": "为美术团队写 Flux Klein / SDXL prompt 的小工具。看图、出 prompt、顺便告诉你为什么。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5efe3",
+  "theme_color": "#f5efe3",
+  "lang": "zh-CN",
+  "categories": ["productivity", "design"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

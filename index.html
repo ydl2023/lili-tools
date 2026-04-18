@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>里里的工具箱</title>
 
+<!-- PWA · 让浏览器可以"安装"这个网页成桌面应用 -->
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="icon" type="image/svg+xml" href="./icon.svg" />
+<meta name="theme-color" content="#f5efe3" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -6594,6 +6599,17 @@ if (!hasKey() && !state.keys.gemini && !state.keys.claude && !state.keys.openai 
   setTimeout(() => {
     showToast('首次使用，请先在右上角设置里填 API Key');
   }, 800);
+}
+</script>
+
+<!-- PWA · Service Worker 注册（让工具可安装到桌面 + 离线兜底） -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((e) => {
+      console.warn('SW 注册失败（不影响网页使用，只是 PWA 可安装性不可用）:', e);
+    });
+  });
 }
 </script>
 </body>
