@@ -6081,37 +6081,6 @@ const NEWBIE_DOCS_DEFAULT = [
 > ⚠️ **不要给所有词都加权重**。权重是"倾斜"，全加等于没加。一张图里一般只有 2-4 个词需要动权重。`
   },
   {
-    title: "画风词不要写！（团队铁律）",
-    content: `**请看完这一条，不然你会走很多弯路。**
-
-## 为什么不写画风词？
-
-我们团队把**画风 LoRA 整合进底模**了——意思是模型已经自带我们要的画风。
-
-这时候你再写 \`anime style\` / \`watercolor\` / \`oil painting\` 这些词，**会冲突**。模型会试图在"我们自己的画风" 和 "你写的画风" 之间妥协，结果两边都画不对。
-
-## 哪些词不能写？
-
-❌ **风格关键词**：anime, manga, oil painting, watercolor, pixel art, realistic, photorealistic, 3d render, chibi, flat color 等
-❌ **媒介关键词**：painting, illustration, sketch, digital art 等
-❌ **画师名**：by xxx, art by xxx（除非你明确知道是团队支持的画师）
-
-## 能写什么？
-
-✅ **画面内容**：人物、场景、服装、动作、表情
-✅ **光影氛围**：dramatic lighting, backlit, soft shadow, golden hour 等
-✅ **构图视角**：cowboy shot, from above, dutch angle 等
-✅ **材质细节**：lace trim, metal buckle, silk fabric 等
-✅ **质量词**：masterpiece, best quality（SDXL 尾巴习惯加，Klein 可以不加）
-
-## 两个例外
-
-- **香蕉（Nano Banana Pro）不一样**——它要写完整的风格锚点（参考《场景通用指令》），因为它不是扩散模型，逻辑完全不同
-- **反推出来的 prompt 如果带画风词，要手动删掉**再用
-
-> 📌 **一句话记住**：底模已经决定了画风，你只管说"画什么"，不要说"用什么风格画"。`
-  },
-  {
     title: "Prompt 不要堆砌细节",
     content: `新人最容易犯的错：把脑子里所有要素都塞进 prompt，觉得越详细越好。**结果画出来反而糊。**
 
