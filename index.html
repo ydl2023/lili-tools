@@ -1,0 +1,4848 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>里里的工具箱</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --paper: #f4efe4;
+  --paper-2: #ebe4d4;
+  --ink: #1a1714;
+  --ink-soft: #4a4037;
+  --ink-faint: #8a7f73;
+  --line: #d3c8b3;
+  --line-soft: #e3dac6;
+  --accent: #9b3a2f;
+  --accent-soft: #c07a6f;
+  --gold: #8b6f3a;
+  --ok: #5a6e42;
+  --err: #9b3a2f;
+  --card: #fbf7ec;
+  --shadow: 0 1px 2px rgba(40,30,20,.05), 0 8px 24px rgba(40,30,20,.06);
+  --serif-cn: "Noto Serif SC", serif;
+  --sans-cn: "Noto Sans SC", system-ui, sans-serif;
+  --serif-en: "Cormorant Garamond", serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  font-family: var(--sans-cn);
+  color: var(--ink);
+  background: var(--paper);
+  background-image:
+    radial-gradient(ellipse 1200px 800px at 20% 10%, rgba(155,58,47,.05), transparent 60%),
+    radial-gradient(ellipse 1000px 700px at 80% 90%, rgba(139,111,58,.06), transparent 60%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 .05 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity:.5;
+  pointer-events:none;
+  z-index:0;
+  mix-blend-mode: multiply;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 36px 80px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 28px;
+}
+.brand { display: flex; align-items: baseline; gap: 14px; }
+.brand-home {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  margin: 0 -8px;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  border-radius: 2px;
+  transition: background .15s ease;
+}
+.brand-home:hover { background: var(--paper-2); }
+.brand .mark {
+  font-family: var(--serif-cn);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: .06em;
+}
+.brand .mark .dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  transform: translateY(-3px);
+  margin: 0 4px;
+}
+.brand .en {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--ink-faint);
+  font-size: 15px;
+  letter-spacing: .04em;
+}
+.top-actions { display: flex; gap: 14px; align-items: center; }
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 6px 14px;
+  font-family: var(--serif-en);
+  font-size: 12px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all .2s ease;
+}
+.icon-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.icon-btn.warn { border-color: var(--accent); color: var(--accent); }
+.icon-btn.warn:hover { background: var(--accent); color: var(--paper); }
+
+.rail {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: center;
+  margin-bottom: 36px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+}
+.rail .stage { display: flex; align-items: center; gap: 12px; }
+.rail .num {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 26px;
+  color: var(--ink-faint);
+  line-height: 1;
+  min-width: 28px;
+}
+.rail .stage.active .num { color: var(--accent); }
+.rail .meta { display: flex; flex-direction: column; line-height: 1.2; }
+.rail .name { font-family: var(--serif-cn); font-weight: 500; font-size: 15px; }
+.rail .stage.locked .name { color: var(--ink-faint); }
+.rail .note {
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: .1em;
+  margin-top: 2px;
+}
+.rail .stage.active .note { color: var(--accent); }
+.rail .sep {
+  width: 36px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--line), transparent);
+  margin: 0 12px;
+}
+
+/* Make Ⅱ and Ⅲ rail items clickable buttons */
+button.stage.stage-clickable {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  border-radius: 2px;
+  transition: background .15s ease;
+}
+button.stage.stage-clickable:hover {
+  background: var(--paper-2);
+}
+button.stage.stage-clickable:hover .note {
+  color: var(--accent);
+}
+
+.screen { display: none; animation: fadeUp .5s ease; }
+.screen.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Screen 1 hero ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 56px;
+  padding: 40px 0 20px;
+}
+.hero-left .eyebrow {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--accent);
+  font-size: 16px;
+  letter-spacing: .1em;
+  margin-bottom: 12px;
+}
+.hero-left h1 {
+  font-family: var(--serif-cn);
+  font-weight: 600;
+  font-size: 54px;
+  line-height: 1.15;
+  letter-spacing: .02em;
+  margin: 0 0 20px;
+}
+.hero-left h1 em {
+  font-style: normal;
+  color: var(--accent);
+  font-weight: 500;
+  border-bottom: 2px solid var(--accent-soft);
+  padding-bottom: 2px;
+}
+.hero-left .lede {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
+  max-width: 520px;
+}
+.hero-left .lede b {
+  color: var(--ink);
+  font-weight: 500;
+  border-bottom: 1px dashed var(--accent-soft);
+}
+
+.flow { display: flex; margin: 30px 0 36px; }
+.flow .node {
+  flex: 1;
+  padding: 14px 12px;
+  border-left: 2px solid var(--line);
+}
+.flow .node:first-child { border-left: 2px solid var(--accent); }
+.flow .node .step {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
+.flow .node .step.cur { color: var(--accent); }
+.flow .node .label {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.flow .node .desc {
+  font-size: 12px;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+.flow .node.locked .label { color: var(--ink-faint); }
+
+.hero-right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ornament {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, #d4b68a 0%, #b8915a 30%, #8b6f3a 55%, #6b4a2a 80%, #3d2615 100%);
+  border-radius: 2px;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(40,30,20,.15), 0 20px 60px rgba(40,30,20,.2), inset 0 0 80px rgba(20,10,5,.3);
+  overflow: hidden;
+}
+.ornament::before{
+  content:"";
+  position:absolute; inset:14px;
+  border: 1px solid rgba(244,239,228,.25);
+}
+.ornament::after{
+  content:"";
+  position:absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 60%; aspect-ratio: 1;
+  background: radial-gradient(circle, rgba(244,239,228,.3) 0%, transparent 65%);
+}
+.ornament .sigil {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--serif-cn);
+  font-size: 48px;
+  color: rgba(244,239,228,.85);
+  font-weight: 400;
+  text-shadow: 0 2px 12px rgba(0,0,0,.3);
+  letter-spacing: .12em;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  padding: 40px 0 60px;
+}
+.ornament .caption {
+  position: absolute;
+  bottom: 24px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: .3em;
+  color: rgba(244,239,228,.7);
+  text-transform: uppercase;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--serif-cn);
+  font-size: 15px;
+  font-weight: 500;
+  padding: 14px 28px;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+  transition: all .2s ease;
+  letter-spacing: .05em;
+}
+.btn:hover { background: var(--accent); border-color: var(--accent); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--ink); border-color: var(--ink); }
+.btn .arrow {
+  font-family: var(--serif-en);
+  font-style: italic;
+  transition: transform .2s ease;
+}
+.btn:hover:not(:disabled) .arrow { transform: translateX(3px); }
+.btn.ghost { background: transparent; color: var(--ink); }
+.btn.ghost:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.btn-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Stage head ---------- */
+.stage-head { margin-bottom: 32px; }
+.stage-head .crumb {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--ink-faint);
+  font-size: 14px;
+  letter-spacing: .1em;
+  margin-bottom: 10px;
+}
+.stage-head h2 {
+  font-family: var(--serif-cn);
+  font-weight: 600;
+  font-size: 36px;
+  margin: 0 0 10px;
+  letter-spacing: .02em;
+}
+.stage-head .sub {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.7;
+  max-width: 680px;
+}
+
+/* ---------- Provider pill ---------- */
+.provider-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-family: var(--serif-en);
+  letter-spacing: .08em;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.provider-pill:hover { border-color: var(--accent); color: var(--accent); }
+.provider-pill .label { font-style: italic; }
+.provider-pill .val {
+  font-family: var(--serif-cn);
+  font-style: normal;
+  color: var(--ink);
+  font-weight: 500;
+  font-size: 13px;
+}
+.provider-pill.missing .val { color: var(--accent); }
+
+/* ---------- Upload ---------- */
+.upload-zone {
+  border: 2px dashed var(--line);
+  background: var(--card);
+  border-radius: 4px;
+  padding: 80px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.upload-zone:hover, .upload-zone.drag {
+  border-color: var(--accent);
+  background: #fdf9ef;
+}
+.upload-zone .icon {
+  font-family: var(--serif-en);
+  font-size: 56px;
+  font-style: italic;
+  color: var(--ink-faint);
+  line-height: 1;
+  margin-bottom: 18px;
+}
+.upload-zone:hover .icon, .upload-zone.drag .icon { color: var(--accent); }
+.upload-zone .prompt-l1 {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+.upload-zone .prompt-l2 {
+  color: var(--ink-faint);
+  font-size: 13px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: .1em;
+}
+.upload-zone kbd {
+  display: inline-block;
+  padding: 1px 7px;
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  background: #fff;
+  color: var(--ink-soft);
+  margin: 0 2px;
+  vertical-align: 2px;
+}
+.upload-hint {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--gold);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.upload-hint .heading {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+/* ---------- Preview after upload ---------- */
+.preview-card {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 28px;
+  padding: 28px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.preview-img-wrap {
+  background: #1a1512;
+  border-radius: 2px;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.preview-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.preview-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.preview-label {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: .15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.preview-filename {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--ink);
+  word-break: break-all;
+  line-height: 1.4;
+}
+.preview-size {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: .05em;
+  margin-bottom: 14px;
+}
+.preview-tip {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  padding: 12px 16px;
+  background: var(--paper-2);
+  border-left: 2px solid var(--gold);
+  border-radius: 2px;
+}
+@media (max-width: 700px) {
+  .preview-card { grid-template-columns: 1fr; }
+  .preview-img-wrap { max-height: 320px; aspect-ratio: auto; }
+}
+
+/* ---------- Diagnose ---------- */
+.diag {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 40px;
+}
+.diag-left {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+}
+.canvas {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  background: #1a1512;
+  position: relative;
+}
+.canvas img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.canvas .caption {
+  position: absolute;
+  bottom: 10px; left: 14px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: rgba(244,239,228,.75);
+  font-size: 12px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  background: rgba(20,15,10,.6);
+  padding: 3px 8px;
+  border-radius: 1px;
+  max-width: calc(100% - 28px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reupload {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+.reupload:hover { color: var(--accent); }
+
+.diag-right h3 {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+.ai-intro {
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--card);
+  border-radius: 2px;
+  border-left: 2px solid var(--accent);
+}
+.ai-intro .tag {
+  display: inline-block;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: .15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+
+.checklist { margin: 0 0 28px; padding: 0; list-style: none; }
+.checklist li {
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line-soft);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.checklist li:hover { padding-left: 4px; }
+.checklist .box {
+  flex: 0 0 18px;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 2px;
+  margin-top: 3px;
+  position: relative;
+  transition: all .15s ease;
+}
+.checklist li.on .box {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.checklist li.on .box::after {
+  content: "✓";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.checklist .body { flex: 1; }
+.checklist .body .title {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 3px;
+}
+.checklist .body .why {
+  font-size: 12px;
+  color: var(--ink-faint);
+  line-height: 1.55;
+}
+
+.supplement { margin-bottom: 28px; }
+.supplement label {
+  display: block;
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.supplement .hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-bottom: 10px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: .05em;
+}
+.supplement textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--card);
+  font-family: var(--sans-cn);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+  min-height: 90px;
+  resize: vertical;
+}
+.supplement textarea:focus { outline: none; border-color: var(--accent); }
+.supplement textarea::placeholder { color: var(--ink-faint); font-style: italic; }
+
+/* ---------- Option toggle ---------- */
+.option-toggle {
+  margin-bottom: 20px;
+  padding: 14px 16px;
+  background: var(--paper-2);
+  border-radius: 2px;
+  border-left: 2px solid var(--gold);
+}
+.toggle-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+.toggle-row input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--line);
+  border-radius: 2px;
+  background: var(--card);
+  margin: 2px 0 0;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: all .15s ease;
+}
+.toggle-row input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle-row input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  color: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.toggle-text { display: flex; flex-direction: column; gap: 3px; }
+.toggle-title {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--ink);
+}
+.toggle-sub {
+  font-size: 12px;
+  color: var(--ink-faint);
+  line-height: 1.55;
+}
+
+/* ---------- Output ---------- */
+.output-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.output-head .title-stack h2 {
+  margin: 0 0 4px;
+  font-family: var(--serif-cn);
+  font-weight: 600;
+  font-size: 28px;
+}
+.output-head .title-stack .sub {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--ink-faint);
+  font-size: 13px;
+  letter-spacing: .08em;
+}
+
+.prompt-card {
+  background: #1f1a14;
+  color: #e8dcc4;
+  padding: 32px 32px 28px;
+  border-radius: 3px;
+  box-shadow: var(--shadow);
+  font-family: var(--sans-cn);
+  font-size: 14px;
+  line-height: 1.9;
+  position: relative;
+  margin-bottom: 18px;
+}
+.prompt-card .corner {
+  position: absolute;
+  top: 14px; right: 18px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: rgba(232,220,196,.4);
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.prompt-card .line { padding: 2px 0; }
+.prompt-card .line.anno-target {
+  border-left: 2px solid transparent;
+  padding-left: 10px;
+  margin-left: -12px;
+  transition: all .2s ease;
+  cursor: pointer;
+}
+.prompt-card .line.anno-target:hover,
+.prompt-card .line.anno-target.flash {
+  border-left-color: var(--accent-soft);
+  background: rgba(192,122,111,.08);
+}
+.copy-btn {
+  position: absolute;
+  top: 14px; right: 120px;
+  background: transparent;
+  border: 1px solid rgba(232,220,196,.3);
+  color: rgba(232,220,196,.7);
+  padding: 6px 14px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--serif-en);
+  font-size: 11px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  transition: all .2s ease;
+}
+.copy-btn:hover { color: var(--paper); border-color: var(--paper); }
+
+.notes h3 {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 17px;
+  margin: 30px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.notes h3::before {
+  content: "";
+  display: inline-block;
+  width: 18px; height: 1px;
+  background: var(--accent);
+}
+.notes .note-intro {
+  color: var(--ink-faint);
+  font-size: 12px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  margin-bottom: 14px;
+  letter-spacing: .05em;
+}
+.notes ul { list-style: none; padding: 0; margin: 0; }
+.notes li {
+  padding: 14px 18px;
+  background: var(--card);
+  border-left: 2px solid var(--gold);
+  margin-bottom: 10px;
+  border-radius: 1px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all .2s ease;
+}
+.notes li:hover, .notes li.flash {
+  border-left-color: var(--accent);
+  background: #fdf9ef;
+  transform: translateX(3px);
+}
+.notes li .quote {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  color: var(--ink);
+  background: #ebe4d4;
+  padding: 1px 6px;
+  border-radius: 1px;
+  font-size: 12px;
+}
+.notes li .why {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink-faint);
+}
+
+.next-steps {
+  margin-top: 36px;
+  padding: 24px 28px;
+  background: var(--paper-2);
+  border-radius: 3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.next-steps .txt {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  flex: 1;
+  min-width: 260px;
+}
+.next-steps .txt strong {
+  font-family: var(--serif-cn);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ---------- Margin note ---------- */
+.margin-note {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-soft);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: .05em;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 30px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 24px;
+  border-radius: 2px;
+  font-size: 13px;
+  font-family: var(--serif-cn);
+  letter-spacing: .05em;
+  opacity: 0;
+  transition: all .3s ease;
+  pointer-events: none;
+  z-index: 200;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.err { background: var(--err); }
+
+/* ---------- Modal ---------- */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(20,15,10,.5);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 150;
+  padding: 20px;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 30px 80px rgba(0,0,0,.25);
+  padding: 32px 36px;
+}
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.modal-head h3 {
+  margin: 0 0 4px;
+  font-family: var(--serif-cn);
+  font-weight: 600;
+  font-size: 22px;
+}
+.modal-head .sub {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--ink-faint);
+  font-size: 13px;
+  letter-spacing: .08em;
+}
+.modal-head .close {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: var(--ink-faint);
+  cursor: pointer;
+  line-height: 1;
+}
+.modal-head .close:hover { color: var(--accent); }
+
+.provider-choice {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.provider-choice label {
+  text-align: center;
+  padding: 12px 8px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+  background: var(--card);
+  transition: all .2s ease;
+  font-family: var(--serif-cn);
+  font-size: 14px;
+  font-weight: 500;
+}
+.provider-choice label:hover { border-color: var(--accent-soft); }
+.provider-choice input[type="radio"] { display: none; }
+.provider-choice input[type="radio"]:checked + label,
+.provider-choice label.selected {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.provider-choice label .en {
+  display: block;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: .1em;
+  opacity: .7;
+  margin-top: 2px;
+}
+
+.key-field { margin-bottom: 18px; }
+.key-field label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 14px;
+}
+.key-field label a {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  letter-spacing: .05em;
+}
+.key-field label a:hover { text-decoration: underline; }
+.key-field input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--card);
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 12px;
+  color: var(--ink);
+}
+.key-field input:focus { outline: none; border-color: var(--accent); }
+.key-field .hint {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.modal-warning {
+  background: #fdf4e8;
+  border-left: 3px solid var(--gold);
+  padding: 14px 18px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+.modal-warning b { color: var(--ink); }
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line-soft);
+}
+
+/* ---------- Loading overlay ---------- */
+.loading {
+  position: absolute;
+  inset: 0;
+  background: rgba(251,247,236,.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+}
+.loading .spinner {
+  width: 32px; height: 32px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading .msg {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  color: var(--ink-soft);
+  letter-spacing: .05em;
+}
+.loading .sub {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: .08em;
+}
+
+/* ---------- Error state ---------- */
+.error-box {
+  background: #fbebe6;
+  border: 1px solid #d89d91;
+  border-left: 3px solid var(--accent);
+  padding: 16px 20px;
+  border-radius: 2px;
+  margin: 20px 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.error-box .title {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.error-box pre {
+  background: rgba(0,0,0,.05);
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-size: 11px;
+  overflow-x: auto;
+  margin: 8px 0 0;
+  max-height: 200px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ---------- Toolbox on home ---------- */
+.toolbox-section {
+  margin-top: 60px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line-soft);
+}
+.toolbox-head {
+  margin-bottom: 20px;
+}
+.toolbox-head .eyebrow {
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: var(--gold);
+  font-size: 13px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.toolbox-head h3 {
+  margin: 4px 0 6px;
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 22px;
+}
+.toolbox-head .sub {
+  color: var(--ink-faint);
+  font-size: 13px;
+  font-family: var(--serif-en);
+  font-style: italic;
+}
+.tool-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.tool-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 2px;
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-family: var(--sans-cn);
+  text-align: left;
+  color: var(--ink);
+}
+.tool-card:hover:not(.locked) {
+  border-left-color: var(--accent);
+  background: #fdf9ef;
+  transform: translateX(3px);
+}
+.tool-card.locked {
+  opacity: .55;
+  cursor: not-allowed;
+  border-left-color: var(--line);
+}
+.tool-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.tool-num {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--accent);
+  min-width: 22px;
+}
+.tool-card.locked .tool-num { color: var(--ink-faint); }
+.tool-name {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 17px;
+}
+.tool-desc {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.65;
+}
+
+/* ---------- Mode selector (reverse tool) ---------- */
+.mode-selector {
+  margin: 20px 0 24px;
+  padding: 20px 22px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+.mode-head {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 14px;
+}
+.mode-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.mode-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .15s ease;
+  background: var(--paper);
+}
+.mode-card:hover { border-color: var(--accent-soft); }
+.mode-card input[type="radio"] { display: none; }
+.mode-card.selected {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.mode-name {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 15px;
+}
+.mode-desc {
+  font-size: 12px;
+  opacity: .7;
+  line-height: 1.5;
+}
+@media (max-width: 620px) {
+  .mode-cards { grid-template-columns: 1fr; }
+}
+
+/* ---------- Reverse output ---------- */
+.reverse-output-card {
+  background: #1f1a14;
+  color: #e8dcc4;
+  padding: 28px 32px 22px;
+  border-radius: 3px;
+  box-shadow: var(--shadow);
+  position: relative;
+  margin-bottom: 20px;
+  font-family: var(--sans-cn);
+  font-size: 14px;
+  line-height: 1.9;
+  word-wrap: break-word;
+}
+.reverse-output-card.tags {
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.reverse-output-card .corner {
+  position: absolute;
+  top: 14px; right: 18px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  color: rgba(232,220,196,.4);
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.reverse-observation {
+  padding: 14px 18px;
+  background: var(--card);
+  border-left: 2px solid var(--accent);
+  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  border-radius: 2px;
+}
+.reverse-observation .tag {
+  display: inline-block;
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 11px;
+  letter-spacing: .15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-right: 8px;
+}
+.reverse-usage-tip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--paper-2);
+  border-left: 2px solid var(--gold);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  border-radius: 2px;
+}
+.reverse-usage-tip b { color: var(--ink); font-weight: 500; }
+.reverse-thumb {
+  float: left;
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  margin-right: 20px;
+  margin-bottom: 12px;
+  border-radius: 2px;
+  border: 1px solid var(--line);
+}
+
+/* ---------- Stage Ⅰ · Type choice ---------- */
+.type-choice {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin: 20px 0 36px;
+}
+.type-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 2px;
+  padding: 28px 28px 24px;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-family: var(--sans-cn);
+  text-align: left;
+  color: var(--ink);
+}
+.type-card:hover {
+  border-left-color: var(--accent);
+  background: #fdf9ef;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.type-card .type-eyebrow {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: .15em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.type-card .type-title {
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.type-card .type-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.type-card .type-meta {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: .05em;
+  padding-top: 10px;
+  border-top: 1px solid var(--line-soft);
+}
+
+/* Multi-image upload grid for character flow */
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.img-slot {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.img-slot .slot-thumb {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  background: #1a1512;
+  display: block;
+}
+.img-slot .slot-controls {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--line-soft);
+}
+.img-slot .slot-controls label {
+  font-size: 11px;
+  color: var(--ink-faint);
+  font-family: var(--serif-en);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.img-slot .slot-role {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--paper);
+  font-family: var(--sans-cn);
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.img-slot .slot-role:focus { outline: none; border-color: var(--accent); }
+.img-slot .slot-remove {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(26,21,18,.7);
+  color: var(--paper);
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s ease;
+}
+.img-slot .slot-remove:hover { background: var(--accent); }
+
+.img-add-slot {
+  aspect-ratio: 3/4;
+  border: 2px dashed var(--line);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all .2s ease;
+  background: transparent;
+  color: var(--ink-faint);
+}
+.img-add-slot:hover, .img-add-slot.drag {
+  border-color: var(--accent);
+  background: #fdf9ef;
+  color: var(--accent);
+}
+.img-add-slot .plus {
+  font-family: var(--serif-en);
+  font-style: italic;
+  font-size: 42px;
+  line-height: 1;
+}
+.img-add-slot .txt {
+  font-size: 12px;
+  font-family: var(--serif-en);
+  font-style: italic;
+  letter-spacing: .08em;
+  text-align: center;
+  padding: 0 10px;
+}
+
+/* Field group for optional inputs */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-family: var(--serif-cn);
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.field .hint {
+  font-size: 12px;
+  color: var(--ink-faint);
+  font-family: var(--serif-en);
+  font-style: italic;
+  margin-bottom: 8px;
+  letter-spacing: .03em;
+}
+.field input[type="text"],
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--card);
+  font-family: var(--sans-cn);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+.field textarea { min-height: 100px; resize: vertical; }
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.field input::placeholder, .field textarea::placeholder {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-right { display: none; }
+  .diag { grid-template-columns: 1fr; }
+  .diag-left { position: static; }
+  .rail { grid-template-columns: 1fr; gap: 14px; }
+  .rail .sep { display: none; }
+  .hero-left h1 { font-size: 40px; }
+  .shell { padding: 20px 20px 60px; }
+  .provider-choice { grid-template-columns: 1fr; }
+  .type-choice { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============ TOPBAR ============ -->
+  <div class="topbar">
+    <button class="brand brand-home" onclick="go(1)" title="回到主页">
+      <div class="mark">里里的工具箱</div>
+      <div class="en">Lili · Prompt Toolbox</div>
+    </button>
+    <div class="top-actions">
+      <button class="icon-btn" onclick="go(1)">主页 · Home</button>
+      <button class="provider-pill" id="provider-pill" onclick="openSettings()">
+        <span class="label">provider</span>
+        <span class="val" id="provider-pill-val">—</span>
+      </button>
+      <button class="icon-btn" onclick="openSettings()">Settings</button>
+    </div>
+  </div>
+
+  <!-- ============ STAGE RAIL ============ -->
+  <div class="rail">
+    <button class="stage stage-clickable" data-stage="1" onclick="goStage(1)">
+      <span class="num">Ⅰ</span>
+      <div class="meta"><span class="name">抽图</span><span class="note">点击进入</span></div>
+    </button>
+    <div class="sep"></div>
+    <button class="stage stage-clickable" data-stage="2" onclick="goStage(2)">
+      <span class="num">Ⅱ</span>
+      <div class="meta"><span class="name">整图优化</span><span class="note">点击进入</span></div>
+    </button>
+    <div class="sep"></div>
+    <button class="stage stage-clickable" data-stage="3" onclick="goStage(3)">
+      <span class="num">Ⅲ</span>
+      <div class="meta"><span class="name">局部精修</span><span class="note">点击进入</span></div>
+    </button>
+  </div>
+
+  <!-- ============ SCREEN 1 ============ -->
+  <section class="screen active" data-screen="1">
+    <div class="hero">
+      <div class="hero-left">
+        <div class="eyebrow">— Internal tool, for the atelier</div>
+        <h1>看图、出 prompt、<br>顺便告诉你<em>为什么</em>。</h1>
+        <p class="lede">
+          这是一个教你写 <b>Flux Klein 与 SDXL 提示词</b> 的小工具，不是代你写。
+          它会先看你上传的图、追问缺失的光影需求，再给你提示词和<b>为什么这么写</b>的注释。
+          用多了，你就不用再看它。
+        </p>
+
+        <div class="flow">
+          <div class="node">
+            <div class="step cur">Stage Ⅰ</div>
+            <div class="label">抽图</div>
+            <div class="desc">香蕉抽场景 · SDXL 抽角色</div>
+          </div>
+          <div class="node">
+            <div class="step cur">Stage Ⅱ</div>
+            <div class="label">整图优化</div>
+            <div class="desc">一句话让 Flux Klein 优化整张，构图不变</div>
+          </div>
+          <div class="node">
+            <div class="step cur">Stage Ⅲ</div>
+            <div class="label">局部精修</div>
+            <div class="desc">色块起手 · 局部增强</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" onclick="goStart()">进入 Ⅱ · 整图优化 <span class="arrow">→</span></button>
+          <button class="btn ghost" onclick="goStage(3)">进入 Ⅲ · 局部精修 <span class="arrow">→</span></button>
+          <button class="btn ghost" onclick="goStage(1)">进入 Ⅰ · 抽图 <span class="arrow">→</span></button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="ornament">
+          <div class="sigil">里里的工具箱</div>
+          <div class="caption">Lili · Atelier Toolbox</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toolbox-section">
+      <div class="toolbox-head">
+        <div class="eyebrow">— Toolbox · 工具箱</div>
+        <h3>独立小工具</h3>
+        <div class="sub">跟主工作流平行 · standalone utilities</div>
+      </div>
+      <div class="tool-cards">
+        <button class="tool-card" onclick="goReverseUpload()">
+          <div class="tool-card-head">
+            <span class="tool-num">01</span>
+            <span class="tool-name">反推提示词</span>
+          </div>
+          <p class="tool-desc">从图片反推出 SDXL tag 或 Flux Klein 自然语言描述。</p>
+        </button>
+        <div class="tool-card locked">
+          <div class="tool-card-head">
+            <span class="tool-num">—</span>
+            <span class="tool-name">更多工具</span>
+          </div>
+          <p class="tool-desc">敬请期待。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="margin-note">
+      <span>v1.0</span>
+      <span>API Key 存在你本地浏览器 · 不经过任何服务器</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 2: UPLOAD ============ -->
+  <section class="screen" data-screen="2">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅱ · Refinement</div>
+      <h2>整图优化 · 上传你想优化的图</h2>
+      <p class="sub">
+        这一步不改变构图和人物，只优化光影、材质、细节、氛围。
+        上传你已经抽到满意构图的草图或初稿，工具会看图后帮你写出 Flux Klein 的一句话 prompt。
+      </p>
+    </div>
+
+    <div id="upload-empty-state">
+      <div class="upload-zone" id="upload-zone">
+        <div class="icon">+</div>
+        <div class="prompt-l1">点击、拖拽、或 <kbd>Ctrl</kbd>+<kbd>V</kbd> 粘贴</div>
+        <div class="prompt-l2">PNG · JPG · WebP · 最大 20MB</div>
+        <input type="file" id="file-input" accept="image/*" style="display:none" />
+      </div>
+
+      <div class="upload-hint">
+        <div class="heading">什么时候用？</div>
+        <div>
+          你用香蕉、Flux Klein 或 SDXL 抽到了一张<b>构图满意</b>的图，但觉得光影不够、材质偏假、细节不够、氛围差点意思——就上传到这里。
+          <br><br>
+          <b>不适合的情况：</b>整张构图还想大改 · 要换动作或人物——这些属于阶段 Ⅰ 或 Ⅲ。
+        </div>
+      </div>
+    </div>
+
+    <div id="upload-preview-state" style="display:none">
+      <div class="preview-card">
+        <div class="preview-img-wrap">
+          <img id="preview-img" alt="" />
+        </div>
+        <div class="preview-meta">
+          <div class="preview-label">已选择</div>
+          <div class="preview-filename" id="preview-filename"></div>
+          <div class="preview-size" id="preview-size"></div>
+          <div class="preview-tip">确认这张图对吗？确认后 AI 开始读图。</div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="resetUpload()"><span class="arrow">↻</span> 换一张</button>
+        <button class="btn" onclick="confirmUpload()">确认 · AI 读图 <span class="arrow">→</span></button>
+      </div>
+    </div>
+
+    <div class="btn-row" id="upload-back-row">
+      <button class="btn ghost" onclick="go(1)"><span class="arrow">←</span> 返回</button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅱ / Step 1 of 3</span>
+      <span>上传 → 诊断 → 出 prompt</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 3: DIAGNOSE ============ -->
+  <section class="screen" data-screen="3">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅱ · Refinement · Step 2</div>
+      <h2>AI 看图 · 你来补充</h2>
+      <p class="sub">
+        左边是你上传的图。右边是工具对这张图的诊断——勾选你想优化的方向。下面可以补充光影等需求，没有也行。
+      </p>
+    </div>
+
+    <div class="diag">
+      <div class="diag-left">
+        <div class="canvas" id="canvas-wrap">
+          <img id="canvas-img" alt="" />
+          <div class="caption" id="canvas-caption"></div>
+          <div class="loading" id="diag-loading" style="display:none">
+            <div class="spinner"></div>
+            <div class="msg">AI 正在读图...</div>
+            <div class="sub" id="diag-loading-sub">Analyzing composition & atmosphere</div>
+          </div>
+        </div>
+        <div class="reupload" onclick="goToUpload()">↻ 换一张图</div>
+      </div>
+
+      <div class="diag-right">
+        <div id="diag-content">
+          <!-- filled by JS -->
+        </div>
+
+        <div class="supplement" id="supplement-wrap" style="display:none">
+          <label>补充需求（可选）</label>
+          <div class="hint">Supplement · 光影方向、想强调什么、或者什么绝对不能动</div>
+          <textarea id="supplement" placeholder="例：保持黄昏暖调，强化侧逆光的体积感；人物立绘位置绝对不能动。"></textarea>
+        </div>
+
+        <div class="option-toggle" id="lockdown-toggle-wrap" style="display:none">
+          <label class="toggle-row">
+            <input type="checkbox" id="strict-lockdown" checked>
+            <span class="toggle-text">
+              <span class="toggle-title">严格保持原图构图、人物、角色设计</span>
+              <span class="toggle-sub">勾选：Klein 不动构图和人物（默认）· 取消：允许 Klein 适度自由发挥</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="btn-row" id="diag-actions" style="display:none">
+          <button class="btn ghost" onclick="goToUpload()"><span class="arrow">←</span> 重新上传</button>
+          <button class="btn" id="generate-btn" onclick="generatePrompt()">生成 Flux Klein Prompt <span class="arrow">→</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅱ / Step 2 of 3</span>
+      <span>诊断不是固定清单 · AI 根据每张图动态生成</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 4: OUTPUT ============ -->
+  <section class="screen" data-screen="4">
+    <div class="output-head">
+      <div class="title-stack">
+        <h2>你的提示词出来了</h2>
+        <div class="sub">Stage Ⅱ · Step 3 of 3 · Hover 任意一行看注释</div>
+      </div>
+    </div>
+
+    <div id="output-content">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅱ / Step 3 of 3 · Done</span>
+      <span>Hover prompt 行 ↔ 注释联动</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 5: REVERSE UPLOAD ============ -->
+  <section class="screen" data-screen="5">
+    <div class="stage-head">
+      <div class="crumb">Toolbox · 反推提示词</div>
+      <h2>从图到提示词</h2>
+      <p class="sub">
+        上传一张参考图，反推出可用的 prompt。你可以选 SDXL 风格（danbooru tag）或 Flux Klein 风格（中文自然语言）。
+      </p>
+    </div>
+
+    <div id="rev-empty-state">
+      <div class="upload-zone" id="rev-upload-zone">
+        <div class="icon">+</div>
+        <div class="prompt-l1">点击、拖拽、或 <kbd>Ctrl</kbd>+<kbd>V</kbd> 粘贴</div>
+        <div class="prompt-l2">PNG · JPG · WebP · 最大 20MB</div>
+        <input type="file" id="rev-file-input" accept="image/*" style="display:none" />
+      </div>
+
+      <div class="upload-hint">
+        <div class="heading">什么时候用？</div>
+        <div>
+          看到别人一张想学的图，或者自己抽到好图想知道关键词，就上传到这里。
+          <br><br>
+          <b>SDXL 风格</b>适合贴到 SDXL / Illustrious / NoobAI 的 positive prompt；
+          <b>Flux Klein 风格</b>适合直接作为 Klein 的 prompt 用。
+        </div>
+      </div>
+    </div>
+
+    <div id="rev-preview-state" style="display:none">
+      <div class="preview-card">
+        <div class="preview-img-wrap">
+          <img id="rev-preview-img" alt="" />
+        </div>
+        <div class="preview-meta">
+          <div class="preview-label">已选择</div>
+          <div class="preview-filename" id="rev-preview-filename"></div>
+          <div class="preview-size" id="rev-preview-size"></div>
+          <div class="preview-tip">选一个反推方向，然后开始。</div>
+        </div>
+      </div>
+
+      <div class="mode-selector">
+        <div class="mode-head">反推成什么？</div>
+        <div class="mode-cards" id="rev-mode-cards">
+          <label class="mode-card" data-mode="sdxl">
+            <input type="radio" name="rev-mode" value="sdxl" />
+            <span class="mode-name">SDXL 风格</span>
+            <span class="mode-desc">Danbooru 英文 tag · 逗号分隔 · 用于 SDXL / Illustrious / NoobAI</span>
+          </label>
+          <label class="mode-card selected" data-mode="flux">
+            <input type="radio" name="rev-mode" value="flux" checked />
+            <span class="mode-name">Flux Klein 风格</span>
+            <span class="mode-desc">中文自然语言描述 · 一段式 · 用于 Flux Klein</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn ghost" onclick="resetReverseUpload()"><span class="arrow">↻</span> 换一张</button>
+        <button class="btn" id="rev-start-btn" onclick="runReverse()">开始反推 <span class="arrow">→</span></button>
+      </div>
+    </div>
+
+    <div class="btn-row" id="rev-back-row">
+      <button class="btn ghost" onclick="go(1)"><span class="arrow">←</span> 返回首页</button>
+    </div>
+
+    <div class="margin-note">
+      <span>Toolbox · 反推提示词</span>
+      <span>使用 AI 看图 · 不用本地模型</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 6: REVERSE OUTPUT ============ -->
+  <section class="screen" data-screen="6">
+    <div class="stage-head">
+      <div class="crumb">Toolbox · 反推提示词 · Done</div>
+      <h2>反推结果</h2>
+      <div class="sub">复制 prompt 到对应模型里使用。</div>
+    </div>
+
+    <div id="rev-output-content">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="margin-note">
+      <span>Toolbox · Reverse · Done</span>
+      <span></span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 7: STAGE Ⅲ UPLOAD + INTENT ============ -->
+  <section class="screen" data-screen="7">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅲ · Local Repaint</div>
+      <h2>局部精修 · 上传你要改的图</h2>
+      <p class="sub">
+        这一步只动图里的某一块，其它内容保持不变。可以用色块占位让 Klein 渲染完整，也可以截出一块局部让 Klein 增强精细度或变换材质。
+      </p>
+    </div>
+
+    <div id="s3-empty-state">
+      <div class="upload-zone" id="s3-upload-zone">
+        <div class="icon">+</div>
+        <div class="prompt-l1">点击、拖拽、或 <kbd>Ctrl</kbd>+<kbd>V</kbd> 粘贴</div>
+        <div class="prompt-l2">PNG · JPG · WebP · 最大 20MB</div>
+        <input type="file" id="s3-file-input" accept="image/*" style="display:none" />
+      </div>
+
+      <div class="upload-hint">
+        <div class="heading">两种情况</div>
+        <div>
+          <b>色块重绘：</b>你在 WIP 图上画了块色块当占位（比如胸前一块暗红代表礼服），让 Klein 把它变成完整的、高完成度的内容。
+          <br><br>
+          <b>局部精细化：</b>你截出了图里某一块（一个面部、一块布料、一只手），想增强精细度 / 调颜色 / 变材质。
+        </div>
+      </div>
+    </div>
+
+    <div id="s3-preview-state" style="display:none">
+      <div class="preview-card">
+        <div class="preview-img-wrap">
+          <img id="s3-preview-img" alt="" />
+        </div>
+        <div class="preview-meta">
+          <div class="preview-label">已选择</div>
+          <div class="preview-filename" id="s3-preview-filename"></div>
+          <div class="preview-size" id="s3-preview-size"></div>
+          <div class="preview-tip">选择模式，再告诉 Klein 你要做什么。</div>
+        </div>
+      </div>
+
+      <div class="mode-selector">
+        <div class="mode-head">局部精修的场景</div>
+        <div class="mode-cards" id="s3-mode-cards">
+          <label class="mode-card selected" data-mode="color_block">
+            <input type="radio" name="s3-mode" value="color_block" checked />
+            <span class="mode-name">色块重绘</span>
+            <span class="mode-desc">图上有我画的色块占位，让 Klein 渲染成完整内容</span>
+          </label>
+          <label class="mode-card" data-mode="localized_enhance">
+            <input type="radio" name="s3-mode" value="localized_enhance" />
+            <span class="mode-name">局部精细化</span>
+            <span class="mode-desc">已截出一块局部，想增强精细度 / 调颜色 / 变材质</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="supplement">
+        <label id="s3-intent-label">告诉 Klein 画的是哪块？改成什么？</label>
+        <div class="hint" id="s3-intent-hint">Intent · 具体一点，Klein 才知道动哪里</div>
+        <textarea id="s3-intent" placeholder="例：角色胸前的深红色色块，把它变成繁复金线刺绣的红色宫廷礼服胸甲，领口收紧，胸前有银饰扣件。"></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn ghost" onclick="resetS3Upload()"><span class="arrow">↻</span> 换一张</button>
+        <button class="btn" id="s3-generate-btn" onclick="runS3Generate()">生成 Flux Klein Prompt <span class="arrow">→</span></button>
+      </div>
+    </div>
+
+    <div class="btn-row" id="s3-back-row">
+      <button class="btn ghost" onclick="go(1)"><span class="arrow">←</span> 返回首页</button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅲ / Step 1 of 2</span>
+      <span>上传 → 选模式 + 说意图 → 出 prompt</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 8: STAGE Ⅲ OUTPUT ============ -->
+  <section class="screen" data-screen="8">
+    <div class="output-head">
+      <div class="title-stack">
+        <h2>局部精修 Prompt 出来了</h2>
+        <div class="sub">Stage Ⅲ · Step 2 of 2 · Hover 任意一行看注释</div>
+      </div>
+    </div>
+
+    <div id="s3-output-content">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅲ / Done</span>
+      <span>Hover prompt 行 ↔ 注释联动</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 9: STAGE Ⅰ TYPE CHOICE ============ -->
+  <section class="screen" data-screen="9">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Generation</div>
+      <h2>抽图 · 你要抽哪种图？</h2>
+      <p class="sub">
+        场景图用香蕉（Nano Banana Pro）抽；角色图用 SDXL（画风 LoRA 已整合进底模，不需要触发词）。两条路的提示词语法完全不同。
+      </p>
+    </div>
+
+    <div class="type-choice">
+      <button class="type-card" onclick="goS1Scene()">
+        <div class="type-eyebrow">— Scene · 香蕉</div>
+        <div class="type-title">场景图</div>
+        <div class="type-desc">AVG 对话背景图。环境为主体、有无角色都可以、默认下三分之一留立绘位。</div>
+        <div class="type-meta">输出 · 中文自然语言 prompt · 带风格锚点</div>
+      </button>
+
+      <button class="type-card" onclick="goS1TwoChar()">
+        <div class="type-eyebrow">— Two-Char · 香蕉</div>
+        <div class="type-title">双人图</div>
+        <div class="type-desc">两个角色互动的剧情插画。上传男主女主参考图和场景参考，工具写出中文 prompt 给香蕉用。</div>
+        <div class="type-meta">输出 · 中文自然语言 prompt · 双人剧情向</div>
+      </button>
+
+      <button class="type-card" onclick="goS1Char()">
+        <div class="type-eyebrow">— Character · SDXL</div>
+        <div class="type-title">角色图</div>
+        <div class="type-desc">立绘 / 单人 / 双人。上传角色参考图，描述场景和情境，工具给你 danbooru tag。</div>
+        <div class="type-meta">输出 · danbooru 风格英文 tag · 末尾带质量词</div>
+      </button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(1)"><span class="arrow">←</span> 返回首页</button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / 选择子流程</span>
+      <span>场景图 → 香蕉 · 角色图 → SDXL</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 10: STAGE Ⅰ SCENE (Banana) ============ -->
+  <section class="screen" data-screen="10">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Scene · 香蕉</div>
+      <h2>抽场景图 · 告诉我你要画什么</h2>
+      <p class="sub">
+        描述你要抽的场景。可以上传参考图帮工具理解你要的建筑风格 / 色彩氛围。工具会按团队的《场景通用指令》自动加风格锚点。
+      </p>
+    </div>
+
+    <div class="field">
+      <label>场景描述 *</label>
+      <div class="hint">Scene · 场景类型、时间、光源方向、氛围、特殊元素</div>
+      <textarea id="s1-scene-desc" placeholder="例：维多利亚风教堂花园，黄昏时分，侧逆光从右后方穿过彩色玻璃窗，忧郁氛围，石板路两侧有玫瑰与铁艺栏杆。"></textarea>
+    </div>
+
+    <div class="field">
+      <label>参考图（可选）</label>
+      <div class="hint">Refs · 最多 3 张，参考建筑风格 / 色彩氛围 / 光影感觉</div>
+      <div class="img-grid" id="s1-scene-refs">
+        <!-- thumbnails inserted here -->
+        <button class="img-add-slot" id="s1-scene-add">
+          <div class="plus">+</div>
+          <div class="txt">添加参考图<br>(点击或拖拽)</div>
+        </button>
+        <input type="file" id="s1-scene-file-input" accept="image/*" multiple style="display:none" />
+      </div>
+    </div>
+
+    <div class="option-toggle">
+      <label class="toggle-row">
+        <input type="checkbox" id="s1-scene-standing" checked>
+        <span class="toggle-text">
+          <span class="toggle-title">下三分之一留立绘位</span>
+          <span class="toggle-sub">勾选：AVG 对话背景用（默认）· 取消：不留白，纯场景图</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(9)"><span class="arrow">←</span> 回上一步</button>
+      <button class="btn" id="s1-scene-generate" onclick="runS1SceneGenerate()">生成香蕉 Prompt <span class="arrow">→</span></button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Scene</span>
+      <span>输出给 Nano Banana Pro</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 11: STAGE Ⅰ CHARACTER (SDXL) ============ -->
+  <section class="screen" data-screen="11">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Character · SDXL</div>
+      <h2>抽角色图 · 上传参考 + 描述情境</h2>
+      <p class="sub">
+        上传角色和场景的参考图，告诉工具每张图代表什么（男主 / 女主 / 场景），再描述这次要抽的画面（时间、地点、动作、姿势、情绪、氛围）。没说的工具会自己补。
+      </p>
+    </div>
+
+    <div class="field">
+      <label>上传参考图</label>
+      <div class="hint">Refs · 可选 · 最多 4 张 · 留空表示纯文生图</div>
+      <div class="img-grid" id="s1-char-refs">
+        <button class="img-add-slot" id="s1-char-add">
+          <div class="plus">+</div>
+          <div class="txt">添加参考图<br>(点击或拖拽)</div>
+        </button>
+        <input type="file" id="s1-char-file-input" accept="image/*" multiple style="display:none" />
+      </div>
+      <div class="hint" style="margin-top:8px">有参考图的话，每张下面选一下它是什么（男主 / 女主 / 场景等）</div>
+    </div>
+
+    <div class="field">
+      <label>情境描述 *</label>
+      <div class="hint">Scene · 时间 / 地点 / 在干什么 / 姿势 / 情绪 / 氛围 · 没传图时这里要写详细</div>
+      <textarea id="s1-char-desc" placeholder="例：一个银白色长发的男人，年轻俊美，邪魅气质，身着黑色古风宽袍，立绘站姿，白色背景。"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(9)"><span class="arrow">←</span> 回上一步</button>
+      <button class="btn" id="s1-char-generate" onclick="runS1CharGenerate()">生成 SDXL Tag <span class="arrow">→</span></button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Character</span>
+      <span>输出给 SDXL / Illustrious / NoobAI</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 13: STAGE Ⅰ TWO-CHAR via 香蕉 ============ -->
+  <section class="screen" data-screen="13">
+    <div class="stage-head">
+      <div class="crumb">Stage Ⅰ · Two-Char · 香蕉</div>
+      <h2>抽双人图 · 香蕉</h2>
+      <p class="sub">
+        两个角色互动的剧情插画。上传男主、女主和场景参考图（跟你直接喂香蕉时一样的那几张），描述这次要画的情境，工具写出中文 prompt。
+      </p>
+    </div>
+
+    <div class="field">
+      <label>上传参考图</label>
+      <div class="hint">Refs · 可选 · 最多 4 张 · 留空表示文生图造两个新角色</div>
+      <div class="img-grid" id="s1-two-refs">
+        <button class="img-add-slot" id="s1-two-add">
+          <div class="plus">+</div>
+          <div class="txt">添加参考图<br>(点击或拖拽)</div>
+        </button>
+        <input type="file" id="s1-two-file-input" accept="image/*" multiple style="display:none" />
+      </div>
+      <div class="hint" style="margin-top:8px">有参考图的话，每张下面选一下它是什么（男主 / 女主 / 场景等）</div>
+    </div>
+
+    <div class="field">
+      <label>情境描述 *</label>
+      <div class="hint">Scene · 时间 / 地点 / 两人在干什么 / 姿势 / 情绪 / 氛围 · 没传图时角色外貌也要描述清楚</div>
+      <textarea id="s1-two-desc" placeholder="例：夜晚教堂内，男主低头凝视躺在长椅上的女主，烛光氛围，男主表情深沉专注，女主闭眼安静。"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn ghost" onclick="go(9)"><span class="arrow">←</span> 回上一步</button>
+      <button class="btn" id="s1-two-generate" onclick="runS1TwoCharGenerate()">生成香蕉 Prompt <span class="arrow">→</span></button>
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Two-Char · 香蕉</span>
+      <span>输出给 Nano Banana Pro · 双人剧情向</span>
+    </div>
+  </section>
+
+
+  <!-- ============ SCREEN 12: STAGE Ⅰ OUTPUT ============ -->
+  <section class="screen" data-screen="12">
+    <div class="output-head">
+      <div class="title-stack">
+        <h2 id="s1-output-title">抽图 Prompt 出来了</h2>
+        <div class="sub">Stage Ⅰ · Done · Hover 任意一行看注释</div>
+      </div>
+    </div>
+
+    <div id="s1-output-content">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="margin-note">
+      <span>Stage Ⅰ / Done</span>
+      <span></span>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ SETTINGS MODAL ============ -->
+<div class="modal-backdrop" id="settings-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3>设置 · API Key</h3>
+        <div class="sub">Your keys, your browser, your machine.</div>
+      </div>
+      <button class="close" onclick="closeSettings()">×</button>
+    </div>
+
+    <div class="modal-warning">
+      <b>API Key 存在你本地浏览器里</b>，不经过我、不经过任何服务器。清浏览器缓存会丢失，需要重填。
+      <br><b>不要把 Key 发给任何人</b>——包括 AI 助手、群聊、截图。泄漏了立刻去对应平台作废重生。
+    </div>
+
+    <div style="margin-bottom:8px;font-family:var(--serif-cn);font-weight:500;font-size:14px;">选一家 AI 用：</div>
+    <div class="provider-choice">
+      <label data-provider="gemini">
+        Gemini
+        <span class="en">2.5 Pro</span>
+      </label>
+      <label data-provider="claude">
+        Claude
+        <span class="en">Sonnet 4.6</span>
+      </label>
+      <label data-provider="openai">
+        OpenAI
+        <span class="en">GPT-4.1</span>
+      </label>
+      <label data-provider="doubao">
+        豆包
+        <span class="en">Seed 2.0 Pro</span>
+      </label>
+      <label data-provider="qwen">
+        千问
+        <span class="en">Qwen3-VL Plus</span>
+      </label>
+    </div>
+
+    <div class="key-field">
+      <label>Gemini Key <a href="https://aistudio.google.com/apikey" target="_blank">去申请 →</a></label>
+      <input type="password" id="key-gemini" placeholder="AIza..." autocomplete="off" />
+      <div class="hint">免费额度足够日常用，超了再付费</div>
+    </div>
+
+    <div class="key-field">
+      <label>Claude Key <a href="https://console.anthropic.com/settings/keys" target="_blank">去申请 →</a></label>
+      <input type="password" id="key-claude" placeholder="sk-ant-..." autocomplete="off" />
+      <div class="hint">需要绑定信用卡 · 看图质量最高</div>
+    </div>
+
+    <div class="key-field">
+      <label>OpenAI Key <a href="https://platform.openai.com/api-keys" target="_blank">去申请 →</a></label>
+      <input type="password" id="key-openai" placeholder="sk-..." autocomplete="off" />
+      <div class="hint">需要绑定信用卡</div>
+    </div>
+
+    <div class="key-field">
+      <label>豆包 Key <a href="https://console.volcengine.com/ark/" target="_blank">去申请 →</a></label>
+      <input type="password" id="key-doubao" placeholder="在火山方舟 → API Key 管理里建" autocomplete="off" />
+      <div class="hint">国内直连 · 用前先在"开通管理"里开通 Doubao-Seed-2.0-Pro</div>
+    </div>
+
+    <div class="key-field">
+      <label>豆包 模型 ID（可选） <a href="https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint" target="_blank">在哪找 →</a></label>
+      <input type="text" id="doubao-model" placeholder="doubao-seed-2-0-pro-260215" autocomplete="off" />
+      <div class="hint">默认 doubao-seed-2-0-pro-260215。如果报 404，去"在线推理"页面复制你实际开通的模型名，或 ep- 开头的接入点 ID 填这里</div>
+    </div>
+
+    <div class="key-field">
+      <label>千问 Key <a href="https://bailian.console.aliyun.com/" target="_blank">去申请 →</a></label>
+      <input type="password" id="key-qwen" placeholder="sk-..." autocomplete="off" />
+      <div class="hint">国内直连 · 在阿里云百炼里建，qwen3-vl-plus 默认已开通</div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="icon-btn warn" onclick="clearAllKeys()">清除所有 Key</button>
+      <button class="btn" onclick="saveSettings()">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+"use strict";
+
+/* =====================================================
+ * CONFIG
+ * ===================================================== */
+const MODELS = {
+  gemini: "gemini-2.5-pro",
+  claude: "claude-sonnet-4-5",
+  openai: "gpt-4.1",
+  doubao: "doubao-seed-2-0-pro-260215",
+  qwen:   "qwen3-vl-plus"
+};
+const MAX_IMG_DIM = 1280;      // resize to this on longest side
+const IMG_QUALITY = 0.9;        // jpeg quality
+
+/* =====================================================
+ * STATE
+ * ===================================================== */
+const state = {
+  provider: localStorage.getItem("atelier.provider") || "gemini",
+  keys: {
+    gemini: localStorage.getItem("atelier.key.gemini") || "",
+    claude: localStorage.getItem("atelier.key.claude") || "",
+    openai: localStorage.getItem("atelier.key.openai") || "",
+    doubao: localStorage.getItem("atelier.key.doubao") || "",
+    qwen:   localStorage.getItem("atelier.key.qwen")   || ""
+  },
+  // 豆包可自定义模型 ID / 接入点 ID（空值时用 MODELS.doubao 默认）
+  doubaoModel: localStorage.getItem("atelier.doubaoModel") || "",
+  image: { dataUrl: null, base64: null, mime: "image/jpeg", filename: "" },
+  diagnosis: null,
+  generated: null,
+  // Reverse-inference tool state
+  reverseImage: { dataUrl: null, base64: null, mime: "image/jpeg", filename: "" },
+  reverseMode: "flux",   // "sdxl" or "flux"
+  reverseResult: null    // { image_type, observation, prompt }
+};
+
+/* =====================================================
+ * NAV
+ * ===================================================== */
+function go(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelector('.screen[data-screen="'+n+'"]').classList.add('active');
+  // Rail shows for main stage workflow (1-4, 7-8), hide on reverse tool (5-6)
+  const rail = document.querySelector('.rail');
+  if (rail) rail.style.display = (n === 5 || n === 6) ? 'none' : 'grid';
+  // Update rail active state
+  updateRailActive(n);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function updateRailActive(screenN) {
+  let activeStage = null;
+  if (screenN >= 2 && screenN <= 4) activeStage = 2;
+  else if (screenN === 7 || screenN === 8) activeStage = 3;
+  else if ((screenN >= 9 && screenN <= 12) || screenN === 13) activeStage = 1;
+  document.querySelectorAll('.rail .stage-clickable').forEach(btn => {
+    const s = parseInt(btn.dataset.stage);
+    const noteEl = btn.querySelector('.note');
+    if (s === activeStage) {
+      btn.classList.add('active');
+      if (noteEl) noteEl.textContent = '当前 · Current';
+    } else {
+      btn.classList.remove('active');
+      if (noteEl) noteEl.textContent = '点击进入';
+    }
+  });
+}
+
+function goStart() {
+  if (!hasKey()) {
+    showToast('请先在设置里填入 API Key', 'err');
+    openSettings();
+    return;
+  }
+  go(2);
+}
+
+function goStage(n) {
+  if (!hasKey()) {
+    showToast('请先在设置里填入 API Key', 'err');
+    openSettings();
+    return;
+  }
+  if (n === 1) { go(9); }
+  else if (n === 2) { goToUpload(); }
+  else if (n === 3) { resetS3Upload(); go(7); }
+}
+
+function goReverseUpload() {
+  if (!hasKey()) {
+    showToast('请先在设置里填入 API Key', 'err');
+    openSettings();
+    return;
+  }
+  resetReverseUpload();
+  go(5);
+}
+
+/* =====================================================
+ * SETTINGS / KEYS
+ * ===================================================== */
+function hasKey() { return !!state.keys[state.provider]; }
+
+function updateProviderPill() {
+  const pill = document.getElementById('provider-pill');
+  const val = document.getElementById('provider-pill-val');
+  const names = { gemini: "Gemini", claude: "Claude", openai: "OpenAI", doubao: "豆包", qwen: "千问" };
+  if (!hasKey()) {
+    val.textContent = names[state.provider] + " · 未配置";
+    pill.classList.add('missing');
+  } else {
+    val.textContent = names[state.provider];
+    pill.classList.remove('missing');
+  }
+}
+
+function openSettings() {
+  document.getElementById('settings-modal').classList.add('show');
+  document.getElementById('key-gemini').value = state.keys.gemini;
+  document.getElementById('key-claude').value = state.keys.claude;
+  document.getElementById('key-openai').value = state.keys.openai;
+  document.getElementById('key-doubao').value = state.keys.doubao;
+  document.getElementById('key-qwen').value   = state.keys.qwen;
+  document.getElementById('doubao-model').value = state.doubaoModel;
+  highlightProvider(state.provider);
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('show');
+}
+function highlightProvider(p) {
+  document.querySelectorAll('.provider-choice label').forEach(l => {
+    l.classList.toggle('selected', l.dataset.provider === p);
+  });
+}
+document.querySelectorAll('.provider-choice label').forEach(l => {
+  l.addEventListener('click', () => {
+    state.provider = l.dataset.provider;
+    highlightProvider(state.provider);
+  });
+});
+
+function saveSettings() {
+  state.keys.gemini = document.getElementById('key-gemini').value.trim();
+  state.keys.claude = document.getElementById('key-claude').value.trim();
+  state.keys.openai = document.getElementById('key-openai').value.trim();
+  state.keys.doubao = document.getElementById('key-doubao').value.trim();
+  state.keys.qwen   = document.getElementById('key-qwen').value.trim();
+  state.doubaoModel = document.getElementById('doubao-model').value.trim();
+  localStorage.setItem("atelier.key.gemini", state.keys.gemini);
+  localStorage.setItem("atelier.key.claude", state.keys.claude);
+  localStorage.setItem("atelier.key.openai", state.keys.openai);
+  localStorage.setItem("atelier.key.doubao", state.keys.doubao);
+  localStorage.setItem("atelier.key.qwen",   state.keys.qwen);
+  localStorage.setItem("atelier.doubaoModel", state.doubaoModel);
+  localStorage.setItem("atelier.provider", state.provider);
+  updateProviderPill();
+  closeSettings();
+  showToast('已保存');
+}
+function clearAllKeys() {
+  if (!confirm("真的要清除所有 Key 吗？")) return;
+  ['gemini','claude','openai','doubao','qwen'].forEach(p => {
+    localStorage.removeItem("atelier.key." + p);
+    state.keys[p] = "";
+  });
+  localStorage.removeItem("atelier.doubaoModel");
+  state.doubaoModel = "";
+  document.getElementById('key-gemini').value = "";
+  document.getElementById('key-claude').value = "";
+  document.getElementById('key-openai').value = "";
+  document.getElementById('key-doubao').value = "";
+  document.getElementById('key-qwen').value   = "";
+  document.getElementById('doubao-model').value = "";
+  updateProviderPill();
+  showToast('已清除');
+}
+
+/* =====================================================
+ * UPLOAD
+ * ===================================================== */
+const uploadZone = document.getElementById('upload-zone');
+const fileInput = document.getElementById('file-input');
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => {
+  e.preventDefault();
+  uploadZone.classList.add('drag');
+});
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadZone.classList.remove('drag');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+/* ---------- Paste support (active on upload screens 2, 5, 7) ---------- */
+document.addEventListener('paste', (e) => {
+  const mainUploadActive = document.querySelector('.screen[data-screen="2"]').classList.contains('active');
+  const revUploadActive = document.querySelector('.screen[data-screen="5"]').classList.contains('active');
+  const s3UploadActive = document.querySelector('.screen[data-screen="7"]')?.classList.contains('active');
+  if (!mainUploadActive && !revUploadActive && !s3UploadActive) return;
+
+  // ignore paste into textareas / inputs
+  const target = e.target;
+  const tag = target?.tagName;
+  if (tag === 'TEXTAREA' || tag === 'INPUT') return;
+
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type && item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) {
+        const namedFile = (!file.name || file.name === 'image.png')
+          ? new File([file], `pasted-${Date.now()}.png`, { type: file.type })
+          : file;
+        if (mainUploadActive) handleFile(namedFile);
+        else if (revUploadActive) handleReverseFile(namedFile);
+        else if (s3UploadActive) handleS3File(namedFile);
+        e.preventDefault();
+        showToast('已粘贴图片');
+        return;
+      }
+    }
+  }
+});
+
+async function handleFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件', 'err');
+    return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    showToast('图片大于 20MB，请压缩后上传', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    state.image.dataUrl = dataUrl;
+    state.image.base64 = base64;
+    state.image.mime = "image/jpeg";
+    state.image.filename = file.name;
+    // Show preview state instead of auto-running
+    showPreviewState(file);
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+    console.error(e);
+  }
+}
+
+function showPreviewState(file) {
+  document.getElementById('upload-empty-state').style.display = 'none';
+  document.getElementById('upload-back-row').style.display = 'none';
+  document.getElementById('upload-preview-state').style.display = 'block';
+  document.getElementById('preview-img').src = state.image.dataUrl;
+  document.getElementById('preview-filename').textContent = file.name || 'pasted-image.png';
+  const sizeKB = Math.round(file.size / 1024);
+  const sizeStr = sizeKB > 1024 ? (sizeKB / 1024).toFixed(1) + ' MB' : sizeKB + ' KB';
+  document.getElementById('preview-size').textContent = sizeStr + ' · 原图已自动压缩到 1280px 以内';
+}
+
+function resetUpload() {
+  document.getElementById('upload-empty-state').style.display = 'block';
+  document.getElementById('upload-back-row').style.display = 'flex';
+  document.getElementById('upload-preview-state').style.display = 'none';
+  document.getElementById('file-input').value = ''; // allow re-selecting same file
+  state.image = { dataUrl: null, base64: null, mime: "image/jpeg", filename: "" };
+}
+
+function goToUpload() {
+  resetUpload();
+  go(2);
+}
+
+function confirmUpload() {
+  if (!state.image.base64) {
+    showToast('没有图片', 'err');
+    return;
+  }
+  document.getElementById('canvas-img').src = state.image.dataUrl;
+  document.getElementById('canvas-caption').textContent = "uploaded · " + state.image.filename;
+  go(3);
+  runDiagnosis();
+}
+
+function resizeImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let { width, height } = img;
+        const scale = Math.min(1, MAX_IMG_DIM / Math.max(width, height));
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', IMG_QUALITY);
+        const base64 = dataUrl.split(',')[1];
+        resolve({ dataUrl, base64 });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* =====================================================
+ * AI PROMPTS (the "brain" of the coach)
+ * ===================================================== */
+
+const DIAGNOSIS_SYSTEM = `你是中国乙女恋爱手游（恋与深空、光与夜之恋、未定事件簿系）主美的 AI 提示词助手。
+
+用户是团队里的设计师，他刚抽好一张图，想用 Flux Klein 做"整图优化"——不改构图，只优化光影、材质、细节、氛围。
+
+---
+
+**第一件事：判断图类型**。不同类型评审标准完全不一样，不要套错。
+
+类型有四种：
+- **scene · 场景图**：以环境/建筑/背景为主体，人物占小部分或不出现
+- **standing · 立绘**：单人站桩，背景干净或透明，动作中性，用于游戏内切换
+- **single · 单人图**：单个角色为主体，有构图氛围有光影（插画/CG/剧情图）
+- **double · 双人图**：两个角色互动，有构图氛围
+
+**判断这个字段必须准**。错了后面全错。
+
+---
+
+**🚨 铁律：不同类型用不同词汇，违反则整条诊断失效 🚨**
+
+**如果 image_type 是 single / double / standing（角色类）**，**绝对禁止**在 observations 和任何 why 字段中出现以下词汇：
+- "立绘位" / "立绘留白" / "立绘预留空间" / "立绘站位"
+- "下三分之一留白" / "下方预留"
+- "前中后景层次分明" / "前中后景层次"
+- 任何把"立绘"当背景图要素的描述
+
+**如果 image_type 是 scene（场景图）**，**绝对禁止**在 observations 和任何 why 字段中出现以下词汇：
+- "人物是视觉中心" / "角色为主体"
+- 大段描述某个角色外貌（角色不是场景图的主体）
+
+写完后在脑子里自检一遍：observations 里用的词，和 image_type 匹不匹？不匹直接重写。
+
+---
+
+**不同类型的评审锚点**（严格区分，不许混用）：
+
+**场景图**专属锚点：
+- 画面下三分之一留立绘站位
+- 前中后景层次分明
+- 平视镜头
+- 建筑/家具硬质3D体积 vs 植物/织物厚涂笔触
+
+**角色类**（立绘 / 单人图 / 双人图）的锚点：
+- 人物是视觉中心（**禁止**在诊断里提"留立绘位"——角色图本身就是主体）
+- **禁止**提"前中后景层次"——这是场景图专用词
+- 人物面部五官 / 皮肤 / 头发 / 服装材质的刻画
+- 戏剧性光影烘托情绪
+- 背景是衬托
+
+**所有类型共通**的美学锚点：
+- 高品质厚涂数字绘画质感，颜色饱和清透
+- 绝对无黑色描边轮廓线
+- 暗部透环境色冷暖交织，绝不死黑
+- 拒绝照片级写实、拒绝扁平线稿填色
+
+---
+
+**返回 JSON**：
+
+{
+  "image_type": "scene" | "standing" | "single" | "double",
+  "scene_description": "对整张图做完整的中文自然语言反推。角色图要着重描述人物（外貌/服装/姿态/情绪/表情），场景只作为衬托简要提到；场景图反过来。200-350 字。这段之后会作为 Flux Klein prompt 的开头，让 Klein 知道要保留什么。",
+  "observations": "一句话紧扣这张图的类型说你看到的主要情况。场景图说构图时间光影；角色图说角色氛围情绪；立绘说姿态服装。15-40 字。",
+  "diagnosis": [
+    {
+      "id": "face",
+      "title": "面部五官精细度",
+      "why": "指向图里具体哪个地方说原因，12-30 字",
+      "default_checked": true
+    }
+  ]
+}
+
+**candidate 项参考**（只选**适合这张图 + 这个类型**的，不是全选）：
+- face · 面部五官精细度（角色类优先）
+- skin · 皮肤质感与光感（角色类）
+- hair · 头发材质与光感（角色类）
+- expression · 情绪张力与表情（角色类）
+- cloth · 布料材质层次
+- hands · 手部解剖与比例
+- atmosphere · 环境光粒子与氛围光
+- depth · 背景景深与柔和散景
+- color_grading · 电影级色彩分级与对比度
+- volumetric_light · 体积光与丁达尔效应（场景图优先）
+- material · 材质区分度（硬质 vs 柔性）
+- composition_layers · 前中后景层次（**仅场景图**可出现）
+- background · 背景氛围烘托（角色类：背景对人物的衬托）
+
+你也可以自行补充其它 id（英文 snake_case）。
+
+---
+
+**判断原则**：
+- 画面里没露出的部位不勾（没露手就不勾 hands）
+- 这张图已经做得够好的不勾
+- why 要指向图里的具体位置/具体问题，不要套话
+- **绝对不要**把场景图专用的锚点硬套到角色图上（反之亦然）
+- default_checked: 这张图明显可以从这一项获益 = true
+- 至少 3 项 default_checked，至多 8 项候选
+
+只返回 JSON，不要其它文字、不要 markdown 代码块。`;
+
+
+const GENERATE_SYSTEM = `你是中国乙女恋爱手游主美的 AI 提示词助手。
+
+用户刚上传了一张图，你之前已经分析过并给出了 scene_description 和 image_type。用户勾选了若干优化方向，还补充了光影需求。现在请你写出 Flux Klein 整图优化 prompt。
+
+---
+
+**根据 image_type 调整用词**（这一点非常关键，用错了主美会很生气）：
+
+如果 image_type 是 **scene（场景图）**：
+- 反推段落可以强调"前中后景层次"、"下三分之一留立绘位"、建筑vs植物的材质对比
+- 增强段可以写体积光/丁达尔、环境氛围
+
+如果 image_type 是 **single / double / standing（角色类）**：
+- 反推段落**重点描述人物**（外貌/服装/姿态/情绪），背景作为衬托简要提到
+- **绝对不要**写"留立绘位"、"前中后景层次"——这是场景图专用词，角色图写了就错
+- 增强段着重面部/皮肤/头发/服装/情绪光影
+- 背景只说"衬托氛围"，不展开层次
+
+---
+
+**模板结构**：
+第1段：原图反推（根据 image_type 调整侧重点）
+第2段：勾选的增强项，翻译成 Klein 能听懂的具体描述
+第3段：用户补充需求的翻译
+第4段收口（**禁止使用抽象词**，要写具体视觉特征）：
+  - ❌ 不要写："整体提升至商业插画完成度"、"大师级"、"电影级质感"、"专业插画水准" 这类抽象词——Flux Klein 对这类词理解不稳定，容易变成通用 AI 风格
+  - ✅ 要写具体的视觉终态。根据这张图 + 勾选方向组合挑选，例如：
+    - "整体材质层次分明，光影过渡自然，细节密度充分"
+    - "色彩分级干净清透，高光通透，暗部冷暖交织不死黑"
+    - "笔触质感饱满，厚涂层次丰富，形体塑造扎实"
+    - "氛围感完整统一，光影关系戏剧性收束"
+  - 写 1-2 句即可，根据这张图最需要的方向选
+第5段固定铁律（**仅当 userText 里 strict_lockdown 为 true 时输出**）："保持原图构图、人物位置、角色设计完全一致。"
+- strict_lockdown = true → 必须输出第5段
+- strict_lockdown = false → **跳过第5段**，不要输出这类锁定铁律
+
+**重要**：以上是要输出给 Flux Klein 的 prompt 内容。不要把"不用写质量和风格提示词"这种**元指令**写进最终 prompt，那是告诉你（写 prompt 的 AI）怎么写的，不是给 Klein 看的。
+
+---
+
+**用词原则**：
+- 全中文自然语言
+- 不要加质量词（best quality / masterpiece）或风格词（anime / realistic）——画风 LoRA 已经锁了风格
+- 把抽象转成具体：
+  - "加光" → "柔和的轮廓光与空气中的氛围光粒子"
+  - "更有氛围" → "暗部透出环境色冷暖交织 / 戏剧性体积光"
+  - "细腻一点" → "精修面部五官解剖，细腻眼部刻画"
+  - "光影戏剧性" → "强化侧逆光的体积感 / 增强明暗对比"
+- 避免黑色描边、勾线、线稿这类词（画风锚点禁止）
+- 不要改构图、不要换角色、不要换场景
+
+---
+
+**输出 JSON**：
+
+{
+  "prompt_lines": [
+    {"text": "一行 prompt 内容", "note_id": "opening"},
+    ...
+  ],
+  "notes": [
+    {
+      "id": "opening",
+      "html": "为什么这么写。用大白话，像主美在边上讲解。可以用 <span class='quote'>xxxx</span> 高亮 prompt 里的关键词。再用 <span class='why'>补充为什么</span> 加一句补充。"
+    }
+  ]
+}
+
+**注释写作风格**（非常重要，这是主美带徒弟的语气）：
+- 短、具体、有因果
+- 告诉他"为什么这么写"而不是"这是什么意思"
+- 指出 Klein 的特点：容易动构图 / 抽象词听不懂 / 风格词叠多会糊
+- 可以引用主美的"口头禅"：暗部不死黑、无描边、下三分之一留位（仅场景图）
+
+**note_id 规则**：
+- "opening" → 对应第1段反推
+- "enhance" → 对应第2段增强项（可以多条 prompt_lines 共用）
+- "supplement" → 用户补充需求的翻译
+- "polish" → 第4段具体视觉终态那一句（不是"商业插画完成度"那种抽象词）
+- "lockdown" → 结尾保持构图不变那句
+- 需要的话可以拆更细，但要对应得上
+
+每个 note_id 在 notes 数组里只出现一次。
+
+只返回 JSON，不要其它文字、不要 markdown 代码块。`;
+
+/* =====================================================
+ * AI PROVIDERS (unified interface)
+ * ===================================================== */
+
+async function callAI({ systemPrompt, userText, imageBase64 }) {
+  const provider = state.provider;
+  const key = state.keys[provider];
+  if (!key) throw new Error(`未配置 ${provider} 的 API Key`);
+
+  if (provider === "gemini") return callGemini(key, systemPrompt, userText, imageBase64);
+  if (provider === "claude") return callClaude(key, systemPrompt, userText, imageBase64);
+  if (provider === "openai") return callOpenAI(key, systemPrompt, userText, imageBase64);
+  if (provider === "doubao") return callDoubao(key, systemPrompt, userText, imageBase64);
+  if (provider === "qwen")   return callQwen(key, systemPrompt, userText, imageBase64);
+  throw new Error("Unknown provider: " + provider);
+}
+
+/* ------- Gemini ------- */
+async function callGemini(key, systemPrompt, userText, imageBase64) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODELS.gemini}:generateContent?key=${encodeURIComponent(key)}`;
+  const parts = [];
+  if (imageBase64) {
+    parts.push({ inline_data: { mime_type: "image/jpeg", data: imageBase64 } });
+  }
+  parts.push({ text: userText });
+  const body = {
+    systemInstruction: { parts: [{ text: systemPrompt }] },
+    contents: [{ role: "user", parts }],
+    generationConfig: {
+      temperature: 0.7,
+      responseMimeType: "application/json"
+    }
+  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Gemini API ${res.status}: ${errText.slice(0,400)}`);
+  }
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "";
+  if (!text) throw new Error("Gemini 返回为空: " + JSON.stringify(data).slice(0,300));
+  return text;
+}
+
+/* ------- Claude ------- */
+async function callClaude(key, systemPrompt, userText, imageBase64) {
+  const url = "https://api.anthropic.com/v1/messages";
+  const content = [];
+  if (imageBase64) {
+    content.push({
+      type: "image",
+      source: { type: "base64", media_type: "image/jpeg", data: imageBase64 }
+    });
+  }
+  content.push({ type: "text", text: userText });
+  const body = {
+    model: MODELS.claude,
+    max_tokens: 4000,
+    system: systemPrompt,
+    messages: [{ role: "user", content }]
+  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Claude API ${res.status}: ${errText.slice(0,400)}`);
+  }
+  const data = await res.json();
+  const text = data?.content?.filter(c => c.type === "text").map(c => c.text).join("") || "";
+  if (!text) throw new Error("Claude 返回为空: " + JSON.stringify(data).slice(0,300));
+  return text;
+}
+
+/* ------- OpenAI ------- */
+async function callOpenAI(key, systemPrompt, userText, imageBase64) {
+  const url = "https://api.openai.com/v1/chat/completions";
+  const userContent = [];
+  if (imageBase64) {
+    userContent.push({
+      type: "image_url",
+      image_url: { url: "data:image/jpeg;base64," + imageBase64 }
+    });
+  }
+  userContent.push({ type: "text", text: userText });
+  const body = {
+    model: MODELS.openai,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userContent }
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.7,
+    max_tokens: 4000
+  };
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`OpenAI API ${res.status}: ${errText.slice(0,400)}`);
+  }
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content || "";
+  if (!text) throw new Error("OpenAI 返回为空: " + JSON.stringify(data).slice(0,300));
+  return text;
+}
+
+/* ------- OpenAI-compatible helper (豆包 / 千问 都用 OpenAI 兼容格式) ------- */
+async function callOpenAICompat({ url, key, model, systemPrompt, userText, imageBase64, providerName }) {
+  const userContent = [];
+  if (imageBase64) {
+    userContent.push({
+      type: "image_url",
+      image_url: { url: "data:image/jpeg;base64," + imageBase64 }
+    });
+  }
+  userContent.push({ type: "text", text: userText });
+  const body = {
+    model,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userContent }
+    ],
+    response_format: { type: "json_object" },
+    temperature: 0.7,
+    max_tokens: 4000
+  };
+  let res;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+      body: JSON.stringify(body)
+    });
+  } catch (e) {
+    // fetch 抛 TypeError 一般是 CORS / 网络 / 证书问题
+    throw new Error(`${providerName} 调不通（可能浏览器跨域被挡）：${e.message}。国内两家 API 对浏览器直连的支持不稳定，建议改用 Gemini / Claude / OpenAI。`);
+  }
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`${providerName} API ${res.status}: ${errText.slice(0,400)}`);
+  }
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content || "";
+  if (!text) throw new Error(`${providerName} 返回为空: ` + JSON.stringify(data).slice(0,300));
+  return text;
+}
+
+/* ------- 豆包 (火山方舟，OpenAI 兼容) ------- */
+async function callDoubao(key, systemPrompt, userText, imageBase64) {
+  return callOpenAICompat({
+    url: "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
+    key,
+    model: state.doubaoModel || MODELS.doubao,
+    systemPrompt, userText, imageBase64,
+    providerName: "豆包"
+  });
+}
+
+/* ------- 千问 (阿里云百炼，OpenAI 兼容) ------- */
+async function callQwen(key, systemPrompt, userText, imageBase64) {
+  return callOpenAICompat({
+    url: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+    key,
+    model: MODELS.qwen,
+    systemPrompt, userText, imageBase64,
+    providerName: "千问"
+  });
+}
+
+/* ------- JSON extraction (robust against fences) ------- */
+function extractJSON(text) {
+  if (!text) throw new Error("返回为空");
+  let t = text.trim();
+  // strip markdown fences
+  t = t.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '');
+  // try direct parse
+  try { return JSON.parse(t); } catch(e) {}
+  // try to find first { ... last }
+  const first = t.indexOf('{');
+  const last = t.lastIndexOf('}');
+  if (first >= 0 && last > first) {
+    try { return JSON.parse(t.slice(first, last+1)); } catch(e) {}
+  }
+  throw new Error("无法解析 JSON: " + t.slice(0, 300));
+}
+
+/* =====================================================
+ * FLOW: DIAGNOSIS
+ * ===================================================== */
+async function runDiagnosis() {
+  const loading = document.getElementById('diag-loading');
+  const subEl = document.getElementById('diag-loading-sub');
+  const content = document.getElementById('diag-content');
+  loading.style.display = 'flex';
+  subEl.textContent = `Using ${providerLabel()} · ${MODELS[state.provider]}`;
+  content.innerHTML = '';
+  document.getElementById('supplement-wrap').style.display = 'none';
+  document.getElementById('lockdown-toggle-wrap').style.display = 'none';
+  document.getElementById('diag-actions').style.display = 'none';
+
+  try {
+    const raw = await callAI({
+      systemPrompt: DIAGNOSIS_SYSTEM,
+      userText: "这是我刚抽到的构图草图。请按照系统指令，帮我分析并给出诊断。",
+      imageBase64: state.image.base64
+    });
+    const parsed = extractJSON(raw);
+    if (!parsed.scene_description || !Array.isArray(parsed.diagnosis)) {
+      throw new Error("返回 JSON 结构不对: " + JSON.stringify(parsed).slice(0, 300));
+    }
+    state.diagnosis = parsed;
+    renderDiagnosis(parsed);
+    document.getElementById('supplement-wrap').style.display = 'block';
+    document.getElementById('lockdown-toggle-wrap').style.display = 'block';
+    document.getElementById('diag-actions').style.display = 'flex';
+    document.getElementById('strict-lockdown').checked = true; // reset default
+  } catch (err) {
+    console.error(err);
+    content.innerHTML = `
+      <div class="error-box">
+        <div class="title">读图失败 · Something went wrong</div>
+        可能是 API Key 无效、网络问题、或者返回格式异常。你可以：
+        <ul style="margin:8px 0 0 20px;padding:0;font-size:13px;">
+          <li>检查 <a href="#" onclick="openSettings();return false;" style="color:var(--accent)">设置里的 API Key</a></li>
+          <li>切换到另一家 AI 试试</li>
+          <li>重新上传图片</li>
+        </ul>
+        <pre>${escapeHTML(err.message)}</pre>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="goToUpload()"><span class="arrow">←</span> 重新上传</button>
+        <button class="btn" onclick="runDiagnosis()">重试 <span class="arrow">↻</span></button>
+      </div>
+    `;
+  } finally {
+    loading.style.display = 'none';
+  }
+}
+
+function renderDiagnosis(d) {
+  const content = document.getElementById('diag-content');
+  const items = d.diagnosis.map((it, idx) => `
+    <li class="${it.default_checked ? 'on' : ''}" data-id="${escapeHTML(it.id)}" data-idx="${idx}">
+      <span class="box"></span>
+      <div class="body">
+        <div class="title">${escapeHTML(it.title)}</div>
+        <div class="why">${escapeHTML(it.why || '')}</div>
+      </div>
+    </li>
+  `).join('');
+
+  content.innerHTML = `
+    <div class="ai-intro">
+      <span class="tag">AI Diagnosis</span>
+      ${escapeHTML(d.observations || '我看了这张图。')}
+      以下是建议的优化方向，你勾一下要让 Flux Klein 处理哪些：
+    </div>
+    <ul class="checklist" id="checklist">${items}</ul>
+  `;
+
+  content.querySelectorAll('#checklist li').forEach(li => {
+    li.addEventListener('click', () => li.classList.toggle('on'));
+  });
+}
+
+function providerLabel() {
+  return { gemini: "Gemini", claude: "Claude", openai: "OpenAI", doubao: "豆包", qwen: "千问" }[state.provider];
+}
+
+/* =====================================================
+ * FLOW: GENERATE PROMPT
+ * ===================================================== */
+async function generatePrompt() {
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 prompt 中...';
+
+  // gather input
+  const selected = [];
+  document.querySelectorAll('#checklist li.on').forEach(li => {
+    const idx = parseInt(li.dataset.idx);
+    const item = state.diagnosis.diagnosis[idx];
+    if (item) selected.push({ id: item.id, title: item.title, why: item.why });
+  });
+  const supplement = document.getElementById('supplement').value.trim();
+  const strictLockdown = document.getElementById('strict-lockdown').checked;
+
+  if (selected.length === 0 && !supplement) {
+    btn.disabled = false;
+    btn.innerHTML = '生成 Flux Klein Prompt <span class="arrow">→</span>';
+    showToast('请至少勾一项或补充需求', 'err');
+    return;
+  }
+
+  const userText = `[image_type]
+${state.diagnosis.image_type || "unknown"}
+
+[scene_description]
+${state.diagnosis.scene_description}
+
+[用户勾选的优化方向]
+${selected.map(s => `- ${s.title}（why: ${s.why}）`).join('\n') || '（无）'}
+
+[用户补充需求]
+${supplement || '（无补充）'}
+
+[strict_lockdown]
+${strictLockdown ? 'true · 必须输出第5段"保持原图构图、人物位置、角色设计完全一致"这句铁律' : 'false · 不要输出锁定构图的铁律，允许 Klein 在保持主体和氛围的前提下适度自由发挥'}
+
+请按系统指令写出 Flux Klein 整图优化 prompt 与注释，返回 JSON。记得根据 image_type 调整反推段落的侧重点——角色类图不要写"留立绘位"和"前中后景层次"。`;
+
+  try {
+    const raw = await callAI({
+      systemPrompt: GENERATE_SYSTEM,
+      userText: userText,
+      imageBase64: state.image.base64
+    });
+    const parsed = extractJSON(raw);
+    if (!Array.isArray(parsed.prompt_lines) || !Array.isArray(parsed.notes)) {
+      throw new Error("返回 JSON 结构不对");
+    }
+    // Fallback: if user unchecked strict lockdown but AI still outputs the lockdown line, remove it
+    if (!strictLockdown) {
+      parsed.prompt_lines = parsed.prompt_lines.filter(l => {
+        if (l.note_id === 'lockdown') return false;
+        // also catch by content (in case AI misassigned note_id)
+        if (/保持.*构图.*完全一致|保持原图构图、人物位置、角色设计完全一致/.test(l.text || '')) return false;
+        return true;
+      });
+      parsed.notes = parsed.notes.filter(n => n.id !== 'lockdown');
+    }
+    state.generated = parsed;
+    renderOutput(parsed);
+    go(4);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0,100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成 Flux Klein Prompt <span class="arrow">→</span>';
+  }
+}
+
+function renderOutput(g) {
+  const out = document.getElementById('output-content');
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+
+  const promptLinesHTML = g.prompt_lines.map(l => `
+    <div class="line anno-target" data-note="${escapeHTML(l.note_id || '')}">${escapeHTML(l.text || '')}</div>
+  `).join('');
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  out.innerHTML = `
+    <div class="prompt-card" id="prompt-card">
+      <span class="corner">${escapeHTML(providerTag)}</span>
+      <button class="copy-btn" onclick="copyPrompt()">复制</button>
+      ${promptLinesHTML}
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步建议：</strong>
+        把这段 prompt 贴到 Flux Klein，跑一遍看看效果。<br>
+        满意了，去 <b>Ⅲ · 局部精修</b> 继续精修；不满意回来调勾选项重跑。
+        <em style="font-style:italic;color:var(--ink-faint);">（Ⅲ 暂未开放）</em>
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(3)"><span class="arrow">←</span> 回去调整</button>
+        <button class="btn" onclick="goToUpload()">做下一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+
+  // wire up hover-linking
+  out.querySelectorAll('.prompt-card .line[data-note]').forEach(line => {
+    line.addEventListener('mouseenter', () => flashNote(line.dataset.note));
+  });
+  out.querySelectorAll('.notes li[data-note]').forEach(li => {
+    li.addEventListener('mouseenter', () => flashNote(li.dataset.note));
+  });
+}
+
+function flashNote(group) {
+  if (!group) return;
+  document.querySelectorAll(`.notes li[data-note="${group}"]`).forEach(el => {
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 1500);
+  });
+  document.querySelectorAll(`.prompt-card .line[data-note="${group}"]`).forEach(el => {
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 1500);
+  });
+}
+
+function copyPrompt() {
+  const lines = [...document.querySelectorAll('.prompt-card .line')].map(l => l.textContent.trim());
+  const text = lines.join('\n');
+  navigator.clipboard?.writeText(text);
+  showToast('Prompt 已复制');
+}
+
+/* =====================================================
+ * REVERSE INFERENCE TOOL
+ * ===================================================== */
+
+const REVERSE_SDXL_SYSTEM = `你是中国乙女游戏（恋与深空、光与夜之恋系）美术团队的图片反推工具。
+
+用户上传一张图，想得到 **SDXL 模型**（Illustrious / NoobAI 等动漫底模）的 **danbooru 风格 tag**。
+
+**输出 tag 规则**：
+- 英文 tag，逗号分隔
+- 多词 tag 用下划线连接（如 long_hair, blue_eyes, looking_at_viewer）
+- 按标准顺序：
+  1. 人数主体（1girl, 1boy, 2boys, solo, multiple_boys 等）
+  2. 构图/视角（upper_body, full_body, portrait, dutch_angle 等）
+  3. 姿势动作（standing, sitting, hand_on_face 等）
+  4. 外貌（hair_color+长度+造型、eye_color、skin、body_type）
+  5. 服装配饰（逐件描述，颜色+材质+款式）
+  6. 表情情绪（smile, serious, crying, blush 等）
+  7. 场景背景
+  8. 光影氛围（backlighting, sunset, cinematic_lighting 等）
+  9. 特殊细节元素
+  10. **最后追加质量词**：\`masterpiece, best quality, amazing quality, very aesthetic, absurdres\`（Illustrious / NoobAI 常用组合，写在所有内容 tag 之后）。工具的使用者可能是新手，必须帮他把质量词加上，不能省略。
+- 总共 30-60 个内容 tag + 末尾 5 个左右质量词
+- 不要 artist_name tag
+- 重点元素可以用 (tag:1.2) 权重，克制使用
+- 不要中文 tag
+
+**先判断图片类型**：scene / standing / single / double / other
+
+**返回 JSON**：
+
+{
+  "image_type": "scene/standing/single/double/other",
+  "observation": "一句话中文描述这张图。15-30 字。",
+  "prompt": "1girl, long_hair, blue_eyes, ..., masterpiece, best quality, amazing quality, very aesthetic, absurdres"
+}
+
+只返回 JSON，不要其他文字、不要 markdown 代码块。`;
+
+
+const REVERSE_FLUX_SYSTEM = `你是中国乙女游戏（恋与深空、光与夜之恋系）美术团队的图片反推工具。
+
+用户上传一张图，想得到 **Flux Klein 模型**的 **中文自然语言提示词**。团队有画风 LoRA 锁定风格，所以**只描述"图里有什么"，绝不描述"图是什么风格或什么媒介"**。
+
+**输出定位**：
+- 描述**内容**（人、物、环境、光、色），不描述**风格或媒介**
+- 像在陈述"我看到这张图里有什么"，而不是"这张图是什么风格"
+- 可以描述具体材质（丝绸光泽、金属反光、羊毛粗糙）这种客观事实，但不要描述整体画风（厚涂、数字绘画、油画感）
+
+**输出规则**：
+- 中文自然语言，一段流畅描述
+- 200-350 字
+- 角色类图（single/double/standing）重点描述人物：外貌/服装/姿态/情绪/表情/发型/配饰
+- 场景类图重点描述环境：建筑/植物/家具/前中后景/时段
+- 覆盖：主体 → 细节 → 环境衬托 → 光源方向 → 色调 → 具体材质
+
+**严格禁用词**（出现一个就算整条失败）：
+- 画风/媒介类：厚涂、数字绘画、插画、CG、2D、3D、动漫风、写实风、卡通、赛璐璐、油画感、水彩感、手绘感
+- 质量类：大师级、电影级、商业插画、专业插画、精致、高品质
+- 英文质量词：best quality、masterpiece、amazing quality、absurdres
+- 英文风格词：anime、realistic、illustration、painting
+- 反锚点：黑色描边、线稿、勾线、照片级写实、扁平填色
+- 抽象评价：氛围感、意境、高级感、叙事氛围
+
+**先判断图片类型**：scene / standing / single / double / other
+
+**返回 JSON**：
+
+{
+  "image_type": "scene/standing/single/double/other",
+  "observation": "一句话中文描述这张图。15-30 字。",
+  "prompt": "一段完整的中文自然语言描述，200-350 字。注意：不要以风格/媒介词开头（比如'厚涂数字绘画'），直接从内容开始描述。"
+}
+
+只返回 JSON，不要其他文字、不要 markdown 代码块。`;
+
+
+/* ---------- Upload handling for reverse flow ---------- */
+const revUploadZone = document.getElementById('rev-upload-zone');
+const revFileInput = document.getElementById('rev-file-input');
+if (revUploadZone && revFileInput) {
+  revUploadZone.addEventListener('click', () => revFileInput.click());
+  revUploadZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    revUploadZone.classList.add('drag');
+  });
+  revUploadZone.addEventListener('dragleave', () => revUploadZone.classList.remove('drag'));
+  revUploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    revUploadZone.classList.remove('drag');
+    if (e.dataTransfer.files[0]) handleReverseFile(e.dataTransfer.files[0]);
+  });
+  revFileInput.addEventListener('change', e => {
+    if (e.target.files[0]) handleReverseFile(e.target.files[0]);
+  });
+}
+
+/* ---------- Mode card selection ---------- */
+document.querySelectorAll('#rev-mode-cards .mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('#rev-mode-cards .mode-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.reverseMode = card.dataset.mode;
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+  });
+});
+
+async function handleReverseFile(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件', 'err');
+    return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    showToast('图片大于 20MB，请压缩后上传', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    state.reverseImage = { dataUrl, base64, mime: "image/jpeg", filename: file.name };
+    showReversePreview(file);
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+    console.error(e);
+  }
+}
+
+function showReversePreview(file) {
+  document.getElementById('rev-empty-state').style.display = 'none';
+  document.getElementById('rev-back-row').style.display = 'none';
+  document.getElementById('rev-preview-state').style.display = 'block';
+  document.getElementById('rev-preview-img').src = state.reverseImage.dataUrl;
+  document.getElementById('rev-preview-filename').textContent = file.name || 'pasted-image.png';
+  const sizeKB = Math.round(file.size / 1024);
+  const sizeStr = sizeKB > 1024 ? (sizeKB / 1024).toFixed(1) + ' MB' : sizeKB + ' KB';
+  document.getElementById('rev-preview-size').textContent = sizeStr;
+}
+
+function resetReverseUpload() {
+  const empty = document.getElementById('rev-empty-state');
+  const preview = document.getElementById('rev-preview-state');
+  const backRow = document.getElementById('rev-back-row');
+  const input = document.getElementById('rev-file-input');
+  if (empty) empty.style.display = 'block';
+  if (preview) preview.style.display = 'none';
+  if (backRow) backRow.style.display = 'flex';
+  if (input) input.value = '';
+  state.reverseImage = { dataUrl: null, base64: null, mime: "image/jpeg", filename: "" };
+}
+
+async function runReverse() {
+  if (!state.reverseImage.base64) {
+    showToast('没有图片', 'err');
+    return;
+  }
+  const btn = document.getElementById('rev-start-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 反推中...';
+
+  const mode = state.reverseMode;
+  const systemPrompt = (mode === 'sdxl') ? REVERSE_SDXL_SYSTEM : REVERSE_FLUX_SYSTEM;
+  const userText = "这是用户上传的图，请按系统指令反推出 prompt，返回 JSON。";
+
+  try {
+    const raw = await callAI({
+      systemPrompt,
+      userText,
+      imageBase64: state.reverseImage.base64
+    });
+    const parsed = extractJSON(raw);
+    if (!parsed.prompt) throw new Error("返回 JSON 没有 prompt 字段");
+    // Post-process: strip leading style/medium descriptors for Flux reverse
+    if (mode === 'flux' && parsed.prompt) {
+      parsed.prompt = stripLeadingStyleWords(parsed.prompt);
+    }
+    state.reverseResult = { ...parsed, mode };
+    renderReverseOutput();
+    go(6);
+  } catch (err) {
+    console.error(err);
+    showToast('反推失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '开始反推 <span class="arrow">→</span>';
+  }
+}
+
+function renderReverseOutput() {
+  const r = state.reverseResult;
+  const isSdxl = r.mode === 'sdxl';
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+  const modeTag = isSdxl ? 'SDXL · DANBOORU TAGS' : 'FLUX KLEIN · 自然语言';
+
+  const usageTip = isSdxl
+    ? `<b>怎么用：</b>把这段 tag 贴到 SDXL / Illustrious / NoobAI 的 positive prompt。末尾的质量词（<code>masterpiece, best quality, ...</code>）已经帮你加好了。如果你另外挂了画风 LoRA，LoRA 标签自己加在开头或结尾即可。根据需要可以手动调权重。`
+    : `<b>怎么用：</b>把这段描述直接作为 Flux Klein 的 prompt。画风和质量词不需要写——Flux Klein 画风由 LoRA 控制。如果要做整图优化，可以加一句"保持原图构图不变"。`;
+
+  const thumbHtml = state.reverseImage.dataUrl
+    ? `<img class="reverse-thumb" src="${state.reverseImage.dataUrl}" alt="" />`
+    : '';
+
+  const out = document.getElementById('rev-output-content');
+  out.innerHTML = `
+    <div class="reverse-observation">
+      ${thumbHtml}
+      <span class="tag">${escapeHTML(modeTag)}</span>
+      ${escapeHTML(r.observation || '')}
+      <div style="clear:both"></div>
+    </div>
+
+    <div class="reverse-output-card ${isSdxl ? 'tags' : ''}" id="reverse-prompt-card">
+      <span class="corner">${escapeHTML(providerTag)}</span>
+      <button class="copy-btn" onclick="copyReversePrompt()">复制</button>
+      ${escapeHTML(r.prompt)}
+    </div>
+
+    <div class="reverse-usage-tip">${usageTip}</div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        复制到你用的模型里去试试效果。不满意可以换另一种风格再反推一次。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(5)"><span class="arrow">←</span> 再来一张</button>
+        <button class="btn" onclick="go(1)">回到首页 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+}
+
+function copyReversePrompt() {
+  const text = state.reverseResult?.prompt || '';
+  if (!text) return;
+  navigator.clipboard?.writeText(text);
+  showToast('Prompt 已复制');
+}
+
+// Strip style/medium descriptor phrases that might appear at the start
+// of a Flux reverse prompt (AI sometimes can't help itself)
+function stripLeadingStyleWords(text) {
+  if (!text) return text;
+  let t = text.trim();
+  // Common lead-in style phrases to strip (Chinese)
+  // Matches patterns like "厚涂数字绘画，..." or "这是一幅厚涂质感的数字绘画。..."
+  const patterns = [
+    /^(这是|这张|画面是|画中是|图中是|图片是|图为)[^。，,.]*?(厚涂|数字绘画|插画|CG|油画|水彩|手绘|动漫|赛璐璐|扁平|写实|卡通)[^。，,.]*?[。，,.]\s*/,
+    /^(厚涂|数字绘画|插画|CG|油画|水彩|手绘|动漫|赛璐璐|扁平|写实|卡通)[^。，,.]*?(质感|风格|绘画|作品|风|感)[^。，,.]*?[，,]\s*/,
+    /^[^，,。.]{0,15}(厚涂|数字绘画|油画感|水彩感|手绘感|扁平线稿)[^，,。.]{0,10}[，,]\s*/,
+  ];
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const p of patterns) {
+      const before = t;
+      t = t.replace(p, '').trim();
+      if (t !== before) { changed = true; break; }
+    }
+  }
+  return t;
+}
+
+
+/* =====================================================
+ * STAGE Ⅲ · 局部精修
+ * ===================================================== */
+
+const S3_SYSTEM = `你是中国乙女游戏（恋与深空、光与夜之恋系）美术团队的 AI 提示词助手。
+
+用户要用 Flux Klein 做**局部精修**。场景有两种（userText 里会告诉你 mode）：
+
+**A · color_block（色块重绘）**
+用户在 WIP 图上画了块色块当占位（比如胸前一块暗红代表礼服），想让 Klein 把色块变成完成度高的内容，画面其它部分完全不动。
+
+**B · localized_enhance（局部精细化）**
+用户截出了图里某个局部（一个面部、一块布料、一只手），想增强精细度 / 调颜色 / 把 X 变成 Y。构图不变，其它内容不动。
+
+---
+
+**你的任务**：结合图 + 用户意图，写出对应模板的 Flux Klein prompt。
+
+---
+
+**核心理念**（主美亲自强调，违反就是错）：
+
+**Klein 会自己看图做设计决策。你写的 prompt 应该是方向性指令，不是设计说明书。**
+
+反例（❌ 过度指定，束缚 Klein）：
+> "重绘该区域，将其变为一条华丽繁复的珠宝项链。项链以精巧的黄金花丝工艺为基座，主吊坠为一颗水滴形切割的鸽血红宝石，周围环绕着细碎的钻石..."
+
+问题：列了花丝工艺、水滴切割、鸽血红宝石、细碎钻石这种设计说明书级别的细节——Klein 反而不知道该听哪条、还可能跟画面整体风格冲突。
+
+正例（✅ 方向 + 融入环境）：
+> "重绘女主角锁骨上方的项链区域，使其变为一条华丽的珠宝项链，自然融入整个画面的宫廷氛围。"
+
+给方向、给大感觉、明确"融入画面环境"，让 Klein 自己设计细节。
+
+**除非用户意图里明确要求了具体款式/材质**（比如"三串链子的项链"、"羊绒材质的红色大衣"），否则**严禁**自己追加花丝工艺、切割方式、宝石形状、刺绣纹样这类设计细节。
+
+---
+
+**Mode A（color_block）模板 · 精简版**：
+
+第1段 **action**：用这个格式：**"重绘 [区域的位置描述], 使其变为 [方向性目标], 自然融入整个画面环境"**
+- 区域描述要位置准确（"胸前"、"锁骨上方"、"腰部"）
+- 目标描述只写**大方向**（一条华丽项链 / 一件宫廷礼服 / 一顶繁复王冠 / 一条华贵披风）
+- "融入画面环境"是标配句式，不要省
+
+第2段 **hint**（可选，只在用户意图里有具体要求时才加）：用户意图里明确提到的约束，例如用户写"偏向暗红色系"、"材质偏金属"这种才加。用户没提就**不要写**这一段，宁缺毋滥。
+
+第3段 **lockdown**："保持画面其它部分和原图完全一致。"
+
+**Mode A 总共 2-3 行**，不要超过。
+
+---
+
+**Mode B（localized_enhance）模板**：
+
+第1段 **change**：用"[增强/调整/变换] [具体要改的东西] 的 [属性]"格式写出指令。
+- **不要**在前面加"画面主体是 XX"这种 subject 介绍句——用户可能传的是整张图，只想改其中一个元素，Klein 自己看图就知道；你加主体介绍会误导它。
+
+第2段 **detail**（可选，用户明确要求或很有必要时才写一句）：具体方向（如"材质区分度 / 色温偏暖"），**一句话**，不要展开成设计说明书。
+
+第3段 **lockdown**："保持原图构图、其它内容完全一致。"
+
+**Mode B 总共 2-3 行**。
+
+---
+
+**用词原则**：
+- 全中文自然语言
+- 抽象转具体（但别过度）：
+  - "精细度" → "精修细节与材质层次"（不是"花丝工艺+切割方式+光影折射"一串）
+  - "颜色调暖" → "色温向暖偏移"
+  - "变成丝绸" → "质感变为丝绸"
+
+**严格禁用词**：
+- 抽象虚词：大师级、电影级、商业插画完成度、专业插画水准、精致、高级感、氛围感
+- 英文质量词：best quality、masterpiece
+- 画风/媒介词（LoRA 锁了）：厚涂、数字绘画、插画、CG、油画感
+- 反锚点：黑色描边、线稿、勾线、照片级写实
+
+---
+
+**返回 JSON**：
+
+{
+  "mode_used": "color_block" 或 "localized_enhance",
+  "prompt_lines": [
+    {"text": "一行 prompt 内容", "note_id": "action / hint / lockdown（Mode A）或 change / detail / lockdown（Mode B）"}
+  ],
+  "notes": [
+    {
+      "id": "action",
+      "html": "为什么这么写。用大白话，像主美在边上讲解。可以用 <span class='quote'>xxx</span> 高亮 prompt 里的关键词。再用 <span class='why'>补充为什么</span> 加一句补充。"
+    }
+  ]
+}
+
+**注释写作风格**（像主美带徒弟的语气）：
+- 短、具体、有因果
+- 告诉他"为什么这么写"而不是"这是什么意思"
+- 特别强调"融入画面环境"这句的意义——它是给 Klein 的设计自由许可证
+- 主美的口头禅：别过度指定 / Klein 自己会看图 / 保持其它不变是保险栓
+
+每个 note_id 在 notes 数组里只出现一次。
+
+只返回 JSON，不要其他文字、不要 markdown 代码块。`;
+
+
+/* ---------- State init for s3 ---------- */
+state.s3 = { image: { dataUrl: null, base64: null, filename: "" }, mode: "color_block", result: null };
+
+/* ---------- Upload handling for s3 ---------- */
+const s3UploadZone = document.getElementById('s3-upload-zone');
+const s3FileInput = document.getElementById('s3-file-input');
+if (s3UploadZone && s3FileInput) {
+  s3UploadZone.addEventListener('click', () => s3FileInput.click());
+  s3UploadZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    s3UploadZone.classList.add('drag');
+  });
+  s3UploadZone.addEventListener('dragleave', () => s3UploadZone.classList.remove('drag'));
+  s3UploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    s3UploadZone.classList.remove('drag');
+    if (e.dataTransfer.files[0]) handleS3File(e.dataTransfer.files[0]);
+  });
+  s3FileInput.addEventListener('change', e => {
+    if (e.target.files[0]) handleS3File(e.target.files[0]);
+  });
+}
+
+/* ---------- S3 mode selection ---------- */
+document.querySelectorAll('#s3-mode-cards .mode-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('#s3-mode-cards .mode-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.s3.mode = card.dataset.mode;
+    const radio = card.querySelector('input[type="radio"]');
+    if (radio) radio.checked = true;
+    updateS3IntentHints();
+  });
+});
+
+function updateS3IntentHints() {
+  const mode = state.s3.mode;
+  const label = document.getElementById('s3-intent-label');
+  const hint = document.getElementById('s3-intent-hint');
+  const area = document.getElementById('s3-intent');
+  if (!label || !hint || !area) return;
+
+  if (mode === 'color_block') {
+    label.textContent = '告诉 Klein：画的是哪块？改成什么？';
+    hint.textContent = 'Intent · 区域位置 + 目标内容，越具体越准';
+    area.placeholder = '例：角色胸前的深红色色块，把它变成繁复金线刺绣的红色宫廷礼服胸甲，领口收紧，胸前有银饰扣件。';
+  } else {
+    label.textContent = '告诉 Klein：想做什么调整？';
+    hint.textContent = 'Intent · 增强/调整/变换 + 具体方向';
+    area.placeholder = '例：增强整张图的精细度与材质层次 / 把这块布料变成丝绸质感 / 把整体色调调暖一点。';
+  }
+}
+
+async function handleS3File(file) {
+  if (!file.type.startsWith('image/')) {
+    showToast('请上传图片文件', 'err');
+    return;
+  }
+  if (file.size > 20 * 1024 * 1024) {
+    showToast('图片大于 20MB，请压缩后上传', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    state.s3.image = { dataUrl, base64, mime: "image/jpeg", filename: file.name };
+    showS3Preview(file);
+    updateS3IntentHints();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+    console.error(e);
+  }
+}
+
+function showS3Preview(file) {
+  document.getElementById('s3-empty-state').style.display = 'none';
+  document.getElementById('s3-back-row').style.display = 'none';
+  document.getElementById('s3-preview-state').style.display = 'block';
+  document.getElementById('s3-preview-img').src = state.s3.image.dataUrl;
+  document.getElementById('s3-preview-filename').textContent = file.name || 'pasted-image.png';
+  const sizeKB = Math.round(file.size / 1024);
+  const sizeStr = sizeKB > 1024 ? (sizeKB / 1024).toFixed(1) + ' MB' : sizeKB + ' KB';
+  document.getElementById('s3-preview-size').textContent = sizeStr;
+}
+
+function resetS3Upload() {
+  const empty = document.getElementById('s3-empty-state');
+  const preview = document.getElementById('s3-preview-state');
+  const backRow = document.getElementById('s3-back-row');
+  const input = document.getElementById('s3-file-input');
+  if (empty) empty.style.display = 'block';
+  if (preview) preview.style.display = 'none';
+  if (backRow) backRow.style.display = 'flex';
+  if (input) input.value = '';
+  const intent = document.getElementById('s3-intent');
+  if (intent) intent.value = '';
+  state.s3.image = { dataUrl: null, base64: null, mime: "image/jpeg", filename: "" };
+}
+
+async function runS3Generate() {
+  if (!state.s3.image.base64) {
+    showToast('没有图片', 'err');
+    return;
+  }
+  const intent = document.getElementById('s3-intent').value.trim();
+  if (!intent) {
+    showToast('请先告诉 Klein 你要改什么', 'err');
+    return;
+  }
+
+  const btn = document.getElementById('s3-generate-btn');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 prompt 中...';
+
+  const mode = state.s3.mode;
+  const userText = `[mode]
+${mode}
+
+[用户意图]
+${intent}
+
+请按系统指令写出 Flux Klein 局部精修 prompt 与注释。注意看图把区域位置描准，不要自作主张扩大改动范围。返回 JSON。`;
+
+  try {
+    const raw = await callAI({
+      systemPrompt: S3_SYSTEM,
+      userText,
+      imageBase64: state.s3.image.base64
+    });
+    const parsed = extractJSON(raw);
+    if (!Array.isArray(parsed.prompt_lines) || !Array.isArray(parsed.notes)) {
+      throw new Error("返回 JSON 结构不对");
+    }
+    // Post-process: for Mode B, strip any leading "subject intro" line the AI still snuck in
+    if (mode === 'localized_enhance') {
+      const subjectIntroPatterns = [
+        /^画面(的)?主体(是|为)/,
+        /^图(中|里|片|画)(的)?主体(是|为)/,
+        /^这是一(张|幅)/,
+        /^图中(是|展示|描绘|画的是)/,
+        /^画面(中|里|内)(是|有|展示|描绘)/,
+      ];
+      parsed.prompt_lines = parsed.prompt_lines.filter((l, idx) => {
+        // Only strip if it's the subject line (by note_id) or matches pattern at the top
+        if (l.note_id === 'subject') return false;
+        if (idx === 0 && subjectIntroPatterns.some(p => p.test((l.text || '').trim()))) return false;
+        return true;
+      });
+      parsed.notes = parsed.notes.filter(n => n.id !== 'subject');
+    }
+    state.s3.result = parsed;
+    renderS3Output();
+    go(8);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成 Flux Klein Prompt <span class="arrow">→</span>';
+  }
+}
+
+function renderS3Output() {
+  const g = state.s3.result;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+  const modeTag = g.mode_used === 'color_block' ? '色块重绘' : '局部精细化';
+
+  const promptLinesHTML = g.prompt_lines.map(l => `
+    <div class="line anno-target" data-note="${escapeHTML(l.note_id || '')}">${escapeHTML(l.text || '')}</div>
+  `).join('');
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  const out = document.getElementById('s3-output-content');
+  out.innerHTML = `
+    <div class="prompt-card" id="s3-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · ' + modeTag)}</span>
+      <button class="copy-btn" onclick="copyS3Prompt()">复制</button>
+      ${promptLinesHTML}
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 prompt 贴到 Flux Klein，用 img2img 或 inpaint 模式跑。<br>
+        满意了可以再局部精修一次改别的地方；要整体再精细化就回 Ⅱ。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(7)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(7)">再来一次 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+
+  out.querySelectorAll('#s3-prompt-card .line[data-note]').forEach(line => {
+    line.addEventListener('mouseenter', () => flashS3Note(line.dataset.note));
+  });
+  out.querySelectorAll('.notes li[data-note]').forEach(li => {
+    li.addEventListener('mouseenter', () => flashS3Note(li.dataset.note));
+  });
+}
+
+function flashS3Note(group) {
+  if (!group) return;
+  document.querySelectorAll(`#s3-output-content .notes li[data-note="${group}"]`).forEach(el => {
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 1500);
+  });
+  document.querySelectorAll(`#s3-prompt-card .line[data-note="${group}"]`).forEach(el => {
+    el.classList.add('flash');
+    setTimeout(()=>el.classList.remove('flash'), 1500);
+  });
+}
+
+function copyS3Prompt() {
+  const lines = [...document.querySelectorAll('#s3-prompt-card .line')].map(l => l.textContent.trim());
+  const text = lines.join('\n');
+  navigator.clipboard?.writeText(text);
+  showToast('Prompt 已复制');
+}
+
+/* ---------- Initialize s3 hints on load ---------- */
+updateS3IntentHints();
+
+
+/* =====================================================
+ * STAGE Ⅰ · 抽图 (Scene via 香蕉 + Character via SDXL)
+ * ===================================================== */
+
+const S1_SCENE_SYSTEM = `你是中国乙女手游（恋与深空 / 光与夜之恋 / 未定事件簿系）美术团队的场景抽图 prompt 助手。用户要用 **Nano Banana Pro（团队俗称"香蕉"）** 抽一张场景图，你帮他写出完整的中文 prompt。
+
+---
+
+**风格锚点**（团队铁律，每次都要贯彻）：
+- 恋与深空、光与夜之恋、未定事件簿同款的中国乙女手游背景原画风格
+- 高品质厚涂（Impasto）数字绘画质感，颜色饱和清透
+- 光影戏剧性强，空气中弥漫通透体积光 / 丁达尔效应
+- 绝对无黑色描边轮廓线 —— 所有物体边界靠厚涂色块与光影衰减自然过渡
+- 植物叶片、织物窗帘、花卉等有机元素用手绘厚涂笔触
+- 建筑结构、家具用硬质 3D 体积感
+- 色彩搭配高级感，**摒弃死板高饱和或土气撞色**，多用复古 / 灰调 / 冷暖高级调和色
+- 暗部透出环境色冷暖交织，绝不死黑
+
+**构图铁律**：
+- 水平平视镜头（禁止强烈俯视仰视）
+- 竖版 9:16 构图（除非用户指定其它）
+- 当用户 standing_space = true：**画面下三分之一留出极为宽敞干净的地面 / 地板区域**，给立绘站位
+- 当 standing_space = false：不强调留白
+- 前中后景层次分明
+
+---
+
+**Prompt 结构**（必须按这个顺序输出）：
+
+**第1段 opening**（固定开头）：
+"请以《恋与深空》《光与夜之恋》《未定事件簿》同款中国乙女手游背景原画的风格绘制以下场景："
+
+**第2段 scene_type**（定调）：
+描述整体环境类型、氛围、时间、锁定平视镜头视角，以及竖版 9:16 构图。如果 standing_space = true 加一句"画面下三分之一留出宽敞地面给立绘站位"。
+
+**第3段 space**（主体与空间）：
+按从前到后的物理逻辑描述建筑构造与陈设，**强调高级时尚设计感**。区分**硬质 3D 体积材质**（建筑 / 家具）和**需要厚涂手绘笔触的柔性材质**（植物 / 织物 / 花卉），描写时自然标注。
+
+**第4段 detail**（丰富细节）：
+补充生活感碎片（散落的信件、精致摆件、花瓶里枯萎的花等），增加场景真实性和叙事感。
+
+**第5段 closing_style**（固定收尾句）：
+"画面整体为电影级高品质厚涂数字绘画风格，颜色饱和清透，光影戏剧性强。绝对禁止任何形式的黑色描边、勾线或线稿填色，物体边界靠纯正的高品质厚涂色块与光影自然过渡。整体色调偏 [根据场景选 X 色系与 Y 色系的克制搭配]，有极其浓郁且清透的专业游戏原画师手绘笔触质感。"
+
+最后一段的色调搭配要**根据场景真实选择**（比如黄昏教堂 → "暖橙与深蓝紫的克制搭配"；夜晚室内 → "冷蓝与暖橙烛光的冷暖呼应"）。
+
+---
+
+**处理用户上传的参考图**：
+如果用户给了参考图，每张可能表达建筑风格 / 色彩氛围 / 特定元素 / 光影感觉。读图后把观察到的具体视觉元素**融入到描述里**。不要写"参考图1"，要把图里的元素自然融合进 space / detail / 色调里。
+
+---
+
+**严格禁用词**（出现一个算整条失败）：
+- 审核触发词：judge、prison、legal、court、oxblood。用户描述若涉及，用中性替代："法官" → "身着庄严服饰者"、"监狱" → "高墙院落"、"血红" → "深酒红"、"法庭" → "议事厅"
+- "seen from the doorway"（会引入不该有的门框）
+- photorealistic / realistic / 写实 / 真实感
+- cel-shading / 扁平 / 线稿 / 漫画
+
+---
+
+**返回 JSON**：
+
+{
+  "prompt_lines": [
+    {"text": "请以《恋与深空》...", "note_id": "opening"},
+    {"text": "......", "note_id": "scene_type"},
+    {"text": "......", "note_id": "space"},
+    {"text": "......", "note_id": "detail"},
+    {"text": "画面整体为电影级......", "note_id": "closing_style"}
+  ],
+  "notes": [
+    {"id": "opening", "html": "..."},
+    {"id": "scene_type", "html": "..."},
+    {"id": "space", "html": "..."},
+    {"id": "detail", "html": "..."},
+    {"id": "closing_style", "html": "..."}
+  ]
+}
+
+**注释风格**（主美带徒弟的语气，短、具体、有因果）：
+- opening 为什么每次都要有（锁定团队画风的身份标签）
+- scene_type 为什么要锁镜头和构图（Banana 容易乱来）
+- space 为什么要区分硬质 vs 柔性材质（不区分整张会糊成一片）
+- 色调选择的思路
+- 为什么不写 realistic / 写实类的词
+
+只返回 JSON，不要其他文字、不要 markdown 代码块。`;
+
+
+const S1_CHAR_SYSTEM = `你是中国乙女手游美术团队的角色抽图 prompt 助手。用户要用 **SDXL（Illustrious / NoobAI 等动漫底模）** 抽一张角色图，你帮他写 danbooru 风格 tag prompt。
+
+**团队已经把画风 LoRA 整合进底模了**，所以你不需要管风格，专注内容即可。
+
+---
+
+**输入**：
+- 1-4 张参考图，每张会告诉你它代表什么角色（男主 / 女主 / 主角 / 配角）或场景参考 / 其它参考
+- 用户描述：时间 / 地点 / 动作 / 姿势 / 情绪 / 氛围 —— **可能不全，缺的根据图和描述合理补充**
+
+**输出**：danbooru 风格英文 tag 字符串，逗号分隔。
+
+---
+
+**Tag 标准顺序**：
+
+1. 人数（\`1girl\` / \`1boy\` / \`2boys\` / \`1boy, 1girl\` / \`solo\` 等）
+2. 构图 / 视角（\`upper_body\` / \`full_body\` / \`cowboy_shot\` / \`from_above\` / \`from_side\` / \`dutch_angle\` 等）
+3. 姿势动作（\`standing\` / \`sitting\` / \`hugging\` / \`looking_at_another\` / \`hand_on_own_chest\` 等）
+4. 每个角色的外貌（根据参考图**忠实提取**，不能瞎编）：
+   - 发色 + 发型（\`long_hair\`, \`brown_hair\`, \`wavy_hair\`, \`hair_between_eyes\` 等）
+   - 眼睛（\`blue_eyes\`, \`slit_pupils\` 等）
+   - 皮肤 / 体型（\`pale_skin\`, \`fair_skin\` 等）
+5. 每个角色的服装配饰（逐件：颜色 + 款式 + 材质）
+6. 表情情绪（\`gentle_smile\` / \`serious\` / \`teary_eyes\` / \`closed_eyes\` / \`blush\` 等）
+7. 场景环境（根据场景参考图或用户描述：\`church_interior\`, \`outdoors\`, \`forest\` 等）
+8. 光影氛围（\`backlighting\` / \`candlelight\` / \`sunset\` / \`moonlight\` / \`cinematic_lighting\` 等）
+9. 特殊元素
+10. **最后追加质量词**（新手必须加，不能省）：\`masterpiece, best quality, amazing quality, very aesthetic, absurdres\`
+
+---
+
+**处理多角色**：
+- 2 人时 tag 顺序：先写人数（\`1boy, 1girl\` 或 \`2boys\`），然后每个角色的属性块（发色眼睛皮肤服装）按逻辑分组
+- 尽量让 SDXL 知道哪个属性属于哪个角色（通过顺序和语境）
+- 多人情况下用 \`looking_at_another\` / \`hugging_from_behind\` / \`holding_hands\` 等关系 tag
+
+**从参考图读角色**：
+- 发色、发型、眼睛、体型 —— 按图判断
+- 服装 —— 按图判断，但要用 danbooru 标准 tag（不要瞎造词）
+- 不确定的就不写
+
+**用户没说的情况**：
+- 用户没说光影 / 氛围 → 根据场景合理补充（室内夜晚加 \`candlelight\` / \`warm_light\`，户外白天加 \`sunlight\` / \`backlighting\` 等）
+- 用户没说构图 → 默认 \`cowboy_shot\` 或 \`upper_body\`（剧情画常用）
+
+---
+
+**Tag 规则**：
+- 英文，多词 tag 用下划线连接
+- 30-70 个内容 tag + 5 个质量词
+- 不要 artist 标签
+- 不要中文
+- 重点元素可以用 \`(tag:1.2)\` 权重，克制使用
+
+**严格禁用**：
+- LoRA 触发词（团队画风已集成，不需要）
+- 风格词：\`anime\` / \`realistic\` / \`2d\`
+
+---
+
+**返回 JSON**：
+
+{
+  "image_type": "standing / single / double / other",
+  "observation": "一句话中文描述要抽的图。15-30 字。",
+  "prompt": "1boy, 1girl, ..., masterpiece, best quality, amazing quality, very aesthetic, absurdres",
+  "notes": [
+    {"id": "layout", "html": "为什么这么选构图和视角..."},
+    {"id": "char1", "html": "男主 tag 怎么从图读的..."},
+    {"id": "char2", "html": "女主 tag 怎么从图读的（如果有）..."},
+    {"id": "scene_mood", "html": "场景和光影的处理..."},
+    {"id": "quality", "html": "末尾质量词新手必须加..."}
+  ]
+}
+
+notes 数量根据实际情况调整。
+
+**注释风格**（主美带徒弟的语气，短、具体、有因果）：
+- 构图选择的理由
+- 角色 tag 从图里读到的关键特征
+- 场景 / 光影的组合逻辑
+- 质量词为什么要加
+
+只返回 JSON，不要其他文字、不要 markdown 代码块。`;
+
+
+const S1_TWO_CHAR_BANANA_SYSTEM = `你是中国乙女手游美术团队的双人图抽图 prompt 助手。用户要用 **Nano Banana Pro（"香蕉"）** 抽一张**两个角色互动**的剧情插画。你帮他写完整的中文 prompt。
+
+---
+
+**风格锚点**（跟场景图一致的团队铁律）：
+- 恋与深空 / 光与夜之恋 / 未定事件簿 同款中国乙女手游美术风格
+- 高品质厚涂（Impasto）数字绘画质感，颜色饱和清透
+- 光影戏剧性强，体积光 / 空气感
+- 绝对无黑色描边轮廓线 —— 色块与光影自然过渡
+- 柔性材质（织物 / 头发 / 植物）用手绘厚涂笔触；硬质（建筑 / 家具 / 金属饰品）有体积感
+- 色彩搭配高级感，高级调和色，**拒绝土气撞色**
+- 暗部透出环境色冷暖交织，绝不死黑
+
+**构图要点**：
+- 这是**剧情插画**，不是背景图 —— **不要**写"下三分之一留立绘位"
+- **两个角色是视觉中心**
+- 水平平视镜头（默认；用户指定另外的视角除外）
+- 镜头景别看情境选（特写 / 半身 / 全身）
+
+---
+
+**Prompt 结构**（5 段）：
+
+**第1段 opening**（固定开头）：
+"请以《恋与深空》《光与夜之恋》《未定事件簿》同款中国乙女手游美术风格绘制以下画面："
+
+**第2段 characters**（核心 · 双人描写）：
+- 根据参考图描述**两个角色的外貌**（发色发型、瞳色、服装、气质）——必须忠实于参考图
+- 描述他们的**动作与相对位置**（谁在前 / 谁在后、拥抱 / 对视 / 靠着 / 并肩、有没有肢体接触）
+- 两人的**表情情绪**（温柔 / 专注 / 悲伤 / 欲言又止）
+- 这段是整个 prompt 最重要的一段，写足信息
+
+**第3段 scene**（环境衬托）：
+- 简短描写场景（地点 / 时段 / 主要环境元素）
+- 不需要像纯场景图那样展开前中后景——环境是衬托，不是主体
+- 如果用户传了场景参考图，融入进来
+
+**第4段 light_atmosphere**（光影与氛围）：
+- 光源方向（顶光 / 侧逆光 / 烛光 / 月光 等）
+- 主色调搭配
+- 空气感 / 体积光描写
+- 情绪氛围强调（温馨 / 紧张 / 哀伤 等）
+
+**第5段 closing_style**（固定收尾句）：
+"画面整体为电影级高品质厚涂数字绘画风格，颜色饱和清透，光影戏剧性强。绝对禁止任何形式的黑色描边、勾线或线稿填色，物体边界靠纯正的高品质厚涂色块与光影自然过渡。整体色调偏 [根据情境选 X 色系与 Y 色系的克制搭配]，有极其浓郁且清透的专业游戏原画师手绘笔触质感。"
+
+末尾色调要**根据情境真实选择**（烛光夜景→"冷蓝与暖橙烛光的克制搭配"；黄昏户外→"暖橙与深紫的冷暖呼应"）。
+
+---
+
+**处理多张参考图**：
+- 男主 / 女主参考图 → 读外貌特征写进 characters 段
+- 场景参考图 → 读环境 / 建筑 / 色调写进 scene 段
+- 其它参考图（氛围 / 色彩）→ 合理融入光影氛围或色调
+- **不要**说"参考图 1"或"根据图"，自然融合进描述
+
+**用户没详细说的**：
+自己合理补充动作 / 情绪 / 光影 / 色调，但要跟用户给的信息一致。比如用户只说"两人在教堂"，你要补充是什么时候、什么光源、什么情绪。
+
+---
+
+**严格禁用词**（跟场景图一致）：
+- 审核触发词：judge / prison / legal / oxblood。用中性替代
+- "seen from the doorway"
+- photorealistic / realistic / 写实 / 真实感
+- cel-shading / 扁平 / 线稿 / 漫画
+
+---
+
+**返回 JSON**：
+
+{
+  "prompt_lines": [
+    {"text": "请以《恋与深空》...", "note_id": "opening"},
+    {"text": "......", "note_id": "characters"},
+    {"text": "......", "note_id": "scene"},
+    {"text": "......", "note_id": "light_atmosphere"},
+    {"text": "画面整体为电影级......", "note_id": "closing_style"}
+  ],
+  "notes": [
+    {"id": "opening", "html": "..."},
+    {"id": "characters", "html": "..."},
+    {"id": "scene", "html": "..."},
+    {"id": "light_atmosphere", "html": "..."},
+    {"id": "closing_style", "html": "..."}
+  ]
+}
+
+**注释风格**（主美带徒弟的语气）：
+- opening 为什么要有（风格锁定）
+- characters 为什么写得最详细（双人图的灵魂）+ 怎么从参考图读
+- 为什么 scene 不展开（双人图的 scene 是衬托）
+- 色调选择的思路
+- 禁用词规避的重要性
+
+只返回 JSON。`;
+
+
+
+state.s1 = {
+  subType: null,                // 'scene' | 'two_char' | 'character'
+  scene: { refs: [], description: '', standingSpace: true, result: null },
+  twoChar: { images: [], description: '', result: null },
+  char: { images: [], description: '', result: null }
+};
+
+/* ---------- Entry points ---------- */
+function goS1Scene() { state.s1.subType = 'scene'; resetS1Scene(); go(10); }
+function goS1TwoChar() { state.s1.subType = 'two_char'; resetS1TwoChar(); go(13); }
+function goS1Char() { state.s1.subType = 'character'; resetS1Char(); go(11); }
+
+function resetS1Scene() {
+  state.s1.scene = { refs: [], description: '', standingSpace: true, result: null };
+  const descEl = document.getElementById('s1-scene-desc');
+  if (descEl) descEl.value = '';
+  const standEl = document.getElementById('s1-scene-standing');
+  if (standEl) standEl.checked = true;
+  renderS1SceneRefs();
+}
+function resetS1TwoChar() {
+  state.s1.twoChar = { images: [], description: '', result: null };
+  const descEl = document.getElementById('s1-two-desc');
+  if (descEl) descEl.value = '';
+  renderS1TwoCharImages();
+}
+function resetS1Char() {
+  state.s1.char = { images: [], description: '', result: null };
+  const descEl = document.getElementById('s1-char-desc');
+  if (descEl) descEl.value = '';
+  renderS1CharImages();
+}
+
+/* ---------- Scene refs: multi-image upload ---------- */
+const ROLES = ['男主', '女主', '主角', '配角', '场景参考', '其它参考'];
+
+function renderS1SceneRefs() {
+  const grid = document.getElementById('s1-scene-refs');
+  if (!grid) return;
+  // Clear, rebuild
+  const refs = state.s1.scene.refs;
+  const addBtn = `
+    <button class="img-add-slot" id="s1-scene-add">
+      <div class="plus">+</div>
+      <div class="txt">添加参考图<br>(点击或拖拽)</div>
+    </button>
+    <input type="file" id="s1-scene-file-input" accept="image/*" multiple style="display:none" />
+  `;
+  const slots = refs.map((ref, i) => `
+    <div class="img-slot">
+      <img class="slot-thumb" src="${ref.dataUrl}" alt="">
+      <button class="slot-remove" onclick="removeS1SceneRef(${i})">×</button>
+    </div>
+  `).join('');
+  grid.innerHTML = slots + (refs.length < 3 ? addBtn : '');
+  wireS1SceneAddButton();
+}
+
+function wireS1SceneAddButton() {
+  const addBtn = document.getElementById('s1-scene-add');
+  const fileInput = document.getElementById('s1-scene-file-input');
+  if (!addBtn || !fileInput) return;
+  addBtn.addEventListener('click', () => fileInput.click());
+  addBtn.addEventListener('dragover', e => { e.preventDefault(); addBtn.classList.add('drag'); });
+  addBtn.addEventListener('dragleave', () => addBtn.classList.remove('drag'));
+  addBtn.addEventListener('drop', e => {
+    e.preventDefault();
+    addBtn.classList.remove('drag');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    for (const f of files) addS1SceneRef(f);
+  });
+  fileInput.addEventListener('change', e => {
+    for (const f of e.target.files) addS1SceneRef(f);
+    e.target.value = '';
+  });
+}
+
+async function addS1SceneRef(file) {
+  if (state.s1.scene.refs.length >= 3) {
+    showToast('最多 3 张参考图', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    state.s1.scene.refs.push({ dataUrl, base64, filename: file.name });
+    renderS1SceneRefs();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+  }
+}
+
+function removeS1SceneRef(i) {
+  state.s1.scene.refs.splice(i, 1);
+  renderS1SceneRefs();
+}
+
+/* ---------- Character images: multi + role ---------- */
+function renderS1CharImages() {
+  const grid = document.getElementById('s1-char-refs');
+  if (!grid) return;
+  const imgs = state.s1.char.images;
+  const addBtn = `
+    <button class="img-add-slot" id="s1-char-add">
+      <div class="plus">+</div>
+      <div class="txt">添加参考图<br>(点击或拖拽)</div>
+    </button>
+    <input type="file" id="s1-char-file-input" accept="image/*" multiple style="display:none" />
+  `;
+  const slots = imgs.map((img, i) => `
+    <div class="img-slot">
+      <img class="slot-thumb" src="${img.dataUrl}" alt="">
+      <button class="slot-remove" onclick="removeS1CharImage(${i})">×</button>
+      <div class="slot-controls">
+        <label>这张图是</label>
+        <select class="slot-role" onchange="setS1CharRole(${i}, this.value)">
+          ${ROLES.map(r => `<option value="${r}" ${r === img.role ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+  grid.innerHTML = slots + (imgs.length < 4 ? addBtn : '');
+  wireS1CharAddButton();
+}
+
+function wireS1CharAddButton() {
+  const addBtn = document.getElementById('s1-char-add');
+  const fileInput = document.getElementById('s1-char-file-input');
+  if (!addBtn || !fileInput) return;
+  addBtn.addEventListener('click', () => fileInput.click());
+  addBtn.addEventListener('dragover', e => { e.preventDefault(); addBtn.classList.add('drag'); });
+  addBtn.addEventListener('dragleave', () => addBtn.classList.remove('drag'));
+  addBtn.addEventListener('drop', e => {
+    e.preventDefault();
+    addBtn.classList.remove('drag');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    for (const f of files) addS1CharImage(f);
+  });
+  fileInput.addEventListener('change', e => {
+    for (const f of e.target.files) addS1CharImage(f);
+    e.target.value = '';
+  });
+}
+
+async function addS1CharImage(file) {
+  if (state.s1.char.images.length >= 4) {
+    showToast('最多 4 张参考图', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    // smart default role: first = 主角, then next alternate男/女, then 场景参考
+    const count = state.s1.char.images.length;
+    const defaultRole = count === 0 ? '男主' : count === 1 ? '女主' : '场景参考';
+    state.s1.char.images.push({ dataUrl, base64, filename: file.name, role: defaultRole });
+    renderS1CharImages();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+  }
+}
+
+function removeS1CharImage(i) {
+  state.s1.char.images.splice(i, 1);
+  renderS1CharImages();
+}
+
+function setS1CharRole(i, role) {
+  if (state.s1.char.images[i]) state.s1.char.images[i].role = role;
+}
+
+/* ---------- Two-Char images: multi + role (for 香蕉 双人图) ---------- */
+function renderS1TwoCharImages() {
+  const grid = document.getElementById('s1-two-refs');
+  if (!grid) return;
+  const imgs = state.s1.twoChar.images;
+  const addBtn = `
+    <button class="img-add-slot" id="s1-two-add">
+      <div class="plus">+</div>
+      <div class="txt">添加参考图<br>(点击或拖拽)</div>
+    </button>
+    <input type="file" id="s1-two-file-input" accept="image/*" multiple style="display:none" />
+  `;
+  const slots = imgs.map((img, i) => `
+    <div class="img-slot">
+      <img class="slot-thumb" src="${img.dataUrl}" alt="">
+      <button class="slot-remove" onclick="removeS1TwoCharImage(${i})">×</button>
+      <div class="slot-controls">
+        <label>这张图是</label>
+        <select class="slot-role" onchange="setS1TwoCharRole(${i}, this.value)">
+          ${ROLES.map(r => `<option value="${r}" ${r === img.role ? 'selected' : ''}>${r}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+  `).join('');
+  grid.innerHTML = slots + (imgs.length < 4 ? addBtn : '');
+  wireS1TwoAddButton();
+}
+
+function wireS1TwoAddButton() {
+  const addBtn = document.getElementById('s1-two-add');
+  const fileInput = document.getElementById('s1-two-file-input');
+  if (!addBtn || !fileInput) return;
+  addBtn.addEventListener('click', () => fileInput.click());
+  addBtn.addEventListener('dragover', e => { e.preventDefault(); addBtn.classList.add('drag'); });
+  addBtn.addEventListener('dragleave', () => addBtn.classList.remove('drag'));
+  addBtn.addEventListener('drop', e => {
+    e.preventDefault();
+    addBtn.classList.remove('drag');
+    const files = [...e.dataTransfer.files].filter(f => f.type.startsWith('image/'));
+    for (const f of files) addS1TwoCharImage(f);
+  });
+  fileInput.addEventListener('change', e => {
+    for (const f of e.target.files) addS1TwoCharImage(f);
+    e.target.value = '';
+  });
+}
+
+async function addS1TwoCharImage(file) {
+  if (state.s1.twoChar.images.length >= 4) {
+    showToast('最多 4 张参考图', 'err');
+    return;
+  }
+  try {
+    const { dataUrl, base64 } = await resizeImage(file);
+    const count = state.s1.twoChar.images.length;
+    const defaultRole = count === 0 ? '男主' : count === 1 ? '女主' : '场景参考';
+    state.s1.twoChar.images.push({ dataUrl, base64, filename: file.name, role: defaultRole });
+    renderS1TwoCharImages();
+  } catch (e) {
+    showToast('读取图片失败', 'err');
+  }
+}
+
+function removeS1TwoCharImage(i) {
+  state.s1.twoChar.images.splice(i, 1);
+  renderS1TwoCharImages();
+}
+
+function setS1TwoCharRole(i, role) {
+  if (state.s1.twoChar.images[i]) state.s1.twoChar.images[i].role = role;
+}
+
+/* ---------- Generate: Scene ---------- */
+async function runS1SceneGenerate() {
+  const desc = document.getElementById('s1-scene-desc').value.trim();
+  if (!desc) {
+    showToast('请先描述场景', 'err');
+    return;
+  }
+  const standingSpace = document.getElementById('s1-scene-standing').checked;
+  state.s1.scene.description = desc;
+  state.s1.scene.standingSpace = standingSpace;
+
+  const btn = document.getElementById('s1-scene-generate');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 prompt 中...';
+
+  // Build user content with potentially multiple images
+  const refs = state.s1.scene.refs;
+  const userText = `[场景描述]
+${desc}
+
+[standing_space]
+${standingSpace ? 'true' : 'false'}
+
+[参考图]
+${refs.length === 0 ? '（用户没传参考图，按描述自由发挥）' : `用户传了 ${refs.length} 张参考图，请读图后把风格/色彩/元素融入到 prompt 里。`}
+
+请按系统指令写出香蕉 prompt，返回 JSON。`;
+
+  try {
+    const raw = await callAIMulti({
+      systemPrompt: S1_SCENE_SYSTEM,
+      userText,
+      imageBase64List: refs.map(r => r.base64)
+    });
+    const parsed = extractJSON(raw);
+    if (!Array.isArray(parsed.prompt_lines) || !Array.isArray(parsed.notes)) {
+      throw new Error("返回 JSON 结构不对");
+    }
+    state.s1.scene.result = parsed;
+    renderS1SceneOutput();
+    go(12);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成香蕉 Prompt <span class="arrow">→</span>';
+  }
+}
+
+/* ---------- Generate: Character ---------- */
+async function runS1CharGenerate() {
+  const desc = document.getElementById('s1-char-desc').value.trim();
+  const imgs = state.s1.char.images;
+  if (imgs.length === 0 && !desc) {
+    showToast('请上传参考图，或填写情境描述（至少一样）', 'err');
+    return;
+  }
+  state.s1.char.description = desc;
+
+  const btn = document.getElementById('s1-char-generate');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 tag 中...';
+
+  const imageLabels = imgs.length > 0
+    ? imgs.map((img, i) => `图 ${i+1}: ${img.role}`).join('\n')
+    : '（用户没传参考图 · 纯文生图模式 · 按描述构造）';
+  const userText = `[参考图清单]
+${imageLabels}
+
+[情境描述]
+${desc || '（用户没详细描述）'}
+
+${imgs.length === 0
+  ? '这是**纯文生图**模式（没有参考图）——请根据用户描述合成 SDXL tag，外貌特征都从描述里读，不要瞎编参考图里没有的东西。'
+  : '请按系统指令为每张参考图对应的角色提取外貌 tag，结合情境描述生成完整的 SDXL tag prompt。'}
+返回 JSON。`;
+
+  try {
+    const raw = await callAIMulti({
+      systemPrompt: S1_CHAR_SYSTEM,
+      userText,
+      imageBase64List: imgs.map(im => im.base64)
+    });
+    const parsed = extractJSON(raw);
+    if (!parsed.prompt) throw new Error("返回 JSON 没有 prompt 字段");
+    if (!Array.isArray(parsed.notes)) parsed.notes = [];
+    state.s1.char.result = parsed;
+    renderS1CharOutput();
+    go(12);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成 SDXL Tag <span class="arrow">→</span>';
+  }
+}
+
+/* ---------- Generate: Two-Char (Banana) ---------- */
+async function runS1TwoCharGenerate() {
+  const desc = document.getElementById('s1-two-desc').value.trim();
+  const imgs = state.s1.twoChar.images;
+  if (imgs.length === 0 && !desc) {
+    showToast('请上传参考图，或填写情境描述（至少一样）', 'err');
+    return;
+  }
+  state.s1.twoChar.description = desc;
+
+  const btn = document.getElementById('s1-two-generate');
+  btn.disabled = true;
+  btn.innerHTML = 'AI 写 prompt 中...';
+
+  const imageLabels = imgs.length > 0
+    ? imgs.map((img, i) => `图 ${i+1}: ${img.role}`).join('\n')
+    : '（用户没传参考图 · 纯文生图模式 · 按描述构造两个新角色）';
+  const userText = `[参考图清单]
+${imageLabels}
+
+[情境描述]
+${desc || '（用户没详细描述，请合理补充）'}
+
+${imgs.length === 0
+  ? '这是**纯文生图**模式（没有参考图）——两个角色的外貌全部从用户描述里读。如果描述里角色外貌也少，按恋与深空系审美合理补充（俊美/清秀/复古欧式气质等），但要自洽。'
+  : '请为这次双人图抽图写出完整的香蕉 prompt，characters 段是灵魂，多花笔墨；scene 段衬托即可，不展开。'}
+按 5 段结构返回 JSON。`;
+
+  try {
+    const raw = await callAIMulti({
+      systemPrompt: S1_TWO_CHAR_BANANA_SYSTEM,
+      userText,
+      imageBase64List: imgs.map(im => im.base64)
+    });
+    const parsed = extractJSON(raw);
+    if (!Array.isArray(parsed.prompt_lines) || !Array.isArray(parsed.notes)) {
+      throw new Error("返回 JSON 结构不对");
+    }
+    state.s1.twoChar.result = parsed;
+    renderS1TwoCharOutput();
+    go(12);
+  } catch (err) {
+    console.error(err);
+    showToast('生成失败: ' + err.message.slice(0, 100), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '生成香蕉 Prompt <span class="arrow">→</span>';
+  }
+}
+
+/* ---------- Multi-image-capable AI call ---------- */
+async function callAIMulti({ systemPrompt, userText, imageBase64List }) {
+  const provider = state.provider;
+  const key = state.keys[provider];
+  if (!key) throw new Error(`未配置 ${provider} 的 API Key`);
+  const images = imageBase64List || [];
+
+  if (provider === "gemini") {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODELS.gemini}:generateContent?key=${encodeURIComponent(key)}`;
+    const parts = images.map(b => ({ inline_data: { mime_type: "image/jpeg", data: b } }));
+    parts.push({ text: userText });
+    const body = {
+      systemInstruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: "user", parts }],
+      generationConfig: { temperature: 0.7, responseMimeType: "application/json" }
+    };
+    const res = await fetch(url, { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(`Gemini API ${res.status}: ${(await res.text()).slice(0,400)}`);
+    const data = await res.json();
+    const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || "").join("") || "";
+    if (!text) throw new Error("Gemini 返回为空");
+    return text;
+  }
+
+  if (provider === "claude") {
+    const url = "https://api.anthropic.com/v1/messages";
+    const content = images.map(b => ({
+      type: "image",
+      source: { type: "base64", media_type: "image/jpeg", data: b }
+    }));
+    content.push({ type: "text", text: userText });
+    const body = {
+      model: MODELS.claude,
+      max_tokens: 4000,
+      system: systemPrompt,
+      messages: [{ role: "user", content }]
+    };
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": key,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`Claude API ${res.status}: ${(await res.text()).slice(0,400)}`);
+    const data = await res.json();
+    const text = data?.content?.filter(c => c.type === "text").map(c => c.text).join("") || "";
+    if (!text) throw new Error("Claude 返回为空");
+    return text;
+  }
+
+  if (provider === "openai") {
+    const url = "https://api.openai.com/v1/chat/completions";
+    const userContent = images.map(b => ({
+      type: "image_url",
+      image_url: { url: "data:image/jpeg;base64," + b }
+    }));
+    userContent.push({ type: "text", text: userText });
+    const body = {
+      model: MODELS.openai,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userContent }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+      max_tokens: 4000
+    };
+    const res = await fetch(url, { method: "POST", headers: {"Content-Type":"application/json","Authorization":"Bearer " + key}, body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(`OpenAI API ${res.status}: ${(await res.text()).slice(0,400)}`);
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content || "";
+    if (!text) throw new Error("OpenAI 返回为空");
+    return text;
+  }
+
+  // 豆包 / 千问 都走 OpenAI 兼容格式，消息结构和 OpenAI 一致
+  if (provider === "doubao" || provider === "qwen") {
+    const url = provider === "doubao"
+      ? "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+      : "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+    const model = provider === "doubao"
+      ? (state.doubaoModel || MODELS.doubao)
+      : MODELS.qwen;
+    const providerName = provider === "doubao" ? "豆包" : "千问";
+    const userContent = images.map(b => ({
+      type: "image_url",
+      image_url: { url: "data:image/jpeg;base64," + b }
+    }));
+    userContent.push({ type: "text", text: userText });
+    const body = {
+      model,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userContent }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+      max_tokens: 4000
+    };
+    let res;
+    try {
+      res = await fetch(url, { method: "POST", headers: {"Content-Type":"application/json","Authorization":"Bearer " + key}, body: JSON.stringify(body) });
+    } catch (e) {
+      throw new Error(`${providerName} 调不通（可能浏览器跨域被挡）：${e.message}。国内两家 API 对浏览器直连的支持不稳定，建议改用 Gemini / Claude / OpenAI。`);
+    }
+    if (!res.ok) throw new Error(`${providerName} API ${res.status}: ${(await res.text()).slice(0,400)}`);
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content || "";
+    if (!text) throw new Error(`${providerName} 返回为空`);
+    return text;
+  }
+
+  throw new Error("Unknown provider: " + provider);
+}
+
+/* ---------- Render: Scene output ---------- */
+function renderS1SceneOutput() {
+  const g = state.s1.scene.result;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+
+  const promptLinesHTML = g.prompt_lines.map(l => `
+    <div class="line anno-target" data-note="${escapeHTML(l.note_id || '')}">${escapeHTML(l.text || '')}</div>
+  `).join('');
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  document.getElementById('s1-output-title').textContent = '香蕉场景 Prompt 出来了';
+  const out = document.getElementById('s1-output-content');
+  out.innerHTML = `
+    <div class="prompt-card" id="s1-scene-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · 场景 · 香蕉')}</span>
+      <button class="copy-btn" onclick="copyS1ScenePrompt()">复制</button>
+      ${promptLinesHTML}
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 prompt 贴到 Nano Banana Pro 跑一张。满意的构图可以去 <b>Ⅱ 整图优化</b> 做精细化。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(10)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(9)">再抽一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+  wireS1OutputHover();
+}
+
+/* ---------- Render: Character output ---------- */
+function renderS1CharOutput() {
+  const g = state.s1.char.result;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+  const obs = g.observation ? `
+    <div class="reverse-observation">
+      <span class="tag">AI OBSERVATION</span>
+      ${escapeHTML(g.observation)}
+    </div>
+  ` : '';
+
+  const notesHTML = g.notes.map(n => `
+    <li>${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  document.getElementById('s1-output-title').textContent = '角色图 SDXL Tag 出来了';
+  const out = document.getElementById('s1-output-content');
+  out.innerHTML = `
+    ${obs}
+    <div class="reverse-output-card tags" id="s1-char-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · 角色 · SDXL')}</span>
+      <button class="copy-btn" onclick="copyS1CharPrompt()">复制</button>
+      ${escapeHTML(g.prompt)}
+    </div>
+
+    <div class="reverse-usage-tip">
+      <b>怎么用：</b>把这段 tag 贴到 SDXL / Illustrious / NoobAI 的 positive prompt。末尾的质量词已经加好。参考图用 IPAdapter / ControlNet 或你团队的 workflow 挂进去。
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 tag 和参考图一起丢进你的 SDXL workflow 跑。抽到满意构图后，可以去 <b>Ⅱ 整图优化</b> 做精细化，或者 <b>Ⅲ 局部精修</b> 调局部。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(11)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(9)">再抽一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+  wireS1OutputHover();
+}
+
+function wireS1OutputHover() {
+  document.querySelectorAll('#s1-output-content .prompt-card .line[data-note]').forEach(line => {
+    line.addEventListener('mouseenter', () => flashS1Note(line.dataset.note));
+  });
+  document.querySelectorAll('#s1-output-content .notes li[data-note]').forEach(li => {
+    li.addEventListener('mouseenter', () => flashS1Note(li.dataset.note));
+  });
+}
+
+function flashS1Note(group) {
+  if (!group) return;
+  document.querySelectorAll(`#s1-output-content .notes li[data-note="${group}"]`).forEach(el => {
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1500);
+  });
+  document.querySelectorAll(`#s1-output-content .prompt-card .line[data-note="${group}"]`).forEach(el => {
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1500);
+  });
+}
+
+function copyS1ScenePrompt() {
+  const lines = [...document.querySelectorAll('#s1-scene-prompt-card .line')].map(l => l.textContent.trim());
+  navigator.clipboard?.writeText(lines.join('\n'));
+  showToast('Prompt 已复制');
+}
+function copyS1CharPrompt() {
+  const text = state.s1.char.result?.prompt || '';
+  if (!text) return;
+  navigator.clipboard?.writeText(text);
+  showToast('Prompt 已复制');
+}
+
+/* ---------- Render: Two-Char Banana output ---------- */
+function renderS1TwoCharOutput() {
+  const g = state.s1.twoChar.result;
+  const providerTag = providerLabel().toUpperCase() + " · " + MODELS[state.provider].toUpperCase();
+
+  const promptLinesHTML = g.prompt_lines.map(l => `
+    <div class="line anno-target" data-note="${escapeHTML(l.note_id || '')}">${escapeHTML(l.text || '')}</div>
+  `).join('');
+
+  const notesHTML = g.notes.map(n => `
+    <li data-note="${escapeHTML(n.id || '')}">${sanitizeNoteHTML(n.html || '')}</li>
+  `).join('');
+
+  document.getElementById('s1-output-title').textContent = '双人图香蕉 Prompt 出来了';
+  const out = document.getElementById('s1-output-content');
+  out.innerHTML = `
+    <div class="prompt-card" id="s1-two-prompt-card">
+      <span class="corner">${escapeHTML(providerTag + ' · 双人图 · 香蕉')}</span>
+      <button class="copy-btn" onclick="copyS1TwoCharPrompt()">复制</button>
+      ${promptLinesHTML}
+    </div>
+
+    <div class="notes">
+      <h3>为什么这么写</h3>
+      <div class="note-intro">Annotations · 看一眼就懂，下次你可以自己写</div>
+      <ul>${notesHTML}</ul>
+    </div>
+
+    <div class="next-steps">
+      <div class="txt">
+        <strong>下一步：</strong>
+        把 prompt 和参考图一起丢进香蕉跑。构图满意可以去 <b>Ⅱ 整图优化</b> 精细化，或者 <b>Ⅲ 局部精修</b> 调局部。
+      </div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="go(13)"><span class="arrow">←</span> 回去改</button>
+        <button class="btn" onclick="go(9)">再抽一张 <span class="arrow">→</span></button>
+      </div>
+    </div>
+  `;
+  wireS1OutputHover();
+}
+
+function copyS1TwoCharPrompt() {
+  const lines = [...document.querySelectorAll('#s1-two-prompt-card .line')].map(l => l.textContent.trim());
+  navigator.clipboard?.writeText(lines.join('\n'));
+  showToast('Prompt 已复制');
+}
+
+/* ---------- Initialize s1 ---------- */
+renderS1SceneRefs();
+renderS1CharImages();
+renderS1TwoCharImages();
+
+
+/* =====================================================
+ * UTILS
+ * ===================================================== */
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+
+// Notes allow limited HTML (quote and why spans).
+// Sanitize by escaping everything, then un-escape allowed tags.
+// Note: escapeHTML converts ' → &#39; and " → &quot;, so the regex has to match those.
+function sanitizeNoteHTML(html) {
+  const escaped = escapeHTML(html);
+  const Q = "(?:&#39;|&quot;|)"; // single quote, double quote, or unquoted
+  return escaped
+    .replace(new RegExp(`&lt;span class=${Q}quote${Q}&gt;`, 'g'), '<span class="quote">')
+    .replace(new RegExp(`&lt;span class=${Q}why${Q}&gt;`, 'g'), '<span class="why">')
+    .replace(/&lt;\/span&gt;/g, '</span>')
+    .replace(/&lt;br\s*\/?&gt;/g, '<br>')
+    .replace(/&lt;b&gt;/g, '<b>').replace(/&lt;\/b&gt;/g, '</b>');
+}
+
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.toggle('err', type === 'err');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/* =====================================================
+ * INIT
+ * ===================================================== */
+updateProviderPill();
+// First-run nudge
+if (!hasKey() && !state.keys.gemini && !state.keys.claude && !state.keys.openai && !state.keys.doubao && !state.keys.qwen) {
+  setTimeout(() => {
+    showToast('首次使用，请先在右上角设置里填 API Key');
+  }, 800);
+}
+</script>
+</body>
+</html>
