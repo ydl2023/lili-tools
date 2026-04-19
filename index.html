@@ -12,7 +12,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
@@ -2666,6 +2666,1524 @@ button.stage.stage-clickable:hover .note {
   letter-spacing: .04em;
   width: 100%;
 }
+/* =================================================
+ * SCREEN 1 · 方舟风首页（暖米底 + 橙强调）
+ * 所有样式限定在 .atelier-home 作用域，不影响其他 screen
+ * ================================================= */
+
+/* 首页激活时：隐藏全局顶部栏（topbar + rail），让 shell 全宽铺开，
+   方舟风首页自己的 .ak-nav / .ak-hero 内部有自己的 padding */
+body:has(.atelier-home.active) .topbar,
+body:has(.atelier-home.active) .rail {
+  display: none;
+}
+body:has(.atelier-home.active) .shell {
+  max-width: none;
+  padding: 0;
+}
+
+.atelier-home {
+  /* 局部 CSS 变量，不污染全局 :root */
+  --ak-bg: #f3f0ea;
+  --ak-bg-card: #fbfaf5;
+  --ak-bg-card-hover: #f5f1e8;
+
+  --ak-accent: #d96e2c;
+  --ak-accent-strong: #a8501e;
+  --ak-accent-dim: rgba(217, 110, 44, 0.08);
+
+  --ak-fg-primary: #1a1612;
+  --ak-fg-secondary: #625a52;
+  --ak-fg-tertiary: #a39a90;
+
+  --ak-border: #e0dbd2;
+  --ak-border-bright: #c4bdb2;
+
+  --ak-shadow-card: 0 1px 2px rgba(26, 22, 18, 0.04), 0 1px 1px rgba(26, 22, 18, 0.02);
+  --ak-shadow-card-hover: 0 6px 20px rgba(26, 22, 18, 0.08), 0 2px 6px rgba(26, 22, 18, 0.04);
+
+  --ak-font-display: 'Bebas Neue', 'Impact', 'Oswald', sans-serif;
+  --ak-font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --ak-font-mono: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+
+  /* 覆盖全局，让首页使用方舟风底色和字体 */
+  background: var(--ak-bg);
+  color: var(--ak-fg-primary);
+  font-family: var(--ak-font-sans);
+  position: relative;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: clip;
+}
+
+/* 背景：细点阵 + 右上角暖橙光晕 */
+.atelier-home::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--ak-border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 40%, transparent 100%);
+}
+.atelier-home::after {
+  content: '';
+  position: absolute;
+  top: -400px;
+  right: -400px;
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle, var(--ak-accent-dim) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(50px);
+}
+
+/* 顶部导航 */
+.atelier-home .ak-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(243, 240, 234, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--ak-border);
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.atelier-home .ak-nav-logo { display: flex; align-items: center; gap: 14px; }
+.atelier-home .ak-nav-logo-bar {
+  width: 4px; height: 36px;
+  background: var(--ak-accent);
+}
+.atelier-home .ak-nav-logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.atelier-home .ak-nav-logo-en {
+  font-family: var(--ak-font-display);
+  font-size: 24px;
+  letter-spacing: 3px;
+  color: var(--ak-fg-primary);
+  font-weight: normal;
+}
+.atelier-home .ak-nav-logo-cn {
+  font-size: 11px;
+  color: var(--ak-fg-tertiary);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+
+.atelier-home .ak-nav-menu { display: flex; gap: 44px; }
+.atelier-home .ak-nav-item {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  transition: all 0.2s ease;
+}
+.atelier-home .ak-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--ak-accent);
+  transition: width 0.25s ease;
+}
+.atelier-home .ak-nav-item.active::after,
+.atelier-home .ak-nav-item:hover::after { width: 28px; }
+.atelier-home .ak-nav-item-en {
+  font-family: var(--ak-font-display);
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: var(--ak-fg-primary);
+  transition: color 0.2s ease;
+}
+.atelier-home .ak-nav-item.active .ak-nav-item-en,
+.atelier-home .ak-nav-item:hover .ak-nav-item-en { color: var(--ak-accent); }
+.atelier-home .ak-nav-item-cn {
+  font-size: 11px;
+  color: var(--ak-fg-tertiary);
+  letter-spacing: 1px;
+}
+
+.atelier-home .ak-nav-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--ak-font-mono);
+  font-size: 11px;
+  color: var(--ak-fg-secondary);
+  letter-spacing: 1.5px;
+}
+.atelier-home .ak-nav-meta .ak-dot {
+  width: 7px; height: 7px;
+  background: var(--ak-accent);
+  border-radius: 50%;
+  animation: akPulse 2.4s ease-in-out infinite;
+}
+@keyframes akPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* HERO 区 */
+.atelier-home .ak-hero {
+  position: relative;
+  padding: 80px 40px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  z-index: 1;
+}
+.atelier-home .ak-accent-pillar {
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 2px;
+  height: 280px;
+  background: linear-gradient(180deg, var(--ak-accent) 0%, transparent 100%);
+  z-index: 2;
+}
+.atelier-home .ak-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--ak-font-mono);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--ak-accent);
+  margin-bottom: 28px;
+  font-weight: 500;
+}
+.atelier-home .ak-eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--ak-accent);
+}
+
+.atelier-home .ak-title-en {
+  font-family: var(--ak-font-display);
+  font-size: clamp(64px, 10vw, 132px);
+  line-height: 0.92;
+  letter-spacing: 4px;
+  color: var(--ak-fg-primary);
+  margin-bottom: 28px;
+  font-weight: normal;
+}
+.atelier-home .ak-title-en .ak-sub-accent { color: var(--ak-accent); }
+
+.atelier-home .ak-slogan {
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 300;
+  color: var(--ak-fg-secondary);
+  margin-bottom: 32px;
+  letter-spacing: 2px;
+}
+.atelier-home .ak-slogan em {
+  font-style: normal;
+  color: var(--ak-accent);
+  font-weight: 700;
+}
+
+.atelier-home .ak-lede {
+  font-size: 14px;
+  color: var(--ak-fg-secondary);
+  max-width: 620px;
+  margin-bottom: 60px;
+  line-height: 1.9;
+}
+
+/* Stage 三大卡片 */
+.atelier-home .ak-stage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.atelier-home .ak-stage-card {
+  background: var(--ak-bg-card);
+  border: 1px solid var(--ak-border);
+  box-shadow: var(--ak-shadow-card);
+  padding: 36px 28px 28px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  text-align: left;
+  font-family: inherit;
+}
+.atelier-home .ak-stage-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 0;
+  background: var(--ak-accent);
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.atelier-home .ak-stage-card::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 8px; height: 8px;
+  border-top: 1px solid var(--ak-border-bright);
+  border-right: 1px solid var(--ak-border-bright);
+  transition: border-color 0.25s ease;
+}
+.atelier-home .ak-stage-card:hover {
+  border-color: var(--ak-accent);
+  background: var(--ak-bg-card-hover);
+  box-shadow: var(--ak-shadow-card-hover);
+  transform: translateY(-3px);
+}
+.atelier-home .ak-stage-card:hover::before { height: 100%; }
+.atelier-home .ak-stage-card:hover::after { border-color: var(--ak-accent); }
+
+.atelier-home .ak-stage-num {
+  font-family: var(--ak-font-display);
+  font-size: 56px;
+  letter-spacing: 3px;
+  color: var(--ak-accent);
+  line-height: 1;
+  margin-bottom: 22px;
+}
+.atelier-home .ak-stage-label-en {
+  font-family: var(--ak-font-display);
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--ak-fg-primary);
+  margin-bottom: 4px;
+}
+.atelier-home .ak-stage-label-cn {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ak-fg-primary);
+  margin-bottom: 18px;
+}
+.atelier-home .ak-stage-desc {
+  font-size: 12.5px;
+  color: var(--ak-fg-secondary);
+  line-height: 1.75;
+  margin-bottom: 28px;
+}
+.atelier-home .ak-stage-cta {
+  font-family: var(--ak-font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--ak-accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ak-border);
+  font-weight: 500;
+  transition: gap 0.25s ease;
+}
+.atelier-home .ak-stage-card:hover .ak-stage-cta { gap: 18px; }
+
+/* TOOLBOX 区 */
+.atelier-home .ak-toolbox {
+  position: relative;
+  padding: 40px 40px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  z-index: 1;
+}
+.atelier-home .ak-section-head {
+  margin-bottom: 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--ak-border);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.atelier-home .ak-section-head-left h2 {
+  font-family: var(--ak-font-display);
+  font-size: 40px;
+  letter-spacing: 3px;
+  color: var(--ak-fg-primary);
+  line-height: 1;
+  margin: 0 0 6px 0;
+  font-weight: normal;
+}
+.atelier-home .ak-section-head-left h2 .ak-accent-mark { color: var(--ak-accent); }
+.atelier-home .ak-section-head-left .ak-section-sub {
+  font-size: 12px;
+  color: var(--ak-fg-tertiary);
+  letter-spacing: 1px;
+}
+.atelier-home .ak-section-head-right {
+  font-family: var(--ak-font-mono);
+  font-size: 11px;
+  color: var(--ak-fg-tertiary);
+  letter-spacing: 1.5px;
+}
+
+.atelier-home .ak-tool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+.atelier-home .ak-tool-card {
+  background: var(--ak-bg-card);
+  border: 1px solid var(--ak-border);
+  box-shadow: var(--ak-shadow-card);
+  padding: 22px 22px 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 170px;
+  text-align: left;
+  font-family: inherit;
+}
+.atelier-home .ak-tool-card:hover {
+  border-color: var(--ak-accent);
+  background: var(--ak-bg-card-hover);
+  box-shadow: var(--ak-shadow-card-hover);
+  transform: translateY(-2px);
+}
+.atelier-home .ak-tool-num {
+  font-family: var(--ak-font-mono);
+  font-size: 11px;
+  color: var(--ak-accent);
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.atelier-home .ak-tool-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ak-fg-primary);
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+.atelier-home .ak-tool-desc {
+  font-size: 12.5px;
+  color: var(--ak-fg-secondary);
+  line-height: 1.75;
+  flex: 1;
+  margin: 0;
+}
+.atelier-home .ak-tool-card::after {
+  content: '→';
+  position: absolute;
+  bottom: 18px;
+  right: 22px;
+  color: var(--ak-fg-tertiary);
+  font-size: 16px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.atelier-home .ak-tool-card:hover::after {
+  color: var(--ak-accent);
+  transform: translateX(5px);
+}
+
+/* FOOTER */
+.atelier-home .ak-footer {
+  border-top: 1px solid var(--ak-border);
+  padding: 22px 40px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: var(--ak-font-mono);
+  font-size: 11px;
+  color: var(--ak-fg-tertiary);
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+}
+.atelier-home .ak-footer-left { display: flex; gap: 22px; flex-wrap: wrap; }
+.atelier-home .ak-footer-left .ak-sep { color: var(--ak-border-bright); }
+
+/* 响应式 */
+@media (max-width: 960px) {
+  .atelier-home .ak-nav { padding: 14px 20px; gap: 20px; }
+  .atelier-home .ak-nav-menu { display: none; }
+  .atelier-home .ak-nav-meta { font-size: 10px; }
+  .atelier-home .ak-hero { padding: 48px 20px 60px; }
+  .atelier-home .ak-toolbox { padding: 30px 20px 60px; }
+  .atelier-home .ak-stage-grid { grid-template-columns: 1fr; gap: 10px; }
+  .atelier-home .ak-stage-card { padding: 28px 22px 24px; }
+  .atelier-home .ak-footer { padding: 20px; }
+}
+
+
+/* =================================================
+ * WORKING SCREEN · 工作区方舟风（Stage 内部页面共用）
+ * 作用域：.ak-working · 不影响其他 21 个 screen
+ * ================================================= */
+
+.ak-working {
+  /* 和首页共享的一套变量（重复定义，保证 .ak-working 独立可用） */
+  --ak-bg: #f3f0ea;
+  --ak-bg-card: #fbfaf5;
+  --ak-bg-card-hover: #f5f1e8;
+  --ak-accent: #d96e2c;
+  --ak-accent-strong: #a8501e;
+  --ak-accent-dim: rgba(217, 110, 44, 0.08);
+  --ak-fg-primary: #1a1612;
+  --ak-fg-secondary: #625a52;
+  --ak-fg-tertiary: #a39a90;
+  --ak-border: #e0dbd2;
+  --ak-border-bright: #c4bdb2;
+  --ak-shadow-card: 0 1px 2px rgba(26, 22, 18, 0.04), 0 1px 1px rgba(26, 22, 18, 0.02);
+  --ak-shadow-card-hover: 0 6px 20px rgba(26, 22, 18, 0.08), 0 2px 6px rgba(26, 22, 18, 0.04);
+  --ak-font-display: 'Bebas Neue', 'Impact', 'Oswald', sans-serif;
+  --ak-font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --ak-font-mono: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+
+  position: relative;
+  background: var(--ak-bg);
+  color: var(--ak-fg-primary);
+  font-family: var(--ak-font-sans);
+  min-height: 100vh;
+  padding: 0 !important;
+  margin: 0;
+  overflow-x: clip;
+}
+
+/* 工作区激活时：主文件的 body 背景噪点纹理、shell 的 padding 都让位 */
+body:has(.ak-working.active) {
+  background: var(--ak-bg, #f3f0ea);
+  background-image: none;
+}
+body:has(.ak-working.active)::before {
+  display: none;
+}
+body:has(.ak-working.active) .shell {
+  max-width: none;
+  padding: 0;
+}
+
+/* 工作区激活时：原 topbar 方舟风化（保留所有原有功能按钮） */
+body:has(.ak-working.active) .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 14px 40px;
+  margin: 0;
+  background: rgba(243, 240, 234, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--ak-border, #e0dbd2);
+}
+body:has(.ak-working.active) .topbar .brand .mark {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  color: var(--ak-fg-primary, #1a1612);
+}
+body:has(.ak-working.active) .topbar .brand .mark .dot {
+  background: var(--ak-accent, #d96e2c);
+}
+body:has(.ak-working.active) .topbar .brand .en {
+  font-family: 'JetBrains Mono', monospace;
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--ak-fg-tertiary, #a39a90);
+}
+body:has(.ak-working.active) .topbar .icon-btn {
+  border: 1px solid var(--ak-border, #e0dbd2);
+  color: var(--ak-fg-secondary, #625a52);
+  background: transparent;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  border-radius: 0;
+  padding: 7px 14px;
+  transition: all 0.2s ease;
+}
+body:has(.ak-working.active) .topbar .icon-btn:hover {
+  border-color: var(--ak-accent, #d96e2c);
+  color: var(--ak-accent, #d96e2c);
+  background: transparent;
+}
+body:has(.ak-working.active) .topbar .provider-pill {
+  border: 1px solid var(--ak-border, #e0dbd2);
+  background: transparent;
+  border-radius: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 7px 14px;
+  color: var(--ak-fg-secondary, #625a52);
+}
+body:has(.ak-working.active) .topbar .provider-pill .label {
+  color: var(--ak-fg-tertiary, #a39a90);
+}
+body:has(.ak-working.active) .topbar .provider-pill .val {
+  color: var(--ak-accent, #d96e2c);
+  font-weight: 700;
+}
+
+/* 工作区激活时：rail 方舟风化 */
+body:has(.ak-working.active) .rail {
+  background: var(--ak-bg-card, #fbfaf5);
+  border: 1px solid var(--ak-border, #e0dbd2);
+  border-radius: 0;
+  box-shadow: var(--ak-shadow-card, 0 1px 2px rgba(0,0,0,.04));
+  margin: 24px 40px 0;
+  padding: 18px 24px;
+}
+body:has(.ak-working.active) .rail .num {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-style: normal;
+  font-size: 28px;
+  letter-spacing: 0.15em;
+  color: var(--ak-fg-tertiary, #a39a90);
+}
+body:has(.ak-working.active) .rail .stage.active .num {
+  color: var(--ak-accent, #d96e2c);
+}
+body:has(.ak-working.active) .rail .name {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ak-fg-primary, #1a1612);
+  letter-spacing: 0.02em;
+}
+body:has(.ak-working.active) .rail .note {
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.15em;
+  color: var(--ak-fg-tertiary, #a39a90);
+}
+body:has(.ak-working.active) .rail .stage.active .note {
+  color: var(--ak-accent, #d96e2c);
+}
+body:has(.ak-working.active) .rail .sep {
+  background: linear-gradient(to right, transparent, var(--ak-border, #e0dbd2), transparent);
+}
+
+/* 工作区整体的背景纹理（细点阵 + 右上橙色光晕） */
+.ak-working::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, var(--ak-border) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+  mask-image: radial-gradient(ellipse 70% 50% at 50% 20%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 20%, black 40%, transparent 100%);
+}
+.ak-working::after {
+  content: '';
+  position: absolute;
+  top: -200px;
+  right: -300px;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, var(--ak-accent-dim) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(40px);
+}
+
+/* 工作区的内容包裹器 —— 所有直接子元素都在 1180px 内容带居中 */
+.ak-working > * {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+/* stage-head / output-head：方舟风顶部 */
+.ak-working .stage-head,
+.ak-working .output-head {
+  position: relative;
+  padding-top: 64px !important;
+  padding-bottom: 48px !important;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--ak-border);
+}
+.ak-working .stage-head::before,
+.ak-working .output-head::before {
+  content: '';
+  position: absolute;
+  top: 64px;
+  left: 40px;
+  width: 2px;
+  height: 160px;
+  background: linear-gradient(180deg, var(--ak-accent) 0%, transparent 100%);
+}
+.ak-working .stage-head > *,
+.ak-working .output-head > * {
+  margin-left: 120px;
+}
+
+.ak-working .crumb {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.25em !important;
+  color: var(--ak-accent) !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 18px !important;
+  padding-bottom: 0 !important;
+  border: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.ak-working .crumb::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--ak-accent);
+  display: inline-block;
+}
+
+.ak-working h2 {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 900 !important;
+  font-size: 40px !important;
+  letter-spacing: 0.08em !important;
+  color: var(--ak-fg-primary) !important;
+  line-height: 1.2 !important;
+  margin: 0 0 14px !important;
+  font-style: normal !important;
+}
+.ak-working .output-head h2 {
+  font-size: 36px !important;
+}
+.ak-working .title-stack { margin-left: 0 !important; }
+
+.ak-working .stage-head .sub,
+.ak-working .output-head .sub,
+.ak-working .title-stack .sub {
+  font-family: var(--ak-font-sans);
+  font-size: 14px !important;
+  color: var(--ak-fg-secondary) !important;
+  line-height: 1.8 !important;
+  font-style: normal !important;
+  margin: 0 !important;
+  max-width: 720px;
+}
+.ak-working .stage-head b,
+.ak-working .output-head b,
+.ak-working p b {
+  color: var(--ak-accent);
+  font-weight: 700;
+}
+
+/* 上传区 */
+.ak-working .upload-zone {
+  background: var(--ak-bg-card) !important;
+  border: 2px dashed var(--ak-border-bright) !important;
+  border-radius: 0 !important;
+  padding: 60px 40px !important;
+  transition: all 0.25s ease;
+  box-shadow: var(--ak-shadow-card);
+}
+.ak-working .upload-zone:hover,
+.ak-working .upload-zone.dragover {
+  border-color: var(--ak-accent) !important;
+  background: var(--ak-bg-card-hover) !important;
+}
+.ak-working .upload-zone .icon {
+  color: var(--ak-accent) !important;
+  font-family: var(--ak-font-display);
+  font-size: 56px !important;
+}
+.ak-working .upload-zone .prompt-l1 {
+  font-family: var(--ak-font-sans) !important;
+  font-size: 15px !important;
+  color: var(--ak-fg-primary) !important;
+  letter-spacing: 0.02em;
+}
+.ak-working .upload-zone .prompt-l2 {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-fg-tertiary) !important;
+  letter-spacing: 0.15em !important;
+  margin-top: 8px;
+}
+.ak-working .upload-zone kbd {
+  background: var(--ak-bg);
+  border: 1px solid var(--ak-border);
+  font-family: var(--ak-font-mono);
+  padding: 2px 6px;
+  font-size: 11px;
+  color: var(--ak-fg-secondary);
+}
+
+/* 说明卡 */
+.ak-working .upload-hint {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-left: 3px solid var(--ak-accent) !important;
+  border-radius: 0 !important;
+  padding: 24px 28px !important;
+  margin-top: 20px !important;
+  color: var(--ak-fg-secondary);
+  line-height: 1.9;
+}
+.ak-working .upload-hint .heading {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ak-accent) !important;
+  margin-bottom: 12px !important;
+  font-weight: 500;
+}
+.ak-working .upload-hint b {
+  color: var(--ak-fg-primary);
+  font-weight: 700;
+}
+
+/* 预览卡 */
+.ak-working .preview-card {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  padding: 20px !important;
+  box-shadow: var(--ak-shadow-card);
+}
+.ak-working .preview-label {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-accent) !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase;
+}
+.ak-working .preview-filename {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 13px !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .preview-size,
+.ak-working .preview-tip {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-fg-tertiary) !important;
+  letter-spacing: 0.05em;
+}
+
+/* 模式选择卡 */
+.ak-working .mode-head,
+.ak-working .variant-head {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.25em !important;
+  color: var(--ak-accent) !important;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.ak-working .mode-card {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  transition: all 0.2s ease;
+}
+.ak-working .mode-card:hover {
+  border-color: var(--ak-border-bright) !important;
+  background: var(--ak-bg-card-hover) !important;
+}
+.ak-working .mode-card.selected {
+  border-color: var(--ak-accent) !important;
+  background: var(--ak-bg-card-hover) !important;
+  box-shadow: inset 3px 0 0 var(--ak-accent);
+}
+.ak-working .mode-card .mode-name {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 700 !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .mode-card .mode-desc {
+  font-size: 12px !important;
+  color: var(--ak-fg-secondary) !important;
+  line-height: 1.7;
+}
+
+/* variant chips 小标签 */
+.ak-working .variant-chip {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-secondary) !important;
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+}
+.ak-working .variant-chip:hover {
+  border-color: var(--ak-border-bright) !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .variant-chip.on {
+  background: var(--ak-accent) !important;
+  border-color: var(--ak-accent) !important;
+  color: #fff !important;
+}
+.ak-working .variant-hint {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-fg-tertiary) !important;
+  letter-spacing: 0.05em;
+}
+
+/* 补充说明 + textarea */
+.ak-working .supplement label,
+.ak-working .field label {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.25em !important;
+  color: var(--ak-accent) !important;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.ak-working .hint {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-fg-tertiary) !important;
+  letter-spacing: 0.05em !important;
+}
+.ak-working textarea,
+.ak-working .supplement textarea {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-primary) !important;
+  font-family: var(--ak-font-sans) !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+  padding: 16px 18px !important;
+  transition: border-color 0.2s ease;
+}
+.ak-working textarea:focus,
+.ak-working .supplement textarea:focus {
+  outline: none !important;
+  border-color: var(--ak-accent) !important;
+}
+.ak-working textarea::placeholder {
+  color: var(--ak-fg-tertiary) !important;
+  font-style: normal !important;
+}
+
+/* 按钮方舟风 */
+.ak-working .btn,
+.ak-working .ak-btn {
+  background: var(--ak-accent) !important;
+  color: #fff !important;
+  border: 1px solid var(--ak-accent) !important;
+  border-radius: 0 !important;
+  font-family: var(--ak-font-mono) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.2em !important;
+  padding: 12px 22px !important;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.ak-working .btn:hover {
+  background: var(--ak-accent-strong) !important;
+  border-color: var(--ak-accent-strong) !important;
+}
+.ak-working .btn.ghost {
+  background: transparent !important;
+  color: var(--ak-fg-secondary) !important;
+  border-color: var(--ak-border-bright) !important;
+}
+.ak-working .btn.ghost:hover {
+  color: var(--ak-accent) !important;
+  border-color: var(--ak-accent) !important;
+  background: transparent !important;
+}
+.ak-working .btn .arrow {
+  font-family: inherit;
+}
+
+/* 输出卡（prompt-card / notes / next-steps） */
+.ak-working .prompt-card {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  padding: 28px 28px 20px !important;
+  box-shadow: var(--ak-shadow-card);
+  position: relative;
+}
+.ak-working .prompt-card .corner {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.2em !important;
+  color: var(--ak-accent) !important;
+  text-transform: uppercase;
+  background: transparent !important;
+  padding: 0 !important;
+}
+.ak-working .prompt-card .copy-btn {
+  background: var(--ak-fg-primary) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.15em !important;
+  padding: 6px 12px !important;
+}
+.ak-working .prompt-card .copy-btn:hover {
+  background: var(--ak-accent) !important;
+}
+.ak-working .prompt-card .line {
+  font-family: var(--ak-font-sans) !important;
+  color: var(--ak-fg-primary) !important;
+  font-size: 14px !important;
+  line-height: 1.9 !important;
+  padding: 2px 0 !important;
+  border: none !important;
+}
+.ak-working .prompt-card .line.hl,
+.ak-working .prompt-card .line:hover {
+  background: var(--ak-accent-dim) !important;
+  color: var(--ak-fg-primary) !important;
+}
+
+.ak-working .notes {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-left: 3px solid var(--ak-accent) !important;
+  border-radius: 0 !important;
+  padding: 24px 28px !important;
+  margin-top: 20px !important;
+}
+.ak-working .notes h3 {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 900 !important;
+  font-size: 16px !important;
+  color: var(--ak-fg-primary) !important;
+  letter-spacing: 0.05em !important;
+  margin: 0 0 6px !important;
+}
+.ak-working .notes .note-intro {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-fg-tertiary) !important;
+  letter-spacing: 0.1em;
+  margin-bottom: 16px !important;
+}
+.ak-working .notes ul {
+  padding-left: 20px;
+}
+.ak-working .notes li {
+  color: var(--ak-fg-secondary) !important;
+  line-height: 1.9 !important;
+  margin-bottom: 8px !important;
+  font-size: 13.5px !important;
+}
+.ak-working .notes li.hl,
+.ak-working .notes li:hover {
+  background: var(--ak-accent-dim) !important;
+  color: var(--ak-fg-primary) !important;
+}
+
+.ak-working .next-steps {
+  background: transparent !important;
+  border-top: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  padding: 24px 0 0 !important;
+  margin-top: 32px !important;
+  display: flex !important;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+.ak-working .next-steps .txt {
+  color: var(--ak-fg-secondary) !important;
+  font-size: 13.5px !important;
+  line-height: 1.8 !important;
+}
+.ak-working .next-steps .txt strong {
+  color: var(--ak-accent) !important;
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.25em !important;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+/* 底部 margin-note */
+.ak-working .margin-note {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  color: var(--ak-fg-tertiary) !important;
+  letter-spacing: 0.15em !important;
+  border-top: 1px solid var(--ak-border) !important;
+  padding: 20px 40px !important;
+  margin: 48px 0 0 !important;
+  max-width: none !important;
+}
+
+/* screen 3 诊断页的独特组件 */
+.ak-working .canvas {
+  border-radius: 0 !important;
+  border: 1px solid var(--ak-border) !important;
+  background: var(--ak-fg-primary) !important;
+  box-shadow: var(--ak-shadow-card);
+}
+.ak-working .canvas .caption {
+  font-family: var(--ak-font-mono) !important;
+  font-style: normal !important;
+  color: rgba(251, 250, 245, 0.75) !important;
+  border-radius: 0 !important;
+  background: rgba(26, 22, 18, 0.7) !important;
+}
+.ak-working .reupload {
+  font-family: var(--ak-font-mono) !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  letter-spacing: 0.2em !important;
+  color: var(--ak-fg-tertiary) !important;
+  text-transform: uppercase;
+}
+.ak-working .reupload:hover { color: var(--ak-accent) !important; }
+.ak-working .diag-right h3 {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 900 !important;
+  font-size: 20px !important;
+  letter-spacing: 0.05em !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .ai-intro {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-left: 3px solid var(--ak-accent) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-secondary) !important;
+  font-family: var(--ak-font-sans);
+  line-height: 1.85;
+}
+
+/* option-toggle 开关卡片 */
+.ak-working .option-toggle {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--ak-shadow-card);
+}
+.ak-working .toggle-row input[type="checkbox"] {
+  accent-color: var(--ak-accent);
+}
+.ak-working .toggle-title {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 700 !important;
+  color: var(--ak-fg-primary) !important;
+  letter-spacing: 0.02em;
+}
+.ak-working .toggle-sub {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  color: var(--ak-fg-tertiary) !important;
+}
+
+/* 加载态 */
+.ak-working .loading {
+  color: var(--ak-fg-secondary);
+}
+.ak-working .loading .spinner {
+  border-color: var(--ak-border) !important;
+  border-top-color: var(--ak-accent) !important;
+}
+.ak-working .loading .msg {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 700 !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .loading .sub {
+  font-family: var(--ak-font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.15em !important;
+  color: var(--ak-fg-tertiary) !important;
+}
+
+/* Stage Ⅰ 独特组件 */
+
+/* 分区头（按模型分组） */
+.ak-working .type-section { margin-bottom: 36px; }
+.ak-working .type-section-head {
+  padding: 0 0 14px !important;
+  border-bottom: 1px solid var(--ak-border) !important;
+  margin-bottom: 20px !important;
+}
+.ak-working .type-section-head .title {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 900 !important;
+  font-size: 22px !important;
+  color: var(--ak-fg-primary) !important;
+  letter-spacing: 0.05em !important;
+}
+.ak-working .type-section-head .title .en {
+  font-family: var(--ak-font-display) !important;
+  font-style: normal !important;
+  font-size: 14px !important;
+  color: var(--ak-accent) !important;
+  letter-spacing: 0.25em !important;
+}
+.ak-working .type-section-head .caption {
+  font-family: var(--ak-font-mono) !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  letter-spacing: 0.1em !important;
+  color: var(--ak-fg-tertiary) !important;
+}
+
+/* 类型卡：场景 / 单人 / 双人 / 特写 / 道具等 */
+.ak-working .type-card {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-left: 3px solid var(--ak-border-bright) !important;
+  border-radius: 0 !important;
+  font-family: var(--ak-font-sans) !important;
+  box-shadow: var(--ak-shadow-card);
+  transition: all 0.25s ease !important;
+}
+.ak-working .type-card:hover {
+  border-left-color: var(--ak-accent) !important;
+  background: var(--ak-bg-card-hover) !important;
+  box-shadow: var(--ak-shadow-card-hover) !important;
+}
+.ak-working .type-card .type-eyebrow {
+  font-family: var(--ak-font-mono) !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  letter-spacing: 0.2em !important;
+  color: var(--ak-accent) !important;
+  font-weight: 500;
+}
+.ak-working .type-card .type-title {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 900 !important;
+  font-size: 22px !important;
+  color: var(--ak-fg-primary) !important;
+  letter-spacing: 0.03em;
+}
+.ak-working .type-card .type-desc {
+  color: var(--ak-fg-secondary) !important;
+  line-height: 1.75 !important;
+}
+.ak-working .type-card .type-meta {
+  font-family: var(--ak-font-mono) !important;
+  font-style: normal !important;
+  font-size: 11px !important;
+  letter-spacing: 0.15em !important;
+  color: var(--ak-fg-tertiary) !important;
+  border-top: 1px solid var(--ak-border) !important;
+  text-transform: uppercase;
+}
+.ak-working .type-card.wip {
+  border-left-color: var(--ak-border) !important;
+  background: transparent !important;
+}
+.ak-working .type-card.wip .type-eyebrow {
+  color: var(--ak-fg-tertiary) !important;
+}
+
+/* 图片上传网格 */
+.ak-working .img-slot {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--ak-shadow-card);
+}
+.ak-working .img-slot .slot-role {
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  font-family: var(--ak-font-sans) !important;
+  color: var(--ak-fg-primary) !important;
+  background: var(--ak-bg) !important;
+}
+.ak-working .img-slot .slot-role:focus {
+  outline: none !important;
+  border-color: var(--ak-accent) !important;
+}
+.ak-working .img-slot .slot-remove {
+  background: var(--ak-fg-primary) !important;
+  border-radius: 0 !important;
+  color: #fff !important;
+}
+.ak-working .img-slot .slot-remove:hover {
+  background: var(--ak-accent) !important;
+}
+.ak-working .img-add-slot {
+  background: var(--ak-bg-card) !important;
+  border: 2px dashed var(--ak-border-bright) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-secondary) !important;
+  transition: all 0.25s ease;
+}
+.ak-working .img-add-slot:hover,
+.ak-working .img-add-slot.drag {
+  border-color: var(--ak-accent) !important;
+  background: var(--ak-bg-card-hover) !important;
+  color: var(--ak-accent) !important;
+}
+.ak-working .img-add-slot .plus {
+  font-family: var(--ak-font-display) !important;
+  color: var(--ak-accent) !important;
+}
+
+/* field 表单 input（textarea 和 label 已经在前面覆盖过） */
+.ak-working .field input[type="text"],
+.ak-working .field input[type="password"] {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-primary) !important;
+  font-family: var(--ak-font-sans) !important;
+  padding: 12px 16px !important;
+}
+.ak-working .field input:focus {
+  outline: none !important;
+  border-color: var(--ak-accent) !important;
+}
+
+/* banana-role-chip（screen 22 的参考图标签，虽然不属于 Stage Ⅰ，但也顺便方舟风化） */
+.ak-working .banana-role-chip {
+  background: var(--ak-bg) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-secondary) !important;
+  font-family: var(--ak-font-mono) !important;
+}
+.ak-working .banana-role-chip.on {
+  background: var(--ak-accent) !important;
+  border-color: var(--ak-accent) !important;
+  color: #fff !important;
+}
+
+/* ---------- Toolbox 独特组件补丁 ---------- */
+
+/* hist-* 历史记录 */
+.ak-working .hist-toolbar {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+}
+.ak-working .hist-tab {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-secondary) !important;
+  font-family: var(--ak-font-sans) !important;
+  transition: all 0.2s ease;
+}
+.ak-working .hist-tab:hover {
+  border-color: var(--ak-border-bright) !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .hist-tab.active {
+  background: var(--ak-accent) !important;
+  border-color: var(--ak-accent) !important;
+  color: #fff !important;
+}
+.ak-working .hist-tab-num {
+  font-family: var(--ak-font-mono) !important;
+  background: rgba(255,255,255,0.25) !important;
+  color: inherit !important;
+  border-radius: 0 !important;
+}
+.ak-working .hist-entry {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-left: 3px solid var(--ak-border-bright) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--ak-shadow-card);
+  transition: all 0.25s ease;
+}
+.ak-working .hist-entry:hover {
+  border-left-color: var(--ak-accent) !important;
+  box-shadow: var(--ak-shadow-card-hover) !important;
+}
+.ak-working .hist-entry-tag {
+  font-family: var(--ak-font-mono) !important;
+  color: var(--ak-accent) !important;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 11px !important;
+}
+.ak-working .hist-entry-time {
+  font-family: var(--ak-font-mono) !important;
+  color: var(--ak-fg-tertiary) !important;
+  font-size: 11px !important;
+}
+.ak-working .hist-entry-desc {
+  color: var(--ak-fg-secondary) !important;
+}
+.ak-working .hist-entry-meta {
+  font-family: var(--ak-font-mono) !important;
+  color: var(--ak-fg-tertiary) !important;
+  font-size: 11px !important;
+}
+.ak-working .hist-entry-actions .btn {
+  font-size: 11px !important;
+  padding: 6px 12px !important;
+}
+.ak-working .hist-entry-actions .hist-del {
+  color: #c0392b !important;
+}
+.ak-working .hist-empty {
+  color: var(--ak-fg-tertiary) !important;
+  font-family: var(--ak-font-mono);
+}
+.ak-working .hist-modal-panel {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 16px 48px rgba(26, 22, 18, 0.2) !important;
+}
+.ak-working .hist-modal-head {
+  border-bottom: 1px solid var(--ak-border) !important;
+}
+.ak-working .hist-modal-close {
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-secondary) !important;
+  background: transparent !important;
+  font-family: var(--ak-font-mono);
+}
+.ak-working .hist-modal-close:hover {
+  border-color: var(--ak-accent) !important;
+  color: var(--ak-accent) !important;
+}
+.ak-working .hist-modal-body .hist-section-title {
+  font-family: var(--ak-font-mono) !important;
+  color: var(--ak-accent) !important;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.ak-working .hist-modal-body pre {
+  background: var(--ak-bg) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  font-family: var(--ak-font-mono) !important;
+  color: var(--ak-fg-primary) !important;
+}
+
+/* banana-* 直接抽图（screen 22） */
+.ak-working .banana-warn-banner {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-accent) !important;
+  border-left: 3px solid var(--ak-accent) !important;
+  border-radius: 0 !important;
+}
+.ak-working .banana-warn-title {
+  font-family: var(--ak-font-sans) !important;
+  font-weight: 900 !important;
+  color: var(--ak-fg-primary) !important;
+}
+.ak-working .banana-warn-text {
+  color: var(--ak-fg-secondary) !important;
+}
+.ak-working .banana-warn-sub {
+  font-family: var(--ak-font-mono) !important;
+  color: var(--ak-fg-tertiary) !important;
+  font-size: 11px !important;
+}
+.ak-working .banana-warn-icon {
+  color: var(--ak-accent) !important;
+}
+.ak-working .banana-result-card {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--ak-shadow-card);
+}
+.ak-working .banana-result-head {
+  background: transparent !important;
+  border-bottom: 1px solid var(--ak-border) !important;
+}
+.ak-working .banana-result-head .banana-idx {
+  font-family: var(--ak-font-display) !important;
+  color: var(--ak-accent) !important;
+  letter-spacing: 0.1em;
+}
+.ak-working .banana-progress {
+  background: var(--ak-bg) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+}
+.ak-working .banana-progress-bar {
+  background: var(--ak-border) !important;
+  border-radius: 0 !important;
+}
+.ak-working .banana-progress-fill {
+  background: var(--ak-accent) !important;
+}
+.ak-working .banana-error {
+  background: rgba(192, 57, 43, 0.08) !important;
+  border: 1px solid #c0392b !important;
+  border-radius: 0 !important;
+  color: #c0392b !important;
+  font-family: var(--ak-font-mono);
+}
+.ak-working .banana-result-foot {
+  border-top: 1px solid var(--ak-border) !important;
+  background: transparent !important;
+}
+.ak-working .banana-result-foot .btn {
+  font-size: 11px !important;
+  padding: 6px 12px !important;
+}
+.ak-working .banana-empty-hint {
+  color: var(--ak-fg-tertiary) !important;
+  font-family: var(--ak-font-mono);
+}
+
+/* tt-cloud tag 云（screen 14） */
+.ak-working .tt-cloud {
+  background: var(--ak-bg-card) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+}
+.ak-working .tt-unit {
+  background: var(--ak-bg) !important;
+  border: 1px solid var(--ak-border) !important;
+  border-radius: 0 !important;
+  color: var(--ak-fg-primary) !important;
+  font-family: var(--ak-font-sans) !important;
+}
+.ak-working .tt-unit:hover {
+  border-color: var(--ak-accent) !important;
+}
+
+/* 工作区响应式 */
+@media (max-width: 960px) {
+  body:has(.ak-working.active) .topbar { padding: 12px 20px; }
+  body:has(.ak-working.active) .rail { margin: 16px 20px 0; padding: 14px 16px; }
+  .ak-working > * {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .ak-working .stage-head::before,
+  .ak-working .output-head::before { left: 20px; }
+  .ak-working h2 { font-size: 30px !important; }
+}
+
 </style>
 </head>
 <body>
@@ -2707,103 +4225,139 @@ button.stage.stage-clickable:hover .note {
   </div>
 
   <!-- ============ SCREEN 1 ============ -->
-  <section class="screen active" data-screen="1">
-    <div class="hero">
-      <div class="hero-left">
-        <div class="eyebrow">— Internal tool, for the atelier</div>
-        <h1>写出<em>更好的</em><br>AI 作图提示词</h1>
-        <p class="lede">
-          看图反推、追问光影、分阶段出词 —— 给美术团队的内部工具。
-          顺便告诉你<b>为什么这么写</b>。
-        </p>
+  <section class="screen active atelier-home" data-screen="1">
 
-        <div class="flow">
-          <div class="node">
-            <div class="step cur">Stage Ⅰ</div>
-            <div class="label">抽图</div>
-            <div class="desc">场景 · 人物 · 道具 — 按类型挑模型</div>
-          </div>
-          <div class="node">
-            <div class="step cur">Stage Ⅱ</div>
-            <div class="label">整图优化</div>
-            <div class="desc">一句话让 Flux 优化整张，构图不变</div>
-          </div>
-          <div class="node">
-            <div class="step cur">Stage Ⅲ</div>
-            <div class="label">局部精修</div>
-            <div class="desc">一句话让 Flux 调整局部</div>
-          </div>
-        </div>
-
-        <div class="btn-row">
-          <button class="btn" onclick="goStart()">进入 Ⅱ · 整图优化 <span class="arrow">→</span></button>
-          <button class="btn ghost" onclick="goStage(3)">进入 Ⅲ · 局部精修 <span class="arrow">→</span></button>
-          <button class="btn ghost" onclick="goStage(1)">进入 Ⅰ · 抽图 <span class="arrow">→</span></button>
+    <nav class="ak-nav">
+      <div class="ak-nav-logo">
+        <div class="ak-nav-logo-bar"></div>
+        <div class="ak-nav-logo-text">
+          <div class="ak-nav-logo-en">ATELIER</div>
+          <div class="ak-nav-logo-cn">里里的工具箱</div>
         </div>
       </div>
 
-      <div class="hero-right">
-        <div class="ornament">
-          <div class="sigil">里里的工具箱</div>
-          <div class="caption">Lili · Atelier Toolbox</div>
+      <div class="ak-nav-menu">
+        <button class="ak-nav-item active" type="button">
+          <div class="ak-nav-item-en">INDEX</div>
+          <div class="ak-nav-item-cn">首页</div>
+        </button>
+        <button class="ak-nav-item" type="button" onclick="goStage(1)">
+          <div class="ak-nav-item-en">STAGE I</div>
+          <div class="ak-nav-item-cn">抽图</div>
+        </button>
+        <button class="ak-nav-item" type="button" onclick="goStart()">
+          <div class="ak-nav-item-en">STAGE II</div>
+          <div class="ak-nav-item-cn">整图优化</div>
+        </button>
+        <button class="ak-nav-item" type="button" onclick="goStage(3)">
+          <div class="ak-nav-item-en">STAGE III</div>
+          <div class="ak-nav-item-cn">局部精修</div>
+        </button>
+        <button class="ak-nav-item" type="button" onclick="document.querySelector('.atelier-home .ak-toolbox').scrollIntoView({behavior:'smooth'})">
+          <div class="ak-nav-item-en">TOOLBOX</div>
+          <div class="ak-nav-item-cn">工具箱</div>
+        </button>
+      </div>
+
+      <div class="ak-nav-meta">
+        <span class="ak-dot"></span>
+        <span>V1.0 · ONLINE</span>
+      </div>
+    </nav>
+
+    <section class="ak-hero">
+      <div class="ak-accent-pillar"></div>
+
+      <div class="ak-eyebrow">LILI'S ATELIER · INTERNAL TOOL</div>
+      <h1 class="ak-title-en">LILI'S<br><span class="ak-sub-accent">TOOLBOX</span></h1>
+      <div class="ak-slogan">写出 <em>更好的</em> AI 作图提示词</div>
+
+      <p class="ak-lede">
+        看图反推 · 追问光影 · 分阶段出词<br>
+        给美术团队的内部工具 — 顺便告诉你为什么这么写。
+      </p>
+
+      <div class="ak-stage-grid">
+        <button class="ak-stage-card" type="button" onclick="goStage(1)">
+          <div class="ak-stage-num">Ⅰ</div>
+          <div class="ak-stage-label-en">STAGE I</div>
+          <div class="ak-stage-label-cn">抽图</div>
+          <p class="ak-stage-desc">没图时从这里开始 · 场景 / 人物 / 道具各有专属 prompt 卡。</p>
+          <div class="ak-stage-cta">ENTER →</div>
+        </button>
+
+        <button class="ak-stage-card" type="button" onclick="goStart()">
+          <div class="ak-stage-num">Ⅱ</div>
+          <div class="ak-stage-label-en">STAGE II</div>
+          <div class="ak-stage-label-cn">整图优化</div>
+          <p class="ak-stage-desc">已经有图了 · 一句话让 Flux 优化整张，不改布局。</p>
+          <div class="ak-stage-cta">ENTER →</div>
+        </button>
+
+        <button class="ak-stage-card" type="button" onclick="goStage(3)">
+          <div class="ak-stage-num">Ⅲ</div>
+          <div class="ak-stage-label-en">STAGE III</div>
+          <div class="ak-stage-label-cn">局部精修</div>
+          <p class="ak-stage-desc">已经有图了 · 只改其中一小块（比如手 / 眼睛 / 衣角）。</p>
+          <div class="ak-stage-cta">ENTER →</div>
+        </button>
+      </div>
+    </section>
+
+    <section class="ak-toolbox">
+      <div class="ak-section-head">
+        <div class="ak-section-head-left">
+          <h2>TOOLBOX <span class="ak-accent-mark">·</span> 工具箱</h2>
+          <div class="ak-section-sub">跟主工作流平行 · standalone utilities</div>
         </div>
+        <div class="ak-section-head-right">05 UNITS / INDEPENDENT</div>
       </div>
-    </div>
 
-    <div class="toolbox-section">
-      <div class="toolbox-head">
-        <div class="eyebrow">— Toolbox · 工具箱</div>
-        <h3>独立小工具</h3>
-        <div class="sub">跟主工作流平行 · standalone utilities</div>
-      </div>
-      <div class="tool-cards">
-        <button class="tool-card" onclick="goReverseUpload()">
-          <div class="tool-card-head">
-            <span class="tool-num">01</span>
-            <span class="tool-name">反推提示词</span>
-          </div>
-          <p class="tool-desc">从图片反推出 SDXL tag 或 Flux Klein 自然语言描述。</p>
+      <div class="ak-tool-grid">
+        <button class="ak-tool-card" type="button" onclick="goNewbieDocs()">
+          <div class="ak-tool-num">UNIT 01</div>
+          <div class="ak-tool-name">AI 新手必看</div>
+          <p class="ak-tool-desc">新同学先点这里 · 三个模型的区别、prompt 权重语法、画风词禁忌一次讲清楚。</p>
         </button>
-        <button class="tool-card" onclick="goTagTrans()">
-          <div class="tool-card-head">
-            <span class="tool-num">02</span>
-            <span class="tool-name">Tag 翻译 · 排序</span>
-          </div>
-          <p class="tool-desc">SDXL tag 中英双向翻译 · 内置 3779 条 danbooru 字典 · 命中直接用不调 AI · AI 翻出的新词自动学进本地。</p>
+        <button class="ak-tool-card" type="button" onclick="goReverseUpload()">
+          <div class="ak-tool-num">UNIT 02</div>
+          <div class="ak-tool-name">反推提示词</div>
+          <p class="ak-tool-desc">从图片反推出 SDXL tag 或 Flux Klein 自然语言描述。</p>
         </button>
-        <button class="tool-card" onclick="goNewbieDocs()">
-          <div class="tool-card-head">
-            <span class="tool-num">03</span>
-            <span class="tool-name">AI 新手必看</span>
-          </div>
-          <p class="tool-desc">基础知识文档 · 看懂三个模型的区别、prompt 权重语法、画风词禁忌等。新同学必读。</p>
+        <button class="ak-tool-card" type="button" onclick="goTagTrans()">
+          <div class="ak-tool-num">UNIT 03</div>
+          <div class="ak-tool-name">Tag 翻译 · 排序</div>
+          <p class="ak-tool-desc">SDXL tag 中英互译 · 常见词内置字典即时翻 · 生僻词调 AI 并自动记住下次不再重翻。</p>
         </button>
-        <button class="tool-card" onclick="goHistory()">
-          <div class="tool-card-head">
-            <span class="tool-num">04</span>
-            <span class="tool-name">抽图历史记录</span>
-          </div>
-          <p class="tool-desc">查看最近抽过的香蕉图 prompt · 可载入回卡再改一版 · 可导出 JSON 备份。</p>
+        <button class="ak-tool-card" type="button" onclick="goHistory()">
+          <div class="ak-tool-num">UNIT 04</div>
+          <div class="ak-tool-name">抽图历史记录</div>
+          <p class="ak-tool-desc">最近抽过的 prompt 都存在这里 · 点一下载回原卡接着改 · 也能导出备份。</p>
         </button>
-        <button class="tool-card" onclick="goBananaDraw()">
-          <div class="tool-card-head">
-            <span class="tool-num">05</span>
-            <span class="tool-name">直接抽图 · 香蕉</span>
-          </div>
-          <p class="tool-desc">直接调 GRSAI 的 Nano Banana Pro 出图 · 支持参考图、比例、并行多张 · 注意会真花钱。</p>
+        <button class="ak-tool-card" type="button" onclick="goBananaDraw()">
+          <div class="ak-tool-num">UNIT 05</div>
+          <div class="ak-tool-name">直接抽图 · 香蕉</div>
+          <p class="ak-tool-desc">直接调 GRSAI 的 Nano Banana Pro 出图 · 支持参考图、比例、并行多张 · 注意会真花钱。</p>
         </button>
       </div>
-    </div>
+    </section>
 
-    <div class="margin-note">
-      <span>v1.0</span>
-      <span>API Key 存在你本地浏览器 · 不经过任何服务器</span>
-    </div>
+    <footer class="ak-footer">
+      <div class="ak-footer-left">
+        <span>V1.0</span>
+        <span class="ak-sep">/</span>
+        <span>BUILD 2026.04</span>
+        <span class="ak-sep">/</span>
+        <span>API KEY STORED LOCALLY · NO SERVER</span>
+      </div>
+      <div>© ATELIER · LILI</div>
+    </footer>
+
   </section>
 
 
   <!-- ============ SCREEN 2: UPLOAD ============ -->
-  <section class="screen" data-screen="2">
+  <section class="screen ak-working" data-screen="2">
     <div class="stage-head">
       <div class="crumb">Stage Ⅱ · Refinement</div>
       <h2>整图优化 · 上传你想优化的图</h2>
@@ -2861,7 +4415,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 3: DIAGNOSE ============ -->
-  <section class="screen" data-screen="3">
+  <section class="screen ak-working" data-screen="3">
     <div class="stage-head">
       <div class="crumb">Stage Ⅱ · Refinement · Step 2</div>
       <h2>AI 看图 · 你来补充</h2>
@@ -2920,7 +4474,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 4: OUTPUT ============ -->
-  <section class="screen" data-screen="4">
+  <section class="screen ak-working" data-screen="4">
     <div class="output-head">
       <div class="title-stack">
         <h2>你的提示词出来了</h2>
@@ -2940,7 +4494,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 5: REVERSE UPLOAD ============ -->
-  <section class="screen" data-screen="5">
+  <section class="screen ak-working" data-screen="5">
     <div class="stage-head">
       <div class="crumb">Toolbox · 反推提示词</div>
       <h2>从图到提示词</h2>
@@ -3015,7 +4569,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 6: REVERSE OUTPUT ============ -->
-  <section class="screen" data-screen="6">
+  <section class="screen ak-working" data-screen="6">
     <div class="stage-head">
       <div class="crumb">Toolbox · 反推提示词 · Done</div>
       <h2>反推结果</h2>
@@ -3034,7 +4588,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 7: STAGE Ⅲ UPLOAD + INTENT ============ -->
-  <section class="screen" data-screen="7">
+  <section class="screen ak-working" data-screen="7">
     <div class="stage-head">
       <div class="crumb">Stage Ⅲ · Local Repaint</div>
       <h2>局部精修 · 上传你要改的图</h2>
@@ -3142,7 +4696,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 8: STAGE Ⅲ OUTPUT ============ -->
-  <section class="screen" data-screen="8">
+  <section class="screen ak-working" data-screen="8">
     <div class="output-head">
       <div class="title-stack">
         <h2>局部精修 Prompt 出来了</h2>
@@ -3162,7 +4716,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 9: STAGE Ⅰ TYPE CHOICE ============ -->
-  <section class="screen" data-screen="9">
+  <section class="screen ak-working" data-screen="9">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Generation</div>
       <h2>抽图 · 你要抽哪种图？</h2>
@@ -3266,7 +4820,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 10: STAGE Ⅰ SCENE (Banana) ============ -->
-  <section class="screen" data-screen="10">
+  <section class="screen ak-working" data-screen="10">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Scene · 香蕉</div>
       <h2>抽场景图 · 告诉我你要画什么</h2>
@@ -3337,7 +4891,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 11: STAGE Ⅰ CHARACTER (SDXL) ============ -->
-  <section class="screen" data-screen="11">
+  <section class="screen ak-working" data-screen="11">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Character · SDXL</div>
       <h2>抽角色图 · 上传参考 + 描述情境</h2>
@@ -3378,7 +4932,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 13: STAGE Ⅰ TWO-CHAR via 香蕉 ============ -->
-  <section class="screen" data-screen="13">
+  <section class="screen ak-working" data-screen="13">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Two-Char · 香蕉</div>
       <h2>抽双人图 · 香蕉</h2>
@@ -3459,7 +5013,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 16: STAGE Ⅰ SINGLE-CHAR via 香蕉 ============ -->
-  <section class="screen" data-screen="16">
+  <section class="screen ak-working" data-screen="16">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Single-Char · 香蕉</div>
       <h2>抽单人图 · 香蕉</h2>
@@ -3533,7 +5087,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 17: STAGE Ⅰ TWO-CHAR · SDXL（独立版） ============ -->
-  <section class="screen" data-screen="17">
+  <section class="screen ak-working" data-screen="17">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Two-Char · SDXL</div>
       <h2>抽双人图 · SDXL 独立版</h2>
@@ -3597,7 +5151,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 18: STAGE Ⅰ SCENE · Flux Klein ============ -->
-  <section class="screen" data-screen="18">
+  <section class="screen ak-working" data-screen="18">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Scene · Flux Klein</div>
       <h2>抽场景图 · Flux Klein</h2>
@@ -3650,7 +5204,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 19: STAGE Ⅰ CLOSE-UP via 香蕉 ============ -->
-  <section class="screen" data-screen="19">
+  <section class="screen ak-working" data-screen="19">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Close-Up · 香蕉</div>
       <h2>抽特写图 · 香蕉</h2>
@@ -3734,7 +5288,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 20: STAGE Ⅰ PROP via 香蕉 ============ -->
-  <section class="screen" data-screen="20">
+  <section class="screen ak-working" data-screen="20">
     <div class="stage-head">
       <div class="crumb">Stage Ⅰ · Prop · 香蕉</div>
       <h2>抽道具图 · 香蕉</h2>
@@ -3807,7 +5361,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 21: HISTORY · 抽图历史记录 ============ -->
-  <section class="screen" data-screen="21">
+  <section class="screen ak-working" data-screen="21">
     <div class="stage-head">
       <div class="crumb">Toolbox · 抽图历史记录</div>
       <h2>历史记录 · <span id="hist-total-count">0</span> 条</h2>
@@ -3855,7 +5409,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 22: DIRECT BANANA DRAW · 直接抽图 ============ -->
-  <section class="screen" data-screen="22">
+  <section class="screen ak-working" data-screen="22">
     <div class="stage-head">
       <div class="crumb">Toolbox · 直接抽图 · 香蕉</div>
       <h2>直接抽图 · Nano Banana Pro</h2>
@@ -3945,7 +5499,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 12: STAGE Ⅰ OUTPUT ============ -->
-  <section class="screen" data-screen="12">
+  <section class="screen ak-working" data-screen="12">
     <div class="output-head">
       <div class="title-stack">
         <h2 id="s1-output-title">抽图 Prompt 出来了</h2>
@@ -3965,7 +5519,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 14: TAG TRANSLATE & SORT ============ -->
-  <section class="screen" data-screen="14">
+  <section class="screen ak-working" data-screen="14">
     <div class="stage-head">
       <div class="crumb">Toolbox · Tag 翻译 · 排序</div>
       <h2>SDXL Tag 双语对照 · 排序</h2>
@@ -4004,7 +5558,7 @@ button.stage.stage-clickable:hover .note {
 
 
   <!-- ============ SCREEN 15: AI 新手必看 ============ -->
-  <section class="screen" data-screen="15">
+  <section class="screen ak-working" data-screen="15">
     <div class="stage-head">
       <div class="crumb">Toolbox · AI 新手必看</div>
       <h2>基础知识文档</h2>
@@ -4244,9 +5798,9 @@ const state = {
 function go(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelector('.screen[data-screen="'+n+'"]').classList.add('active');
-  // Rail shows for main stage workflow (1-4, 7-8), hide on toolbox screens (5-6, 14, 15, 21)
+  // Rail shows for main stage workflow (1-4, 7-8), hide on toolbox screens (5-6, 14, 15, 21) and on the arknights-style home (screen 1)
   const rail = document.querySelector('.rail');
-  if (rail) rail.style.display = (n === 5 || n === 6 || n === 14 || n === 15 || n === 21 || n === 22) ? 'none' : 'grid';
+  if (rail) rail.style.display = (n === 1 || n === 5 || n === 6 || n === 14 || n === 15 || n === 21 || n === 22) ? 'none' : 'grid';
   // Update rail active state
   updateRailActive(n);
   window.scrollTo({top: 0, behavior: 'smooth'});
