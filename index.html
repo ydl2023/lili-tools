@@ -3587,12 +3587,23 @@ fileInput.addEventListener('change', e => {
   if (e.target.files[0]) handleFile(e.target.files[0]);
 });
 
-/* ---------- Paste support (active on upload screens 2, 5, 7) ---------- */
+/* ---------- Paste support ---------- */
+/* 覆盖：Stage Ⅱ 的 2/5，Stage Ⅲ 的 7，Stage Ⅰ 抽图的 10/11/13/16/17/18 */
 document.addEventListener('paste', (e) => {
-  const mainUploadActive = document.querySelector('.screen[data-screen="2"]').classList.contains('active');
-  const revUploadActive = document.querySelector('.screen[data-screen="5"]').classList.contains('active');
-  const s3UploadActive = document.querySelector('.screen[data-screen="7"]')?.classList.contains('active');
-  if (!mainUploadActive && !revUploadActive && !s3UploadActive) return;
+  const isActive = (n) => document.querySelector(`.screen[data-screen="${n}"]`)?.classList.contains('active');
+  const mainUploadActive = isActive(2);
+  const revUploadActive = isActive(5);
+  const s3UploadActive = isActive(7);
+  const s1SceneActive      = isActive(10);  // 抽场景图·香蕉
+  const s1CharActive       = isActive(11);  // SDXL 角色图
+  const s1TwoCharActive    = isActive(13);  // 抽双人图·香蕉
+  const s1SingleCharActive = isActive(16);  // 抽单人图·香蕉
+  const s1SdxlTwoActive    = isActive(17);  // SDXL 双人独立版
+  const s1FluxSceneActive  = isActive(18);  // Flux 场景图
+  const anyActive = mainUploadActive || revUploadActive || s3UploadActive
+    || s1SceneActive || s1CharActive || s1TwoCharActive
+    || s1SingleCharActive || s1SdxlTwoActive || s1FluxSceneActive;
+  if (!anyActive) return;
 
   // ignore paste into textareas / inputs
   const target = e.target;
@@ -3622,6 +3633,13 @@ document.addEventListener('paste', (e) => {
             return;
           }
         }
+        // Stage Ⅰ 抽图的 6 个子流程
+        else if (s1SceneActive) addS1SceneRef(namedFile);
+        else if (s1CharActive) addS1CharImage(namedFile);
+        else if (s1TwoCharActive) addS1TwoCharImage(namedFile);
+        else if (s1SingleCharActive) addS1SingleCharImage(namedFile);
+        else if (s1SdxlTwoActive) addS1SdxlTwoImage(namedFile);
+        else if (s1FluxSceneActive) addS1FluxSceneImage(namedFile);
         e.preventDefault();
         showToast('已粘贴图片');
         return;
