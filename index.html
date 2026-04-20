@@ -957,8 +957,8 @@ button.stage.stage-clickable:hover .note {
 /* ---------- Modal ---------- */
 .modal-backdrop {
   position: fixed; inset: 0;
-  background: rgba(20,15,10,.5);
-  backdrop-filter: blur(4px);
+  background: rgba(20,15,10,.72);
+  /* 故意不加 backdrop-filter —— Edge 上毛玻璃会让 modal 滚动严重卡顿，视觉上用深色半透明底也够了 */
   display: none;
   align-items: center;
   justify-content: center;
@@ -966,6 +966,11 @@ button.stage.stage-clickable:hover .note {
   padding: 20px;
 }
 .modal-backdrop.show { display: flex; }
+
+/* modal 打开时：隐藏 body 全屏噪点 · 避免在被遮挡状态下仍在消耗渲染资源 */
+body:has(.modal-backdrop.show)::before {
+  display: none;
+}
 .modal {
   background: var(--paper);
   border: 1px solid var(--line);
@@ -976,6 +981,9 @@ button.stage.stage-clickable:hover .note {
   overflow-y: auto;
   box-shadow: 0 30px 80px rgba(0,0,0,.25);
   padding: 32px 36px;
+  /* 滚动性能：告诉浏览器这是独立滚动层，用 GPU 加速 */
+  contain: layout style paint;
+  transform: translateZ(0);
 }
 .modal-head {
   display: flex;
@@ -2667,6 +2675,149 @@ button.stage.stage-clickable:hover .note {
   width: 100%;
 }
 /* =================================================
+ * 全局 ak-nav · 首页 + 所有工作区通用的顶部导航
+ * ================================================= */
+
+.ak-nav-global {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(243, 240, 234, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid #e0dbd2;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  font-family: 'Noto Sans SC', -apple-system, sans-serif;
+  margin: 0;
+}
+.ak-nav-global .ak-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+}
+.ak-nav-global .ak-nav-logo-bar {
+  width: 4px; height: 36px;
+  background: #d96e2c;
+}
+.ak-nav-global .ak-nav-logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.ak-nav-global .ak-nav-logo-en {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 24px;
+  letter-spacing: 3px;
+  color: #1a1612;
+  font-weight: normal;
+}
+.ak-nav-global .ak-nav-logo-cn {
+  font-size: 11px;
+  color: #a39a90;
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+.ak-nav-global .ak-nav-menu { display: flex; gap: 44px; }
+.ak-nav-global .ak-nav-item {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  position: relative;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  transition: all 0.2s ease;
+}
+.ak-nav-global .ak-nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: #d96e2c;
+  transition: width 0.25s ease;
+}
+.ak-nav-global .ak-nav-item.active::after,
+.ak-nav-global .ak-nav-item:hover::after { width: 28px; }
+.ak-nav-global .ak-nav-item-en {
+  font-family: 'Bebas Neue', Impact, sans-serif;
+  font-size: 17px;
+  letter-spacing: 2px;
+  color: #1a1612;
+  transition: color 0.2s ease;
+}
+.ak-nav-global .ak-nav-item.active .ak-nav-item-en,
+.ak-nav-global .ak-nav-item:hover .ak-nav-item-en { color: #d96e2c; }
+.ak-nav-global .ak-nav-item-cn {
+  font-size: 11px;
+  color: #a39a90;
+  letter-spacing: 1px;
+}
+.ak-nav-global .ak-nav-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #625a52;
+  letter-spacing: 1.5px;
+}
+.ak-nav-global .ak-nav-btn {
+  background: transparent;
+  border: 1px solid #e0dbd2;
+  color: #625a52;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.ak-nav-global .ak-nav-btn:hover {
+  border-color: #d96e2c;
+  color: #d96e2c;
+}
+.ak-nav-global .ak-nav-btn-label { color: #a39a90; font-size: 10px; }
+.ak-nav-global .ak-nav-btn-val { color: #d96e2c; font-weight: 700; }
+.ak-nav-global .ak-nav-btn.missing { border-color: #a8501e; }
+.ak-nav-global .ak-nav-btn.missing .ak-nav-btn-val { color: #a8501e; }
+.ak-nav-global .ak-nav-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 6px;
+}
+.ak-nav-global .ak-dot {
+  width: 7px; height: 7px;
+  background: #d96e2c;
+  border-radius: 50%;
+  animation: akPulse 2.4s ease-in-out infinite;
+}
+@media (max-width: 960px) {
+  .ak-nav-global { padding: 14px 20px; gap: 20px; }
+  .ak-nav-global .ak-nav-menu { display: none; }
+}
+
+/* 全局 ak-nav 接管后，shell 的 padding 清零（原来是它在撑顶部距离） */
+.shell { padding-top: 0 !important; }
+
+/* =================================================
  * SCREEN 1 · 方舟风首页（暖米底 + 橙强调）
  * 所有样式限定在 .atelier-home 作用域，不影响其他 screen
  * ================================================= */
@@ -4232,24 +4383,70 @@ body:has(.ak-working.active) .rail .sep {
 
 <div class="shell">
 
-  <!-- ============ TOPBAR ============ -->
-  <div class="topbar">
+  <!-- ============ 全局导航（首页 + 工作区通用） ============ -->
+  <nav class="ak-nav ak-nav-global">
+    <button class="ak-nav-logo" type="button" onclick="go(1)" title="回到首页">
+      <div class="ak-nav-logo-bar"></div>
+      <div class="ak-nav-logo-text">
+        <div class="ak-nav-logo-en">ATELIER</div>
+        <div class="ak-nav-logo-cn">里里的工具箱</div>
+      </div>
+    </button>
+
+    <div class="ak-nav-menu">
+      <button class="ak-nav-item" data-target="home" type="button" onclick="go(1)">
+        <div class="ak-nav-item-en">INDEX</div>
+        <div class="ak-nav-item-cn">首页</div>
+      </button>
+      <button class="ak-nav-item" data-target="stage1" type="button" onclick="goStage(1)">
+        <div class="ak-nav-item-en">STAGE I</div>
+        <div class="ak-nav-item-cn">抽图</div>
+      </button>
+      <button class="ak-nav-item" data-target="stage2" type="button" onclick="goStart()">
+        <div class="ak-nav-item-en">STAGE II</div>
+        <div class="ak-nav-item-cn">整图优化</div>
+      </button>
+      <button class="ak-nav-item" data-target="stage3" type="button" onclick="goStage(3)">
+        <div class="ak-nav-item-en">STAGE III</div>
+        <div class="ak-nav-item-cn">局部精修</div>
+      </button>
+      <button class="ak-nav-item" data-target="toolbox" type="button" onclick="goToToolbox()">
+        <div class="ak-nav-item-en">TOOLBOX</div>
+        <div class="ak-nav-item-cn">工具箱</div>
+      </button>
+    </div>
+
+    <div class="ak-nav-meta">
+      <button class="ak-nav-btn js-provider-pill" id="provider-pill" type="button" onclick="openSettings()" title="切换 API / 管理 key">
+        <span class="ak-nav-btn-label">PROVIDER</span>
+        <span class="ak-nav-btn-val js-provider-val" id="provider-pill-val">—</span>
+      </button>
+      <button class="ak-nav-btn" type="button" onclick="openSettings()">SETTINGS</button>
+      <span class="ak-nav-status">
+        <span class="ak-dot"></span>
+        <span>V1.0</span>
+      </span>
+    </div>
+  </nav>
+
+  <!-- ============ 旧 TOPBAR（已隐藏，保留 ID 兼容性）============ -->
+  <div class="topbar" style="display:none">
     <button class="brand brand-home" onclick="go(1)" title="回到主页">
       <div class="mark">里里的工具箱</div>
       <div class="en">Lili · Prompt Toolbox</div>
     </button>
     <div class="top-actions">
       <button class="icon-btn" onclick="go(1)">主页 · Home</button>
-      <button class="provider-pill" id="provider-pill" onclick="openSettings()">
+      <button class="provider-pill" onclick="openSettings()">
         <span class="label">provider</span>
-        <span class="val" id="provider-pill-val">—</span>
+        <span class="val">—</span>
       </button>
       <button class="icon-btn" onclick="openSettings()">Settings</button>
     </div>
   </div>
 
-  <!-- ============ STAGE RAIL ============ -->
-  <div class="rail">
+  <!-- ============ STAGE RAIL（已隐藏，保留 JS 兼容性）============ -->
+  <div class="rail" style="display:none">
     <button class="stage stage-clickable" data-stage="1" onclick="goStage(1)">
       <span class="num">Ⅰ</span>
       <div class="meta"><span class="name">抽图</span><span class="note">点击进入</span></div>
@@ -4268,51 +4465,6 @@ body:has(.ak-working.active) .rail .sep {
 
   <!-- ============ SCREEN 1 ============ -->
   <section class="screen active atelier-home" data-screen="1">
-
-    <nav class="ak-nav">
-      <div class="ak-nav-logo">
-        <div class="ak-nav-logo-bar"></div>
-        <div class="ak-nav-logo-text">
-          <div class="ak-nav-logo-en">ATELIER</div>
-          <div class="ak-nav-logo-cn">里里的工具箱</div>
-        </div>
-      </div>
-
-      <div class="ak-nav-menu">
-        <button class="ak-nav-item active" type="button">
-          <div class="ak-nav-item-en">INDEX</div>
-          <div class="ak-nav-item-cn">首页</div>
-        </button>
-        <button class="ak-nav-item" type="button" onclick="goStage(1)">
-          <div class="ak-nav-item-en">STAGE I</div>
-          <div class="ak-nav-item-cn">抽图</div>
-        </button>
-        <button class="ak-nav-item" type="button" onclick="goStart()">
-          <div class="ak-nav-item-en">STAGE II</div>
-          <div class="ak-nav-item-cn">整图优化</div>
-        </button>
-        <button class="ak-nav-item" type="button" onclick="goStage(3)">
-          <div class="ak-nav-item-en">STAGE III</div>
-          <div class="ak-nav-item-cn">局部精修</div>
-        </button>
-        <button class="ak-nav-item" type="button" onclick="document.querySelector('.atelier-home .ak-toolbox').scrollIntoView({behavior:'smooth'})">
-          <div class="ak-nav-item-en">TOOLBOX</div>
-          <div class="ak-nav-item-cn">工具箱</div>
-        </button>
-      </div>
-
-      <div class="ak-nav-meta">
-        <button class="ak-nav-btn js-provider-pill" type="button" onclick="openSettings()" title="切换 API / 管理 key">
-          <span class="ak-nav-btn-label">PROVIDER</span>
-          <span class="ak-nav-btn-val js-provider-val">—</span>
-        </button>
-        <button class="ak-nav-btn" type="button" onclick="openSettings()">SETTINGS</button>
-        <span class="ak-nav-status">
-          <span class="ak-dot"></span>
-          <span>V1.0</span>
-        </span>
-      </div>
-    </nav>
 
     <section class="ak-hero">
       <div class="ak-accent-pillar"></div>
@@ -5847,15 +5999,47 @@ const state = {
 function go(n) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelector('.screen[data-screen="'+n+'"]').classList.add('active');
-  // Rail shows for main stage workflow (1-4, 7-8), hide on toolbox screens (5-6, 14, 15, 21) and on the arknights-style home (screen 1)
+  // Rail 和 topbar 已经被全局 ak-nav 取代 · 保留隐藏以避免 JS 兼容性问题
   const rail = document.querySelector('.rail');
-  if (rail) rail.style.display = (n === 1 || n === 5 || n === 6 || n === 14 || n === 15 || n === 21 || n === 22) ? 'none' : 'grid';
-  // Update rail active state
+  if (rail) rail.style.display = 'none';
+  // Update rail + ak-nav-global active state
   updateRailActive(n);
+  updateAkNavActive(n);
   window.scrollTo({top: 0, behavior: 'smooth'});
   // 历史记录：切屏时刷新所有卡内折叠区的计数；进入 screen 21 时刷新独立页
   if (typeof refreshAllInlineHistory === 'function') refreshAllInlineHistory();
   if (n === 21 && typeof historyUI === 'object') historyUI.refresh();
+}
+
+// 根据当前 screen 给全局 ak-nav 的菜单项加高亮
+function updateAkNavActive(screenN) {
+  let target = null;
+  if (screenN === 1) target = 'home';
+  else if (screenN >= 2 && screenN <= 4) target = 'stage2';
+  else if (screenN === 7 || screenN === 8) target = 'stage3';
+  else if ((screenN >= 9 && screenN <= 13) || screenN === 16 || screenN === 17
+           || screenN === 18 || screenN === 19 || screenN === 20 || screenN === 12) target = 'stage1';
+  else if (screenN === 5 || screenN === 6 || screenN === 14 || screenN === 15
+           || screenN === 21 || screenN === 22) target = 'toolbox';
+  document.querySelectorAll('.ak-nav-global .ak-nav-item').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.target === target);
+  });
+}
+
+// TOOLBOX 菜单点击：在首页时滚到工具区，不在首页时先回首页再滚
+function goToToolbox() {
+  const onHome = document.querySelector('.atelier-home.active');
+  if (onHome) {
+    const tb = document.querySelector('.atelier-home .ak-toolbox');
+    if (tb) tb.scrollIntoView({behavior:'smooth'});
+  } else {
+    go(1);
+    // 等 screen 切换动画后再滚
+    setTimeout(() => {
+      const tb = document.querySelector('.atelier-home .ak-toolbox');
+      if (tb) tb.scrollIntoView({behavior:'smooth'});
+    }, 400);
+  }
 }
 
 function updateRailActive(screenN) {
@@ -13075,6 +13259,7 @@ function showWipToast(name) {
  * INIT
  * ===================================================== */
 updateProviderPill();
+updateAkNavActive(1);
 // First-run nudge
 if (!hasKey() && !state.keys.gemini && !state.keys.claude && !state.keys.openai && !state.keys.doubao && !state.keys.qwen && !state.keys.deepseek) {
   setTimeout(() => {
